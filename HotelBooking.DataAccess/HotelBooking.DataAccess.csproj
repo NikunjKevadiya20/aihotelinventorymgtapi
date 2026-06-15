@@ -1,0 +1,37 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net6.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Remove="Base\StudentViewLookupsRepository.cs~RF19ac5c79.TMP" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.1.1" />
+    <PackageReference Include="AutoMapper.Extensions.Microsoft.DependencyInjection" Version="8.1.1" />
+    <PackageReference Include="CorePush" Version="3.0.12" />
+    <PackageReference Include="Dapper" Version="2.0.123" />
+    <PackageReference Include="Dapper.ParameterExtensions" Version="2018.12.7.1" />
+    <PackageReference Include="Firebase.Auth" Version="1.0.0" />
+    <PackageReference Include="FireSharp" Version="2.0.4" />
+	  <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="10.0.0" />
+	  <PackageReference Include="Microsoft.Extensions.Options" Version="10.0.0" />
+    <PackageReference Include="Microsoft.IdentityModel.Clients.ActiveDirectory" Version="5.3.0" />
+	  <PackageReference Include="Microsoft.IdentityModel.Tokens" Version="8.16.0" />
+	  <PackageReference Include="Newtonsoft.Json" Version="13.0.4" />
+    <PackageReference Include="PuppeteerSharp" Version="24.40.0" />
+    <PackageReference Include="System.Data.SqlClient" Version="4.8.3" />
+	  <PackageReference Include="System.IdentityModel.Tokens.Jwt" Version="8.16.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\HotelBooking.Entity\HotelBooking.Entity.csproj" />
+    <ProjectReference Include="..\HotelBooking.Entity\HotelBooking.Entity.csproj" />
+    <ProjectReference Include="..\HotelBooking.Entity\HotelBooking.Entity.csproj" />
+  </ItemGroup>
+
+</Project>
