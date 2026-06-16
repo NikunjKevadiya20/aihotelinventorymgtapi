@@ -67,6 +67,11 @@ namespace HotelBooking.DI
             services.AddScoped<IAmountBaseGSTRepository, AmountBaseGSTRepository>();
             services.AddScoped<IAmountBaseGSTDomain, AmountBaseGSTDomain>();
             services.AddScoped(typeof(IAmountBaseGSTLookupRepositoryInterface), typeof(AmountBaseGSTLookupRepository));
+      
+            
+            services.AddScoped<IHotelProfileRepository, HotelProfileRepository>();
+            services.AddScoped<IHotelProfileDomain, HotelProfileDomain>();
+            services.AddScoped(typeof(IHotelProfileLookupRepositoryInterface), typeof(HotelProfileLookupRepository));
         }
 
     }
