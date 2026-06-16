@@ -1,4 +1,4 @@
-﻿/// <summary>
+/// <summary>
 /// Added by NikunjK on 01-08-2023
 /// </summary>
 namespace HotelBooking.Entity.Entities

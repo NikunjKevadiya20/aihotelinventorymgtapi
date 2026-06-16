@@ -1,4 +1,4 @@
-﻿namespace HotelBooking.Entity.Entities
+namespace HotelBooking.Entity.Entities
 {
     // Added by AI009 on 25-03-23
 

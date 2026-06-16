@@ -1,4 +1,4 @@
-﻿using HotelBooking.Entity.Common.Entities;
+using HotelBooking.Entity.Common.Entities;
 using Microsoft.AspNetCore.Http;
 using Org.BouncyCastle.Math;
 using System;

@@ -1,4 +1,4 @@
-﻿using HotelBooking.Entity;
+using HotelBooking.Entity;
 
 namespace HotelBooking.Entity.Entities
 {

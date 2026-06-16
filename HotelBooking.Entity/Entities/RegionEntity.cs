@@ -1,4 +1,4 @@
-﻿namespace HotelBooking.Entity.Entities
+namespace HotelBooking.Entity.Entities
 {
     public class RegionDataEntity
     {
