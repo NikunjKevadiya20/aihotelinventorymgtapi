@@ -15,19 +15,19 @@ namespace HotelBooking.DataAccess.Repositories
         }
         public async Task<TempBookingIDViewEntity> InsertTempBooking(TempBookingEntity entity)
         {
-            return await repository.InsertTempBooking(entity, "SP_ManageTempBooking");
+            return await repository.InsertTempBooking(entity, "sp_ManageTempBooking");
         }
 
         public async Task<BookingViewInsertEntity> InsertBooking(BookingRequestEntity entity)
         {
-            return await repository.InsertBooking(entity, "sp_ManageBooking");
+            return await repository.InsertBooking(entity, "sp_ManageBookingInsert");
         }
 
         public async Task<List<BookingListEntity>> FindAllBooking(BookingSearchEntity entity)
         {
             return await repository.FindAllBooking(entity, "sp_ManageBookingFindAll");
         }
-        public async Task<BookingViewEntity> FindByIDBooking(BookingEntity entity)
+        public async Task<BookingViewInsertEntity> FindByIDBooking(BookingRequestEntity entity)
         {
             return await repository.FindByIDBooking(entity, "sp_ManageBookingFindByID");
         }
@@ -47,9 +47,9 @@ namespace HotelBooking.DataAccess.Repositories
         {
             return await repository.GetDashboardTomorrowCheckIn( "sp_ManageGetBookingDetails");
         }
-        public async Task<PDFDownloadResponse> PDFDownload(BookingRequestEntity entity)
-        {
-            return await repository.PDFDownload(entity, "sp_ManageBookingPDFGenerate");
-        }
+        //public async Task<PDFDownloadResponse> PDFDownload(BookingRequestEntity entity)
+        //{
+        //    return await repository.PDFDownload(entity, "sp_ManageBookingPDFGenerate");
+        //}
     }
 }

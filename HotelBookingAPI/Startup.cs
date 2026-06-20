@@ -4,15 +4,16 @@ using System.Text;
 using System.Text.Json;
 using CorePush.Apple;
 using CorePush.Google;
-using Microsoft.AspNetCore.Authentication.JwtBearer;
-using Microsoft.IdentityModel.Tokens;
-using Microsoft.OpenApi.Models;
 using HotelBooking.DataAccess.Base;
 using HotelBooking.DI;
 using HotelBooking.Entity.Common;
 using HotelBooking.Entity.Common.Entities;
 using HotelBooking.Entity.Common.Enums;
 using HotelBooking.Helpers;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
+using StackExchange.Redis;
 
 
 namespace HotelBooking
@@ -29,10 +30,19 @@ namespace HotelBooking
         {
 
             // Read the connection string from appsettings.
-            string dbConnectionString = Configuration.GetConnectionString("DefaultConnection");
+            //string dbConnectionString = Configuration.GetConnectionString("DefaultConnection");
 
             // Inject IDbConnection, with implementation from SqlConnection class.
-            services.AddScoped<IDbConnection>((sp) => new SqlConnection(dbConnectionString));
+            //services.AddScoped<IDbConnection>((sp) => new SqlConnection(dbConnectionString));
+
+            services.AddScoped<IDbConnection>(sp =>
+            {
+                var tenantProvider =
+                    sp.GetRequiredService<ITenantProvider>();
+
+                return new SqlConnection(
+                    tenantProvider.GetConnectionString());
+            });
 
             //services.AddTransient<INotificationViewLookupRepositoryInterface, NotificationViewLookupRepository>();
             services.AddHttpClient<FcmSender>();
@@ -94,6 +104,16 @@ namespace HotelBooking
                };
            });
             var appSettingsSection = Configuration.GetSection("FcmNotification");
+            services.AddSingleton<IConnectionMultiplexer>(sp =>
+            {
+                var configuration = Configuration.GetConnectionString("Redis");
+                return ConnectionMultiplexer.Connect(configuration);
+            });
+
+            services.AddScoped<IRedisService, RedisService>();
+            services.AddHttpContextAccessor();
+
+            services.AddScoped<ITenantProvider, TenantProvider>();
 
             services.AddTransient<BookingLookupRepository>();
             services.AddControllersWithViews();
@@ -152,6 +172,8 @@ namespace HotelBooking
             .AllowCredentials()); // allow credentials
 
             app.UseRouting();
+            // Tenant middleware FIRST
+            app.UseMiddleware<TenantMiddleware>();
 
             app.UseAuthorization();
 

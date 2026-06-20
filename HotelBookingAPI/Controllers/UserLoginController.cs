@@ -31,7 +31,6 @@ namespace HotelBooking.Controllers
         //[Authorize]
         public async Task<IActionResult> UserLogin(LoginRequestEntity entity)
         {
-
             try
             {
                 //var token = HttpContext.Request.Headers["Authorization"]

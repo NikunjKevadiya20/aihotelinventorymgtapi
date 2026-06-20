@@ -8,6 +8,7 @@ namespace HotelBooking.Entity.Entities
     // ==========================================
     public class TempBookingIDViewEntity : MessageBaseEntity
     {
+        public int? ID { get; set; }
         public int? TempID { get; set; }
         public string? BookingNo { get; set; }
     }
@@ -15,38 +16,53 @@ namespace HotelBooking.Entity.Entities
     // ==========================================
     // MAIN REQUEST ENTITY
     // ==========================================
-    public class TempBookingEntity : BaseEntity
+    public class TempBookingEntity
     {
-        public int? CustomerID { get; set; }
-        public int? HotelBookingPackageID { get; set; }
+        public int? ID { get; set; }
+        public string? BookingNo { get; set; }
 
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? MobileNo { get; set; }
         public string? EmailID { get; set; }
 
-        public string? GSTNo { get; set; }
-        public string? SessionID { get; set; }
-        public string? CompanyName { get; set; }
-        public string? CompanyAddress { get; set; }
-        public int? StateID { get; set; }
-        public int? DistrictID { get; set; }
+        public bool? IsPayAtHotel { get; set; }
+        public string? PromoCode { get; set; }
 
-        public decimal? Price { get; set; }
-        public decimal? DiscountValue { get; set; }
-        public decimal? ServiceCharge { get; set; }
-        public decimal? FinalPrice { get; set; }
-        public decimal? RoundOff { get; set; }
-        public string? WhatsAppMobileNo { get; set; }
-        public int? TotalRooms { get; set; }
-        public int? TotalTickets { get; set; }
-        public DateTime? TicketDate { get; set; }
+        public DateTime? FromDate { get; set; }
+        public DateTime? ToDate { get; set; }
 
-        // Child Lists
-        public IEnumerable<CartTicketList>? TicketCart { get; set; }
-        public IEnumerable<CartHotelList>? HotelCart { get; set; }
+        public int? NoOfNight { get; set; }
+
+        public decimal? SGst { get; set; }
+        public decimal? CGst { get; set; }
+
+        public decimal? TotalRoomCharges { get; set; }
+        public decimal? FinalTotal { get; set; }
+
+        public bool? IsActive { get; set; }
+
+        public int? CreatedBy { get; set; }
+        public int? UpdatedBy { get; set; }
+
+        public List<TempBookingDetailEntity>? TempBookingDetails { get; set; }
     }
+    public class TempBookingDetailEntity
+    {
+        public int? RoomCategoryID { get; set; }
 
+        public int? Room { get; set; }
+
+        public int? Adults { get; set; }
+
+        public int? Child { get; set; }
+
+        public decimal? SGst { get; set; }
+
+        public decimal? CGst { get; set; }
+
+        public decimal? TotalPrice { get; set; }
+    }
     // ==========================================
     // TICKET LIST
     // ==========================================
@@ -195,7 +211,6 @@ namespace HotelBooking.Entity.Entities
         public string? PaymentStatus { get; set; }
         public string? FromDate { get; set; }
         public string? ToDate { get; set; }
-        public string? PNR { get; set; }
         public int? Skip { get; set; }
         public int? Limit { get; set; }
     }
@@ -205,36 +220,34 @@ namespace HotelBooking.Entity.Entities
         public string? Message { get; set; }
         public string? Details { get; set; }
 
-        public int BookingID { get; set; }
-        public int TempBookingID { get; set; }
-        public string? BookingNo { get; set; }
+        public int ID { get; set; }
         public int TempID { get; set; }
-        public int CustomerID { get; set; }
+
+        public string? BookingNo { get; set; }
+
+        public string? FirstName { get; set; }
+        public string? LastName { get; set; }
         public string? CustomerName { get; set; }
+
         public string? MobileNo { get; set; }
         public string? EmailID { get; set; }
 
-        public decimal OrderValue { get; set; }
-        public decimal DiscountValue { get; set; }
-        public decimal ServiceCharge { get; set; }
-        public decimal FinalPrice { get; set; }
+        public bool? IsPayAtHotel { get; set; }
+        public string? PromoCode { get; set; }
+
+        public DateTime? FromDate { get; set; }
+        public DateTime? ToDate { get; set; }
+
+        public int? NoOfNight { get; set; }
+
+        public decimal? SGst { get; set; }
+        public decimal? CGst { get; set; }
+        public decimal? TotalRoomCharges { get; set; }
+        public decimal? FinalTotal { get; set; }
 
         public string? PaymentStatus { get; set; }
         public string? BookingStatus { get; set; }
-        public string? PNR { get; set; }
-        public string? payment_id { get; set; }
-        public string? bank_transaction_id { get; set; }
-        public string? TicketDate { get; set; }
-        public string? CheckIn { get; set; }
-        public int? StateID { get; set; }
-        public string? StateName { get; set; }
-        public int? DistrictID { get; set; }
-        public string? DistrictName { get; set; }
-        public int TotalRooms { get; set; }
-        public int TotalTickets { get; set; }
 
-        public DateTime? CreatedOn { get; set; }
-        public bool? IsHotelDetails { get; set; }
         public int ItemCount { get; set; }
         public int TotalPages { get; set; }
     }
@@ -247,71 +260,83 @@ namespace HotelBooking.Entity.Entities
     }
     public class BookingViewInsertEntity : MessageBaseEntity
     {
-        // Common
-        public string? Message { get; set; }
-        public string? Details { get; set; }
-
-        // -------------------------------
-        // ORDER DETAILS
-        // -------------------------------
         public int? ID { get; set; }
-        public int? HotelBookingPackageID { get; set; }
-        public string? HotelBookingPackageName { get; set; }
+
+        public int? TempID { get; set; }
+
         public string? BookingNo { get; set; }
-        public string? AdminMail { get; set; }
-        public string? TempID { get; set; }
-        public int? CustomerID { get; set; }
+
         public string? FirstName { get; set; }
+
         public string? LastName { get; set; }
+
         public string? MobileNo { get; set; }
-        public string? WhatsAppMobileNo { get; set; }
+
         public string? EmailID { get; set; }
-        public string? GSTNo { get; set; }
-        public string? CompanyName { get; set; }
-        public string? CompanyAddress { get; set; }
-        public decimal? OrderValue { get; set; }
-        public decimal? DiscountValue { get; set; }
-        public decimal? ServiceCharge { get; set; }
-        public decimal? FinalPrice { get; set; }
-        public decimal? RoundOff { get; set; }
-        public DateTime? TicketDate { get; set; }
-        public int? TotalRooms { get; set; }
-        public int? TotalTickets { get; set; }
-        public DateTime? CreatedOn { get; set; }
+
+        public bool? IsPayAtHotel { get; set; }
+
+        public string? PromoCode { get; set; }
+
+        public DateTime? FromDate { get; set; }
+
+        public DateTime? ToDate { get; set; }
+
+        public int? NoOfNight { get; set; }
+
+        public decimal? SGst { get; set; }
+
+        public decimal? CGst { get; set; }
+
+        public decimal? TotalRoomCharges { get; set; }
+
+        public decimal? FinalTotal { get; set; }
+
         public string? PaymentStatus { get; set; }
+
         public string? BookingStatus { get; set; }
-        public string? PNR { get; set; }
 
-        // -------------------------------
-        // PAYMENT DETAILS
-        // -------------------------------
-        public string? PaymentID { get; set; }
-        public string? Entity { get; set; }
-        public decimal? Amount { get; set; }
-        public string? Currency { get; set; }
-        public string? GatewayPaymentStatus { get; set; }
-        public string? Order_ID { get; set; }
-        public string? EasepayID { get; set; }
-        public string? Method { get; set; }
-        public decimal? Amount_Refunded { get; set; }
-        public string? Refund_Status { get; set; }
-        public bool? Captured { get; set; }
-        public string? Bank { get; set; }
-        public string? Wallet { get; set; }
-        public string? VPA { get; set; }
-        public string? Email { get; set; }
-        public string? Contact { get; set; }
-        public decimal? Fee { get; set; }
-        public decimal? Tax { get; set; }
-        public string? TransactionID { get; set; }
-        public string? Error_Code { get; set; }
-        public string? Error_Description { get; set; }
+        public bool? IsActive { get; set; }
 
-        public string? TransactionDate { get; set; }
-        public List<BookingTicketViewEntity>? TicketView { get; set; }
+        public bool? IsDeleted { get; set; }
 
-        public List<BookingTicketPaxViewEntity>? PaxList { get; set; }
-        public List<BookingHotelDetailsViewEntity>? HotelDetails { get; set; }
+        public int? CreatedBy { get; set; }
+
+        public string? CreatedOn { get; set; }
+
+        public int? UpdatedBy { get; set; }
+
+        public string? UpdatedOn { get; set; }
+
+        public int? ItemCount { get; set; }
+
+        public int? TotalPages { get; set; }
+
+        public List<InsertBookingDetailEntity>? BookingDetails { get; set; }
+    }
+    public class InsertBookingDetailEntity
+    {
+        public int? ID { get; set; }
+
+        public int? BookingID { get; set; }
+
+        public int? RoomCategoryID { get; set; }
+
+        public string? RoomCategoryName { get; set; }
+
+        public int? Room { get; set; }
+
+        public int? Adults { get; set; }
+
+        public int? Child { get; set; }
+
+        public decimal? SGst { get; set; }
+
+        public decimal? CGst { get; set; }
+
+        public decimal? TotalPrice { get; set; }
+
+        public string? CreatedOn { get; set; }
     }
     public class BookingViewEntity : MessageBaseEntity
     {

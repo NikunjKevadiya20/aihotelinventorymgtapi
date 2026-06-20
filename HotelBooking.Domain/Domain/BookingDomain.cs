@@ -29,7 +29,7 @@ namespace HotelBooking.Domain.Domain
         {
             return await repository.FindAllBooking(entity);
         }
-        public async Task<BookingViewEntity> FindByIDBooking(BookingEntity entity)
+        public async Task<BookingViewInsertEntity> FindByIDBooking(BookingRequestEntity entity)
         {
             return await repository.FindByIDBooking(entity);
         }
@@ -49,9 +49,9 @@ namespace HotelBooking.Domain.Domain
         {
             return await repository.GetDashboardTomorrowCheckIn();
         }
-        public async Task<PDFDownloadResponse> PDFDownload(BookingRequestEntity entity)
-        {
-            return await repository.PDFDownload(entity);
-        }
+        //public async Task<PDFDownloadResponse> PDFDownload(BookingRequestEntity entity)
+        //{
+        //    return await repository.PDFDownload(entity);
+        //}
     }
 }

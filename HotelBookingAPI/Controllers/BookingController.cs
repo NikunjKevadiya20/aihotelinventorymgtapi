@@ -197,7 +197,7 @@ namespace HotelBooking.Controllers
         #region FindByIDBooking
         [HttpPost("FindByIDBooking")]
         //[Authorize]
-        public async Task<IActionResult> FindByIDBooking(BookingEntity entity)
+        public async Task<IActionResult> FindByIDBooking(BookingRequestEntity entity)
         {
             try
             {
@@ -489,62 +489,62 @@ namespace HotelBooking.Controllers
         }
         #endregion
 
-        #region PDF Download
-        [HttpPost("PDFDownload")]
-        public async Task<IActionResult> PDFDownload(BookingRequestEntity entity)
-        {
-            try
-            {
-                int userId = 1;
+        //#region PDF Download
+        //[HttpPost("PDFDownload")]
+        //public async Task<IActionResult> PDFDownload(BookingRequestEntity entity)
+        //{
+        //    try
+        //    {
+        //        int userId = 1;
 
-                if (userId != 0)
-                {
-                    // Get PDF Bytes
-                    var result = await domain.PDFDownload(entity);
+        //        if (userId != 0)
+        //        {
+        //            // Get PDF Bytes
+        //            var result = await domain.PDFDownload(entity);
 
-                    // Check PDF generated or not
-                    if (result?.PDFBytes != null && result.PDFBytes.Length > 0)
-                    {
-                        return File(
-                            result.PDFBytes,
-                            "application/pdf",
-                            $"Booking_{result.BookingNo}.pdf"
-                        );
-                    }
-                    else
-                    {
-                        return StatusCode((int)HttpStatusCode.BadRequest, new ResultModel()
-                        {
-                            Data = string.Empty,
-                            Message = "error",
-                            Details = "PDF generation failed.",
-                            Status = (int)ResponseStatusCode.BadRequestError,
-                        });
-                    }
-                }
-                else
-                {
-                    return StatusCode((int)ResponseStatusCode.TokenExpired, new ResultModel()
-                    {
-                        Data = string.Empty,
-                        Message = CommonRepositoryMessages.NotFoundMessageEN,
-                        Details = CommonRepositoryMessages.NotFoundMessageEN,
-                        Status = (int)ResponseStatusCode.TokenExpired,
-                    });
-                }
-            }
-            catch (Exception ex)
-            {
-                return StatusCode((int)HttpStatusCode.InternalServerError, new ResultModel()
-                {
-                    Message = CommonRepositoryMessages.NotFoundMessageEN,
-                    Details = CommonRepositoryMessages.NotFoundMessageEN,
-                    ErrorMessage = ex.Message,
-                    Status = (int)ResponseStatusCode.InternaServerError,
-                });
-            }
-        }
-        #endregion
+        //            // Check PDF generated or not
+        //            if (result?.PDFBytes != null && result.PDFBytes.Length > 0)
+        //            {
+        //                return File(
+        //                    result.PDFBytes,
+        //                    "application/pdf",
+        //                    $"Booking_{result.BookingNo}.pdf"
+        //                );
+        //            }
+        //            else
+        //            {
+        //                return StatusCode((int)HttpStatusCode.BadRequest, new ResultModel()
+        //                {
+        //                    Data = string.Empty,
+        //                    Message = "error",
+        //                    Details = "PDF generation failed.",
+        //                    Status = (int)ResponseStatusCode.BadRequestError,
+        //                });
+        //            }
+        //        }
+        //        else
+        //        {
+        //            return StatusCode((int)ResponseStatusCode.TokenExpired, new ResultModel()
+        //            {
+        //                Data = string.Empty,
+        //                Message = CommonRepositoryMessages.NotFoundMessageEN,
+        //                Details = CommonRepositoryMessages.NotFoundMessageEN,
+        //                Status = (int)ResponseStatusCode.TokenExpired,
+        //            });
+        //        }
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        return StatusCode((int)HttpStatusCode.InternalServerError, new ResultModel()
+        //        {
+        //            Message = CommonRepositoryMessages.NotFoundMessageEN,
+        //            Details = CommonRepositoryMessages.NotFoundMessageEN,
+        //            ErrorMessage = ex.Message,
+        //            Status = (int)ResponseStatusCode.InternaServerError,
+        //        });
+        //    }
+        //}
+        //#endregion
     
     }
 }

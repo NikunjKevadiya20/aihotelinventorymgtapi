@@ -12,7 +12,7 @@ namespace HotelBooking.Domain.Interfaces
         Task<TempBookingIDViewEntity> InsertTempBooking(TempBookingEntity entity);
         Task<BookingViewInsertEntity> InsertBooking(BookingRequestEntity entity);
         Task<List<BookingListEntity>> FindAllBooking(BookingSearchEntity entity);
-        Task<BookingViewEntity> FindByIDBooking(BookingEntity entity);
+        Task<BookingViewInsertEntity> FindByIDBooking(BookingRequestEntity entity);
         Task<DashboardResponse> DashboardCount(DashboardCustomerRequestEntity entity);
         Task<List<BookingViewEntity>> GetDashboardBookingDetails(DashboardCustomerRequestEntity entity);
         Task<List<DashboardInquiryData>> GetDashboardInquiry(DashboardCustomerRequestEntity entity);
@@ -20,7 +20,7 @@ namespace HotelBooking.Domain.Interfaces
         Task<List<DashboardTomorrowCheckInData>> GetDashboardTomorrowCheckIn();
 
     
-        Task<PDFDownloadResponse> PDFDownload(BookingRequestEntity entity);
+        //Task<PDFDownloadResponse> PDFDownload(BookingRequestEntity entity);
 
     }
 }
