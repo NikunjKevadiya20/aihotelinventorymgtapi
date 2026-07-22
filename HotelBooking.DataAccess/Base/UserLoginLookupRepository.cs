@@ -11,6 +11,10 @@ using System.Data.SqlClient;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using System.Security.Cryptography;
+using AutoMapper.Configuration;
+using Microsoft.Extensions.Configuration;
+ 
 
 namespace HotelBooking.DataAccess.Base
 {
@@ -19,12 +23,15 @@ namespace HotelBooking.DataAccess.Base
         #region Global Variables
         private readonly IDbConnection _dbConnection;
         private readonly ILogger<UserLoginLookupRepository> logger;
+        private readonly Microsoft.Extensions.Configuration.IConfiguration _configuration;
+
         #endregion
 
-        public UserLoginLookupRepository(ILogger<UserLoginLookupRepository> _logger, IDbConnection dbConnection)
+        public UserLoginLookupRepository(ILogger<UserLoginLookupRepository> _logger, IDbConnection dbConnection, Microsoft.Extensions.Configuration.IConfiguration configuration)
         {
             logger = _logger;
             _dbConnection = dbConnection;
+            _configuration = configuration;
         }
 
 
@@ -36,14 +43,50 @@ namespace HotelBooking.DataAccess.Base
             try
             {
                 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+
+                // STEP 1: Find tenant from master database
+                using var masterConnection = new SqlConnection(
                     _configuration.GetConnectionString("TemplateConnection"));
+
+                var tenant = await masterConnection.QueryFirstOrDefaultAsync<TenantInfo>(
+                @"SELECT *
+          FROM tblOrganization
+          WHERE OrganizationCode = @OrganizationCode
+          AND IsActive = 1
+          AND IsDeleted = 0",
+                new { entity.OrganizationCode });
+
+                if (tenant == null)
+                {
+                    result.Message = "failure";
+                    result.Details = "Invalid Organization Code.";
+                    return result;
+                }
+
+                // STEP 2: Build tenant connection string
+                var tenantConnectionString =
+                    $"Server={tenant.ServerName};" +
+                    $"Database={tenant.DatabaseName};" +
+                    $"User Id={tenant.UserName};" +
+                    $"Password={tenant.Password};" +
+                    $"TrustServerCertificate=True;";
+
+                using var tenantConnection =
+                    new SqlConnection(tenantConnectionString);
+
                 DynamicParameters dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@UserName", entity.UserName);
                 dynamicParameters.Add("@Password", HashPassword.EncryptPlainTextToCipherText(entity.Password));
                 dynamicParameters.Add("@OperationType", 1);
-                var Userdata = await _dbConnection.QueryMultipleAsync(storedProcedure, dynamicParameters, commandType: System.Data.CommandType.StoredProcedure);
 
-                LoginResponseEntity data = await Userdata.ReadFirstOrDefaultAsync<LoginResponseEntity>();
+                // STEP 3: Login against tenant database
+                var Userdata = await tenantConnection.QueryMultipleAsync(
+                    storedProcedure,
+                    dynamicParameters,
+                    commandType: CommandType.StoredProcedure);
+
+                LoginResponseEntity data =
+                    await Userdata.ReadFirstOrDefaultAsync<LoginResponseEntity>();
 
                 if (data == null)
                 {
@@ -98,6 +141,17 @@ namespace HotelBooking.DataAccess.Base
             }
 
             return result;
+        }
+
+        public static string GetTenantSecretKey(string organizationName)
+        {
+            using var sha = SHA256.Create();
+
+            var bytes = sha.ComputeHash(
+                Encoding.UTF8.GetBytes(
+                    organizationName + "_HotelBooking_2026"));
+
+            return Convert.ToBase64String(bytes);
         }
 
         public string Authenticate(string userId, string userGUID, int IsUser)

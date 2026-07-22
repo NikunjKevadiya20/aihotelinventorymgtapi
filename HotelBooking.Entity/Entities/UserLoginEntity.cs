@@ -14,6 +14,7 @@ namespace HotelBooking.Entity.Entities
 {
     public class LoginRequestEntity
     { 
+        public string? OrganizationCode { get; set; }
         public string? UserName { get; set; }
         public string? Password { get; set; }
         public Boolean? isemployee { get; set; }
