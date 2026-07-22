@@ -36,6 +36,7 @@ namespace HotelBooking.DataAccess.Base
             try
             {
                 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+                    _configuration.GetConnectionString("TemplateConnection"));
                 DynamicParameters dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@UserName", entity.UserName);
                 dynamicParameters.Add("@Password", HashPassword.EncryptPlainTextToCipherText(entity.Password));
