@@ -51,6 +51,7 @@ namespace HotelBooking.Entity.Entities
     {
         public int? RoomCategoryID { get; set; }
 
+
         public int? Room { get; set; }
 
         public int? Adults { get; set; }
