@@ -45,6 +45,12 @@ namespace HotelBooking.Entity.Entities
         public int? CreatedBy { get; set; }
         public int? UpdatedBy { get; set; }
 
+        public string? Remarks {  get; set; }
+        public bool? IsBookingforelse {  get; set; }
+        public string? GSTNo {  get; set; }
+        public string? Estimatedarrivaltime {  get; set; }
+        public int? NoOfPax {  get; set; }
+
         public List<TempBookingDetailEntity>? TempBookingDetails { get; set; }
     }
     public class TempBookingDetailEntity
@@ -191,6 +197,11 @@ namespace HotelBooking.Entity.Entities
     {
         public int TempID { get; set; }
         public int ID { get; set; }
+        public string? Remarks { get; set; }
+        public bool? IsBookingforelse { get; set; }
+        public string? GSTNo { get; set; }
+        public string? Estimatedarrivaltime { get; set; }
+        public int? NoOfPax { get; set; }
     }
 
     public class BookingResponseEntity
@@ -312,6 +323,11 @@ namespace HotelBooking.Entity.Entities
         public int? ItemCount { get; set; }
 
         public int? TotalPages { get; set; }
+        public string? Remarks { get; set; }
+        public bool? IsBookingforelse { get; set; }
+        public string? GSTNo { get; set; }
+        public string? Estimatedarrivaltime { get; set; }
+        public int? NoOfPax { get; set; }
 
         public List<InsertBookingDetailEntity>? BookingDetails { get; set; }
     }
