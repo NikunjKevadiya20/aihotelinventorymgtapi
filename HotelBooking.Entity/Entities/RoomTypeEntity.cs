@@ -43,4 +43,10 @@ namespace HotelBooking.Entity.Entities
 
         public int? RoomTypeID { get; set; }            
     }
+
+    public class DeleteImageEntity
+    {
+        public int? RoomTypeID { get; set; }
+
+    }
 }

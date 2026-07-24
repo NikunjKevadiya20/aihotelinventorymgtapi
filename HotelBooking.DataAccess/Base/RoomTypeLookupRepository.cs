@@ -325,7 +325,7 @@ namespace HotelBooking.DataAccess.Base
                 dynamicParameters.Add("@OperationType", 2);     
 
                 var data = await _dbConnection.QueryFirstOrDefaultAsync<ResultModel>(
-                    "sp_ManageImages",                             
+                    "sp_ManageRoomTypeImages",                             
                     dynamicParameters,
                     commandType: CommandType.StoredProcedure
                 );
@@ -349,7 +349,7 @@ namespace HotelBooking.DataAccess.Base
                         imgParams.Add("@OperationType", 2);
 
                         await _dbConnection.ExecuteAsync(
-                            "sp_ManageImages",                         
+                            "sp_ManageRoomTypeImages",                         
                             imgParams,
                             commandType: CommandType.StoredProcedure
                         );
@@ -376,5 +376,46 @@ namespace HotelBooking.DataAccess.Base
         }
 
         #endregion
+
+        #region Delete Image
+        public async Task<ResultModel> DeleteImage(DeleteImageEntity entity, string storedProcedure)
+        {
+            ResultModel result = new ResultModel();
+
+            try
+            {
+                Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+                DynamicParameters dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@RoomTypeID", entity.RoomTypeID);
+                dynamicParameters.Add("@operationtype", CommonRepositoryConstants.HardDelete);
+                var data = await _dbConnection.QueryAsync(storedProcedure, dynamicParameters, commandType: CommandType.StoredProcedure);
+                result.Message = data.FirstOrDefault().Message;
+                result.Details = data.FirstOrDefault().Details;
+
+            }
+            catch (SqlException sqlException)
+            {
+                logger.LogError(sqlException, sqlException.Message);
+                result.ErrorMessage = sqlException.Message;
+                result.Status = (int)ResponseStatusCode.InternaServerError;
+                result.Message = CommonRepositoryMessages.CannotFindAllMessage;
+                result.Details = CommonRepositoryMessages.CannotFindAllDetails;
+
+            }
+            catch (Exception ex)
+            {
+                result.Status = (int)ResponseStatusCode.InternaServerError;
+                result.Message = CommonRepositoryMessages.ExceptionMessage;
+                result.ErrorMessage = ex.Message;
+
+            }
+            finally
+            {
+            }
+
+            return result;
+        }
+        #endregion
+
     }
 }

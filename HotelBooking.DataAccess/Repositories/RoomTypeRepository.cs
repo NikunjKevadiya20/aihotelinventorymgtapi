@@ -44,6 +44,10 @@ namespace HotelBooking.DataAccess.Repositories
         {
             return await repository.RoomTypeImageUpload(image, imageList, roomTypeID, updatedBy );
         }
+        public async Task<ResultModel> DeleteImage(DeleteImageEntity entity)
+        {
+            return await repository.DeleteImage(entity, "sp_ManageRoomTypeImages");
+        }
 
     }
 }

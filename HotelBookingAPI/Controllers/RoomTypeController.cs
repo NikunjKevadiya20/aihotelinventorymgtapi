@@ -555,6 +555,179 @@ namespace HotelBooking.Controllers
                 });
             }
         }
-#endregion
+        #endregion
+
+        #region RoomType Image Upload for Panel
+
+        [HttpPost("RoomTypeImageUploadforPanel")]
+        [Authorize]
+        public async Task<IActionResult> RoomTypeImageUploadforPanel([FromForm] RoomTypeImageEntity entity)
+        {
+            try
+            {
+                var token = HttpContext.Request.Headers["Authorization"]
+                            .FirstOrDefault()?.Split(" ").Last();
+
+                int userId = JwtMiddleware.GetUserIdFromToken(token);
+
+                if (userId == 0)
+                {
+                    return StatusCode((int)ResponseStatusCode.TokenExpired, new ResultModel()
+                    {
+                        Data = string.Empty,
+                        Message = CommonRepositoryMessages.NotFoundMessageEN,
+                        Details = CommonRepositoryMessages.NotFoundMessageEN,
+                        Status = (int)ResponseStatusCode.TokenExpired,
+                    });
+                }
+
+                // Use userId as updatedBy
+                int updatedBy = userId;
+
+                string singleImage = string.Empty;
+                List<string> multipleImages = new List<string>();
+
+                string folderPath = Path.Combine(
+                    CommonRepositoryConstants.ImageFilePath,
+                    CommonRepositoryConstants.documentsFolder);
+
+                if (!Directory.Exists(folderPath))
+                    Directory.CreateDirectory(folderPath);
+
+                // 1. Single Image
+                if (entity.Image != null && entity.Image.Length > 0)
+                {
+                    singleImage = $"{Guid.NewGuid()}.webp";
+                    string filePath = Path.Combine(folderPath, singleImage);
+                    await ImageHelper.CompressWithSkia(entity.Image, filePath);
+                }
+
+                // 2. Multiple Images (ImageList)
+                if (entity.ImageList != null && entity.ImageList.Count > 0)
+                {
+                    foreach (var file in entity.ImageList)
+                    {
+                        if (file != null && file.Length > 0)
+                        {
+                            string fileName = $"{Guid.NewGuid()}.webp";
+                            string filePath = Path.Combine(folderPath, fileName);
+
+                            await ImageHelper.CompressWithSkia(file, filePath);
+
+                            multipleImages.Add(fileName);
+                        }
+                    }
+                }
+
+
+                var result = await domain.RoomTypeImageUpload(
+                    singleImage,
+                    multipleImages,
+                    entity.RoomTypeID ?? 0,
+                    updatedBy
+                );
+
+                if (result.Message == "success" || result.Status == (int)ResponseStatusCode.Success)
+                {
+                    return StatusCode((int)HttpStatusCode.OK, new ResultModel()
+                    {
+                        Status = (int)ResponseStatusCode.Success,
+                        Message = Convert.ToString(result.Message),
+                        Details = Convert.ToString(result.Details),
+                        Data = result,
+                    });
+                }
+                else
+                {
+                    return StatusCode((int)HttpStatusCode.NotFound, new ResultModel()
+                    {
+                        Data = string.Empty,
+                        Message = Convert.ToString(result.Message),
+                        Details = Convert.ToString(result.Details),
+                        Status = (int)ResponseStatusCode.NotFound,
+                        ErrorMessage = Convert.ToString(result.ErrorMessage),
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, new ResultModel()
+                {
+                    Message = CommonRepositoryMessages.NotFoundMessageEN,
+                    Details = CommonRepositoryMessages.NotFoundMessageEN,
+                    ErrorMessage = ex.Message,
+                    Status = (int)ResponseStatusCode.InternaServerError,
+                });
+            }
+        }
+
+        #endregion
+
+        #region Delete Image
+        [HttpPost("DeleteImage")]
+        [Authorize]
+        public async Task<IActionResult> DeleteImage(DeleteImageEntity entity)
+        {
+
+            try
+            {
+                var token = HttpContext.Request.Headers["Authorization"]
+                .FirstOrDefault()?.Split(" ").Last();
+
+                int userId = JwtMiddleware.GetUserIdFromToken(token);
+
+                if (userId != 0)
+                {
+
+                    var result = await domain.DeleteImage(entity);
+                    if (result.Message == "success")
+                    {
+                        return StatusCode((int)HttpStatusCode.OK, new ResultModel()
+                        {
+                            Status = (int)ResponseStatusCode.Success,
+                            Message = Convert.ToString(result.Message),
+                            Details = Convert.ToString(result.Details),
+                            Data = result,
+                        });
+                    }
+                    else
+                    {
+                        return StatusCode((int)HttpStatusCode.BadRequest, new ResultModel()
+                        {
+                            Data = string.Empty,
+                            Message = Convert.ToString(result.Message),
+                            Details = Convert.ToString(result.Details),
+                            Status = (int)ResponseStatusCode.BadRequestError,
+                            ErrorMessage = Convert.ToString(result.ErrorMessage),
+                        });
+                    }
+                }
+                else
+                {
+                    return StatusCode((int)ResponseStatusCode.TokenExpired, new ResultModel()
+                    {
+                        Data = string.Empty,
+                        Message = CommonRepositoryMessages.NotFoundMessageEN,
+                        Details = CommonRepositoryMessages.NotFoundMessageEN,
+                        Status = (int)ResponseStatusCode.TokenExpired,
+
+                    });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, new ResultModel()
+                {
+                    Message = CommonRepositoryMessages.NotFoundMessageEN,
+                    Details = CommonRepositoryMessages.NotFoundMessageEN,
+                    ErrorMessage = ex.Message,
+                    Status = (int)ResponseStatusCode.InternaServerError,
+                });
+            }
+
+        }
+        #endregion
+
     }
 }
