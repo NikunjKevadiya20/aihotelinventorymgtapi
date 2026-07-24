@@ -105,7 +105,11 @@ namespace HotelBooking
            });
             var appSettingsSection = Configuration.GetSection("FcmNotification");
 
-
+            services.AddSingleton<IConnectionMultiplexer>(sp =>
+            {
+                var configuration = Configuration.GetConnectionString("Redis");
+                return ConnectionMultiplexer.Connect(configuration);
+            });
 
             // Redis Connection (singleton – reuse across app)
 
@@ -160,7 +164,7 @@ namespace HotelBooking
             //services.AddScoped<IRedisService, RedisService>();
 
 
-
+            services.AddScoped<IRedisService, RedisService>();
             services.AddHttpContextAccessor();
 
             services.AddScoped<ITenantProvider, TenantProvider>();
