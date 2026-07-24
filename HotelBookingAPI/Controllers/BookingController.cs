@@ -545,6 +545,178 @@ namespace HotelBooking.Controllers
         //    }
         //}
         //#endregion
-    
+
+        #region Insert TempBooking (with Items)
+        [HttpPost("InsertTempBookingForPanel")]
+        [Authorize]
+        public async Task<IActionResult> InsertTempBookingForPanel(TempBookingEntity entity)
+        {
+            try
+            {
+                var token = HttpContext.Request.Headers["Authorization"]
+                    .FirstOrDefault()?.Split(" ").Last();
+                int userId = JwtMiddleware.GetUserIdFromToken(token);
+                
+
+
+                if (userId != 0)
+                {
+                    var result = await domain.InsertTempBooking(entity);
+                    if (result.Message == "success")
+                    {
+                        return StatusCode((int)HttpStatusCode.Created, new ResultModel()
+                        {
+                            Status = (int)ResponseStatusCode.Created,
+                            Message = Convert.ToString(result.Message),
+                            Details = Convert.ToString(result.Details),
+                            Data = result,
+                        });
+                    }
+                    else
+                    {
+                        return StatusCode((int)HttpStatusCode.BadRequest, new ResultModel()
+                        {
+                            Data = string.Empty,
+                            Message = Convert.ToString(result.Message),
+                            Details = Convert.ToString(result.Details),
+                            Status = (int)ResponseStatusCode.BadRequestError,
+                            ErrorMessage = Convert.ToString(result.ErrorMessage),
+                        });
+                    }
+                }
+                else
+                {
+                    return StatusCode((int)ResponseStatusCode.TokenExpired, new ResultModel()
+                    {
+                        Data = string.Empty,
+                        Message = CommonRepositoryMessages.NotFoundMessageEN,
+                        Details = CommonRepositoryMessages.NotFoundMessageEN,
+                        Status = (int)ResponseStatusCode.TokenExpired,
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, new ResultModel()
+                {
+                    Message = CommonRepositoryMessages.NotFoundMessageEN,
+                    Details = CommonRepositoryMessages.NotFoundMessageEN,
+                    ErrorMessage = ex.Message,
+                    Status = (int)ResponseStatusCode.InternaServerError,
+                });
+            }
+        }
+        #endregion
+
+        #region Insert Booking (final)
+        [HttpPost("InsertBookingForPanel")]
+        [Authorize]
+        public async Task<IActionResult> InsertBookingForPanel(BookingRequestEntity entity)
+        {
+            try
+            {
+
+                var token = HttpContext.Request.Headers["Authorization"]
+                .FirstOrDefault()?.Split(" ").Last();
+                int userId = JwtMiddleware.GetUserIdFromToken(token);
+
+                if (userId != 0)
+                {
+                    var result = await domain.InsertBooking(entity);
+                    if (result.Message == "success")
+                    {
+                        return StatusCode((int)HttpStatusCode.Created, new ResultModel()
+                        {
+                            Status = (int)ResponseStatusCode.Created,
+                            Message = Convert.ToString(result.Message),
+                            Details = Convert.ToString(result.Details),
+                            Data = result,
+                        });
+                    }
+                    else
+                    {
+                        return StatusCode((int)HttpStatusCode.BadRequest, new ResultModel()
+                        {
+                            Data = string.Empty,
+                            Message = Convert.ToString(result.Message),
+                            Details = Convert.ToString(result.Details),
+                            Status = (int)ResponseStatusCode.BadRequestError,
+                            ErrorMessage = Convert.ToString(result.ErrorMessage),
+                        });
+                    }
+                }
+                else
+                {
+                    return StatusCode((int)ResponseStatusCode.TokenExpired, new ResultModel()
+                    {
+                        Data = string.Empty,
+                        Message = CommonRepositoryMessages.NotFoundMessageEN,
+                        Details = CommonRepositoryMessages.NotFoundMessageEN,
+                        Status = (int)ResponseStatusCode.TokenExpired,
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, new ResultModel()
+                {
+                    Message = CommonRepositoryMessages.NotFoundMessageEN,
+                    Details = CommonRepositoryMessages.NotFoundMessageEN,
+                    ErrorMessage = ex.Message,
+                    Status = (int)ResponseStatusCode.InternaServerError,
+                });
+            }
+        }
+        #endregion
+
+        #region FindByIDBooking
+        [HttpPost("FindByIDBookingForPanel")]
+        [Authorize]
+        public async Task<IActionResult> FindByIDBookingForPanel(BookingRequestEntity entity)
+        {
+            try
+            {
+                var token = HttpContext.Request.Headers["Authorization"]
+                    .FirstOrDefault()?.Split(" ").Last();
+
+                int userId = JwtMiddleware.GetUserIdFromToken(token);
+
+                
+                if (userId != 0)
+                {
+                    var result = await domain.FindByIDBooking(entity);
+                    return StatusCode((int)HttpStatusCode.OK, new ResultModel()
+                    {
+                        Status = (int)ResponseStatusCode.Success,
+                        Message = "success",
+                        Details = string.Empty,
+                        Data = result,
+                    });
+                }
+                else
+                {
+                    return StatusCode((int)ResponseStatusCode.TokenExpired, new ResultModel()
+                    {
+                        Data = string.Empty,
+                        Message = CommonRepositoryMessages.NotFoundMessageEN,
+                        Details = CommonRepositoryMessages.NotFoundMessageEN,
+                        Status = (int)ResponseStatusCode.TokenExpired,
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, new ResultModel()
+                {
+                    Message = CommonRepositoryMessages.NotFoundMessageEN,
+                    Details = CommonRepositoryMessages.NotFoundMessageEN,
+                    ErrorMessage = ex.Message,
+                    Status = (int)ResponseStatusCode.InternaServerError,
+                });
+            }
+        }
+        #endregion
+
+
     }
 }
