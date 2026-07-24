@@ -509,6 +509,7 @@ namespace HotelBooking.DataAccess.Base
                 DynamicParameters dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@CheckInDate", entity.CheckInDate);
                 dynamicParameters.Add("@CheckOutDate", entity.CheckOutDate);
+                dynamicParameters.Add("@NoOfRooms", entity.NoOfRooms);
                 dynamicParameters.Add("@OperationType", 1);
 
                 using var multi = await _dbConnection.QueryMultipleAsync(

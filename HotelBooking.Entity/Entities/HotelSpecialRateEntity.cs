@@ -128,6 +128,7 @@
     {
         public DateTime? CheckInDate { get; set; }
         public DateTime? CheckOutDate { get; set; }
+        public int? NoOfRooms { get; set; }
     }
     public class HotelListViewEntity : MessageBaseEntity
     {
