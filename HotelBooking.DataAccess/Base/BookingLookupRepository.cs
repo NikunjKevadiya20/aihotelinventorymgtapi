@@ -49,6 +49,12 @@ namespace HotelBooking.DataAccess.Base
                 dynamicParameters.Add("@FromDate", entity.FromDate);
                 dynamicParameters.Add("@ToDate", entity.ToDate);
                 dynamicParameters.Add("@NoOfNight", entity.NoOfNight);
+
+                dynamicParameters.Add("@Remarks", entity.Remarks);
+                dynamicParameters.Add("@IsBookingforelse", entity.IsBookingforelse);
+                dynamicParameters.Add("@GSTNo", entity.GSTNo);
+                dynamicParameters.Add("@Estimatedarrivaltime", entity.Estimatedarrivaltime);
+                dynamicParameters.Add("@NoOfPax", entity.NoOfPax);
           
                 dynamicParameters.Add("@IsActive", entity.IsActive);
                 dynamicParameters.Add("@CreatedBy", entity.CreatedBy);
@@ -114,7 +120,12 @@ namespace HotelBooking.DataAccess.Base
                 DynamicParameters dynamicParameters = new DynamicParameters();
 
                 dynamicParameters.Add("@TempID", entity.TempID);
-                
+                dynamicParameters.Add("@Remarks", entity.Remarks);
+                dynamicParameters.Add("@IsBookingforelse", entity.IsBookingforelse);
+                dynamicParameters.Add("@GSTNo", entity.GSTNo);
+                dynamicParameters.Add("@Estimatedarrivaltime", entity.Estimatedarrivaltime);
+                dynamicParameters.Add("@NoOfPax", entity.NoOfPax);
+
                 dynamicParameters.Add("@OperationType", CommonRepositoryConstants.Insert);
 
                 using var multi = await _dbConnection.QueryMultipleAsync(
