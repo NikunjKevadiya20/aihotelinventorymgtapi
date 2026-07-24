@@ -51,5 +51,9 @@ namespace HotelBooking.Domain.Domain
         {
             return await repository.GetHotelSpecialRate(entity);
         }
+        public async Task<HotelListViewEntity> HotelRoomWiseRateList(HotelListEntity entity)
+        {
+            return await repository.HotelRoomWiseRateList(entity);
+        }
     }
 }

@@ -194,7 +194,6 @@ namespace HotelBooking.DataAccess.Base
             return hotels;
         }
 
-
         #region Update HotelSpecialRate
         public async Task<HotelRateResViewEntity> UpdateHotelSpecialRate(HotelSpecialRateDataEntity entity, string storedProcedure)
         {
@@ -411,45 +410,7 @@ namespace HotelBooking.DataAccess.Base
             }
         }
         #endregion
-        //#region Find All HotelSpecialRate
-        //public async Task<List<HotelSpecialRateViewEntity>> FindAllActiveHotelSpecialRate(string storedProcedure)
-        //{
-        //    HotelSpecialRateViewEntity result = new HotelSpecialRateViewEntity();
-
-        //    try
-        //    {
-        //        Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
-        //        DynamicParameters dynamicParameters = new DynamicParameters();
-        //        dynamicParameters.Add("@OperationType", CommonRepositoryConstants.FindAllItems);
-        //        var data = await _dbConnection.QueryAsync<HotelSpecialRateViewEntity>(storedProcedure, dynamicParameters, commandType: CommandType.StoredProcedure);
-        //        return data.ToList();
-
-        //    }
-        //    catch (SqlException sqlException)
-        //    {
-        //        logger.LogError(sqlException, sqlException.Message);
-        //        result.ErrorMessage = sqlException.Message;
-        //        result.Status = (int)ResponseStatusCode.InternaServerError;
-        //        result.Message = CommonRepositoryMessages.CannotFindAllMessage;
-        //        result.Details = CommonRepositoryMessages.CannotFindAllDetails;
-        //        throw;
-        //    }
-        //    catch (Exception ex)
-        //    {
-        //        result.Status = (int)ResponseStatusCode.InternaServerError;
-        //        result.Message = CommonRepositoryMessages.ExceptionMessage;
-        //        result.ErrorMessage = ex.Message;
-        //        throw;
-        //    }
-        //    finally
-        //    {
-
-        //    }
-
-
-        //}
-        //#endregion
-
+        
         #region Active InActive HotelSpecialRate
         public async Task<ResultModel> ActiveInActiveHotelSpecialRate(HotelSpecialRateIDEntity entity, string storedProcedure)
         {
@@ -491,9 +452,6 @@ namespace HotelBooking.DataAccess.Base
             return result;
         }
         #endregion
-
-
-
 
         #region Get Hotel Special Rate
         public async Task<HotelRateViewEntity> GetHotelSpecialRate(HotelRateDataEntity entity, string storedProcedure)
@@ -539,5 +497,85 @@ namespace HotelBooking.DataAccess.Base
         }
         #endregion
 
+        #region Hotel RoomWise Rate List
+        public async Task<HotelListViewEntity> HotelRoomWiseRateList(HotelListEntity entity, string storedProcedure)
+        {
+            HotelListViewEntity result = new HotelListViewEntity();
+
+            try
+            {
+                Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+
+                DynamicParameters dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@CheckInDate", entity.CheckInDate);
+                dynamicParameters.Add("@CheckOutDate", entity.CheckOutDate);
+                dynamicParameters.Add("@OperationType", 1);
+
+                using var multi = await _dbConnection.QueryMultipleAsync(
+                    storedProcedure,
+                    dynamicParameters,
+                    commandType: CommandType.StoredProcedure);
+
+                var roomList = multi.Read<RoomTypeEntity>().ToList();
+                var rateList = multi.Read<HotelRateView>().ToList();
+
+                if (roomList.Any())
+                {
+                    result.Status = (int)ResponseStatusCode.Success;
+
+                    if (rateList.Any())
+                    {
+                        result.Message = rateList.First().Message;
+                        result.Details = rateList.First().Details;
+                    }
+
+                    result.RoomType = roomList.Select(room => new RoomTypeEntity
+                    {
+                        ID = room.ID,
+                        RoomType = room.RoomType,
+
+                        RateList = rateList
+                            .Where(x => x.RoomCategoryID == room.ID)
+                            .Select(rate => new RateEntity
+                            {
+                                MealPlanID = rate.MealPlanID,
+                                MealPlanName = rate.MealPlanName,
+                                MealDescription = rate.MealDescription,
+                                CoupleCost = rate.CoupleCost,
+                                ExtraPersonCost = rate.ExtraPersonCost,
+                                ExtraChildCost = rate.ExtraChildCost,
+                                Discount = rate.Discount
+                            }).ToList()
+
+                    }).ToList();
+                }
+                else
+                {
+                    result.Status = (int)ResponseStatusCode.NotFound;
+                    result.Message = CommonRepositoryMessages.CannotFindAllMessage;
+                    result.Details = CommonRepositoryMessages.CannotFindAllDetails;
+                }
+            }
+            catch (SqlException ex)
+            {
+                logger.LogError(ex, ex.Message);
+
+                result.Status = (int)ResponseStatusCode.InternaServerError;
+                result.Message = CommonRepositoryMessages.CannotFindAllMessage;
+                result.Details = CommonRepositoryMessages.CannotFindAllDetails;
+                result.ErrorMessage = ex.Message;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(ex, ex.Message);
+
+                result.Status = (int)ResponseStatusCode.InternaServerError;
+                result.Message = CommonRepositoryMessages.ExceptionMessage;
+                result.ErrorMessage = ex.Message;
+            }
+
+            return result;
+        }
+        #endregion
     }
 }

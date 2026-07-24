@@ -104,13 +104,63 @@ namespace HotelBooking
                };
            });
             var appSettingsSection = Configuration.GetSection("FcmNotification");
-            services.AddSingleton<IConnectionMultiplexer>(sp =>
-            {
-                var configuration = Configuration.GetConnectionString("Redis");
-                return ConnectionMultiplexer.Connect(configuration);
-            });
 
-            services.AddScoped<IRedisService, RedisService>();
+
+
+            // Redis Connection (singleton – reuse across app)
+
+            //services.AddSingleton<IConnectionMultiplexer>(sp =>
+            //{
+            //    var redisConnectionString = Configuration.GetValue<string>("Redis:ConnectionString")
+            //                             ?? Configuration.GetConnectionString("Redis")
+            //                             ?? "localhost:6379"; // ← change 7130 → 6379 unless you really use non-standard port
+
+            //    // Append abortConnect=false if not already present
+
+            //    if (!redisConnectionString.Contains("abortConnect", StringComparison.OrdinalIgnoreCase))
+            //    {
+            //        redisConnectionString = redisConnectionString.TrimEnd(',') + ",abortConnect=false";
+            //    }
+
+            //    // Optional: more resilience
+            //    // redisConnectionString += ",connectTimeout=15000,syncTimeout=15000";
+            //    return ConnectionMultiplexer.Connect(redisConnectionString);
+
+            //});
+
+            // ────────────────────────────────────────────────
+
+            // Connection Factory for background service (to create per-DB connections)
+
+            //services.AddSingleton<IDbConnectionFactory, SqlDbConnectionFactory>();
+            //services.AddScoped<ICurrentDbConnectionAccessor, CurrentDbConnectionAccessor>();
+
+            // ────────────────────────────────────────────────
+
+            // Your domain & repository – already probably registered via DependencyContainer.RegisterServices
+
+            // But ensure these are scoped (request lifetime)
+
+            // ────────────────────────────────────────────────
+
+            // The background cache refresher (runs every ~1 min, refreshes when TTL low)
+
+            //services.AddHostedService<HomePageCacheRefresher>();
+            //services.AddScoped<ISitemapService, SitemapService>();
+            //services.AddHostedService<SitemapBackgroundService>();
+
+
+
+            //services.AddSingleton<IConnectionMultiplexer>(sp =>
+            //{
+            //    var configuration = Configuration.GetConnectionString("Redis");
+            //    return ConnectionMultiplexer.Connect(configuration);
+            //});
+
+            //services.AddScoped<IRedisService, RedisService>();
+
+
+
             services.AddHttpContextAccessor();
 
             services.AddScoped<ITenantProvider, TenantProvider>();
@@ -118,6 +168,7 @@ namespace HotelBooking
             services.AddTransient<BookingLookupRepository>();
             services.AddControllersWithViews();
             RegisterServices(services);
+
             services.AddControllers().AddJsonOptions(options => options.JsonSerializerOptions.PropertyNamingPolicy = null);
             SetupConfigKeys();
             //services.AddAutoMapper(typeof(ResultModelAutoMap));

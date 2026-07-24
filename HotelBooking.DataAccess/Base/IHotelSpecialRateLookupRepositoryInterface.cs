@@ -14,5 +14,7 @@ namespace HotelBooking.DataAccess.Base
         //Task<List<HotelSpecialRateViewEntity>> FindAllActiveHotelSpecialRate( string storedProcedure);
         Task<ResultModel> ActiveInActiveHotelSpecialRate(HotelSpecialRateIDEntity entity, string storedProcedure);
         Task<HotelRateViewEntity> GetHotelSpecialRate(HotelRateDataEntity entity, string storedProcedure);
+        Task<HotelListViewEntity> HotelRoomWiseRateList(HotelListEntity entity, string storedProcedure);
+
     }
 }

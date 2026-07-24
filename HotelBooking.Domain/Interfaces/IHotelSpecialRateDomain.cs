@@ -17,6 +17,7 @@ namespace HotelBooking.Domain.Interfaces
         //Task<List<HotelSpecialRateViewEntity>> FindAllActiveHotelSpecialRate();
         Task<ResultModel> ActiveInActiveHotelSpecialRate(HotelSpecialRateIDEntity entity);
         Task<HotelRateViewEntity> GetHotelSpecialRate(HotelRateDataEntity entity);
+        Task<HotelListViewEntity> HotelRoomWiseRateList(HotelListEntity entity);
 
     }
 }

@@ -46,5 +46,9 @@ namespace HotelBooking.DataAccess.Repositories
         {
             return await repository.GetHotelSpecialRate(entity, "sp_ManageHotelSpecialRateFindByID");
         }
+        public async Task<HotelListViewEntity> HotelRoomWiseRateList(HotelListEntity entity)
+        {
+            return await repository.HotelRoomWiseRateList(entity, "sp_ManageHotelList");
+        }
     }
 }

@@ -124,5 +124,50 @@
         public int? MealTypeID { get; set; }
         public int? RoomCategoryID { get; set; }
     }
+    public class HotelListEntity
+    {
+        public DateTime? CheckInDate { get; set; }
+        public DateTime? CheckOutDate { get; set; }
+    }
+    public class HotelListViewEntity : MessageBaseEntity
+    {
+        public List<RoomTypeEntity> RoomType { get; set; } = new();
+    }
+    public class RoomTypeEntity
+    {
+        public int ID { get; set; }
+        public string RoomType { get; set; } = string.Empty;
+        public List<RateEntity> RateList { get; set; } = new();
+    }
+    public class HotelRateView : MessageBaseEntity
+    {
+        public int RoomCategoryID { get; set; }
+
+        public int MealPlanID { get; set; }
+        public string MealPlanName { get; set; } = string.Empty;
+        public string MealDescription { get; set; } = string.Empty;
+
+        public decimal CoupleCost { get; set; }
+        public decimal ExtraPersonCost { get; set; }
+        public decimal ExtraChildCost { get; set; }
+
+        public int Discount { get; set; }
+    }
+    public class RateEntity
+    {
+        public int MealPlanID { get; set; }
+
+        public string MealPlanName { get; set; } = string.Empty;
+
+        public string MealDescription { get; set; } = string.Empty;
+
+        public decimal CoupleCost { get; set; }
+
+        public decimal ExtraPersonCost { get; set; }
+
+        public decimal ExtraChildCost { get; set; }
+
+        public int Discount { get; set; }
+    }
 }
 
