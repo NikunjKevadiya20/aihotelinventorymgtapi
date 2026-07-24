@@ -138,7 +138,15 @@
     {
         public int ID { get; set; }
         public string RoomType { get; set; } = string.Empty;
+        public string Image { get; set; } = string.Empty;
+        public List<RoomTypeImageEntity1> ImageList { get; set; } = new();
         public List<RateEntity> RateList { get; set; } = new();
+    }
+    public class RoomTypeImageEntity1
+    {
+        public int RoomTypeID { get; set; }
+
+        public string ImageList { get; set; } = string.Empty;
     }
     public class HotelRateView : MessageBaseEntity
     {

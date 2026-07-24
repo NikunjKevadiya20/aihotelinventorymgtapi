@@ -497,8 +497,10 @@ namespace HotelBooking.DataAccess.Base
         }
         #endregion
 
-        #region Hotel RoomWise Rate List
-        public async Task<HotelListViewEntity> HotelRoomWiseRateList(HotelListEntity entity, string storedProcedure)
+        #region Hotel Room Wise Rate List
+        public async Task<HotelListViewEntity> HotelRoomWiseRateList(
+            HotelListEntity entity,
+            string storedProcedure)
         {
             HotelListViewEntity result = new HotelListViewEntity();
 
@@ -507,6 +509,7 @@ namespace HotelBooking.DataAccess.Base
                 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
 
                 DynamicParameters dynamicParameters = new DynamicParameters();
+
                 dynamicParameters.Add("@CheckInDate", entity.CheckInDate);
                 dynamicParameters.Add("@CheckOutDate", entity.CheckOutDate);
                 dynamicParameters.Add("@NoOfRooms", entity.NoOfRooms);
@@ -517,8 +520,20 @@ namespace HotelBooking.DataAccess.Base
                     dynamicParameters,
                     commandType: CommandType.StoredProcedure);
 
-                var roomList = multi.Read<RoomTypeEntity>().ToList();
-                var rateList = multi.Read<HotelRateView>().ToList();
+                // Result Set 1
+                var roomList = multi
+                    .Read<RoomTypeEntity>()
+                    .ToList();
+
+                // Result Set 2
+                var rateList = multi
+                    .Read<HotelRateView>()
+                    .ToList();
+
+                // Result Set 3
+                var imageList = multi
+                    .Read<RoomTypeImageEntity1>()
+                    .ToList();
 
                 if (roomList.Any())
                 {
@@ -530,48 +545,78 @@ namespace HotelBooking.DataAccess.Base
                         result.Details = rateList.First().Details;
                     }
 
-                    result.RoomType = roomList.Select(room => new RoomTypeEntity
-                    {
-                        ID = room.ID,
-                        RoomType = room.RoomType,
+                    result.RoomType = roomList
+                        .Select(room => new RoomTypeEntity
+                        {
+                            ID = room.ID,
 
-                        RateList = rateList
-                            .Where(x => x.RoomCategoryID == room.ID)
-                            .Select(rate => new RateEntity
-                            {
-                                MealPlanID = rate.MealPlanID,
-                                MealPlanName = rate.MealPlanName,
-                                MealDescription = rate.MealDescription,
-                                CoupleCost = rate.CoupleCost,
-                                ExtraPersonCost = rate.ExtraPersonCost,
-                                ExtraChildCost = rate.ExtraChildCost,
-                                Discount = rate.Discount
-                            }).ToList()
+                            RoomType = room.RoomType,
 
-                    }).ToList();
+                            //-----------------------------------------
+                            // Multiple Images
+                            //-----------------------------------------
+                            ImageList = imageList
+                                .Where(image =>
+                                    image.RoomTypeID == room.ID)
+                                .ToList(),
+
+                            //-----------------------------------------
+                            // Meal Rate List
+                            //-----------------------------------------
+                            RateList = rateList
+                                .Where(rate =>
+                                    rate.RoomCategoryID == room.ID)
+                                .Select(rate => new RateEntity
+                                {
+                                    MealPlanID = rate.MealPlanID,
+                                    MealPlanName = rate.MealPlanName,
+                                    MealDescription = rate.MealDescription,
+
+                                    CoupleCost = rate.CoupleCost,
+                                    ExtraPersonCost = rate.ExtraPersonCost,
+                                    ExtraChildCost = rate.ExtraChildCost,
+
+                                    Discount = rate.Discount
+
+                                }).ToList()
+
+                        }).ToList();
                 }
                 else
                 {
                     result.Status = (int)ResponseStatusCode.NotFound;
-                    result.Message = CommonRepositoryMessages.CannotFindAllMessage;
-                    result.Details = CommonRepositoryMessages.CannotFindAllDetails;
+                    result.Message =
+                        CommonRepositoryMessages.CannotFindAllMessage;
+
+                    result.Details =
+                        CommonRepositoryMessages.CannotFindAllDetails;
                 }
             }
             catch (SqlException ex)
             {
                 logger.LogError(ex, ex.Message);
 
-                result.Status = (int)ResponseStatusCode.InternaServerError;
-                result.Message = CommonRepositoryMessages.CannotFindAllMessage;
-                result.Details = CommonRepositoryMessages.CannotFindAllDetails;
+                result.Status =
+                    (int)ResponseStatusCode.InternaServerError;
+
+                result.Message =
+                    CommonRepositoryMessages.CannotFindAllMessage;
+
+                result.Details =
+                    CommonRepositoryMessages.CannotFindAllDetails;
+
                 result.ErrorMessage = ex.Message;
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, ex.Message);
 
-                result.Status = (int)ResponseStatusCode.InternaServerError;
-                result.Message = CommonRepositoryMessages.ExceptionMessage;
+                result.Status =
+                    (int)ResponseStatusCode.InternaServerError;
+
+                result.Message =
+                    CommonRepositoryMessages.ExceptionMessage;
+
                 result.ErrorMessage = ex.Message;
             }
 
