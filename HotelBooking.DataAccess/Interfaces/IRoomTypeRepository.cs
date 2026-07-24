@@ -13,6 +13,7 @@ namespace HotelBooking.DataAccess.Interfaces
         Task<List<RoomTypeViewEntity>> FindAllRoomType(RoomTypeIDEntity entity);
         Task<List<RoomTypeViewEntity>> FindAllActiveRoomType();
         Task<ResultModel> ActiveInActiveRoomType(RoomTypeIDEntity entity);
+        Task<ResultModel> RoomTypeImageUpload(string? image, List<string> imageList, int? roomTypeID, int? updatedBy);
 
     }
 }

@@ -40,6 +40,10 @@ namespace HotelBooking.DataAccess.Repositories
         {
             return await repository.ActiveInActiveRoomType(entity, "sp_ManageRoomType");
         }
+        public async Task<ResultModel> RoomTypeImageUpload(string? image,List<string> imageList, int? roomTypeID, int? updatedBy)
+        {
+            return await repository.RoomTypeImageUpload(image, imageList, roomTypeID, updatedBy );
+        }
 
     }
 }

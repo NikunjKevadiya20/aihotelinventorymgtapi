@@ -1,3 +1,5 @@
+using Microsoft.AspNetCore.Http;
+
 namespace HotelBooking.Entity.Entities
 {
     public class RoomTypeDataEntity
@@ -33,5 +35,12 @@ namespace HotelBooking.Entity.Entities
         public int? Status { get; set; }
         public string? ErrorMessage { get; set; }
 
+    }
+    public class RoomTypeImageEntity
+    {
+        public IFormFile? Image { get; set; }           
+        public List<IFormFile>? ImageList { get; set; } 
+
+        public int? RoomTypeID { get; set; }            
     }
 }

@@ -40,5 +40,9 @@ namespace HotelBooking.Domain.Domain
         {
             return await repository.ActiveInActiveRoomType(entity);
         }
+        public async Task<ResultModel> RoomTypeImageUpload( string? image, List<string> imageList, int? roomTypeID, int? updatedBy)
+        {
+            return await repository.RoomTypeImageUpload(image,imageList,roomTypeID,updatedBy);
+        }
     }
 }

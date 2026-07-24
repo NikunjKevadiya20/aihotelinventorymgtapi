@@ -13,6 +13,7 @@ namespace HotelBooking.DataAccess.Base
         Task<List<RoomTypeViewEntity>> FindAllRoomType(RoomTypeIDEntity entity, string storedProcedure);
         Task<List<RoomTypeViewEntity>> FindAllActiveRoomType(string storedProcedure);
         Task<ResultModel> ActiveInActiveRoomType(RoomTypeIDEntity entity, string storedProcedure);
+        Task<ResultModel> RoomTypeImageUpload(string? image, List<string> imageList,int? roomTypeID, int? updatedBy);
 
     }
 }

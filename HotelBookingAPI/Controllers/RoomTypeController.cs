@@ -1,10 +1,11 @@
-﻿using HotelBooking.Domain.Interfaces;
+﻿using AutoMapper;
+using HotelBooking.Domain.Interfaces;
 using HotelBooking.Entity.Common;
 using HotelBooking.Entity.Common.Entities;
 using HotelBooking.Entity.Common.Enums;
+using HotelBooking.Entity.Common.Helper;
 using HotelBooking.Entity.Entities;
 using HotelBooking.Helpers;
-using AutoMapper;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 
@@ -351,6 +352,7 @@ namespace HotelBooking.Controllers
 
         }
         #endregion
+
         #region Find All Active RoomType
         [HttpGet("FindAllActiveRoomType")]
         [Authorize]
@@ -481,5 +483,78 @@ namespace HotelBooking.Controllers
 
         }
         #endregion
+
+        #region RoomType Image Upload
+        [HttpPost("RoomTypeImageUpload")]
+        public async Task<IActionResult> RoomTypeImageUpload([FromForm] RoomTypeImageEntity entity)
+        {
+            try
+            {
+                int updatedBy = 1;
+
+                string singleImage = string.Empty;
+                List<string> multipleImages = new List<string>();
+
+                string folderPath = Path.Combine(
+                    CommonRepositoryConstants.ImageFilePath,
+                    CommonRepositoryConstants.documentsFolder); 
+
+                if (!Directory.Exists(folderPath))
+                    Directory.CreateDirectory(folderPath);
+
+                // 1. Single Image
+                if (entity.Image != null && entity.Image.Length > 0)
+                {
+                    singleImage = $"{Guid.NewGuid()}.webp";
+                    string filePath = Path.Combine(folderPath, singleImage);
+                    await ImageHelper.CompressWithSkia(entity.Image, filePath);
+                }
+
+                // 2. Multiple Images (ImageList)
+                if (entity.ImageList != null && entity.ImageList.Count > 0)
+                {
+                    foreach (var file in entity.ImageList)
+                    {
+                        if (file != null && file.Length > 0)
+                        {
+                            string fileName = $"{Guid.NewGuid()}.webp";
+                            string filePath = Path.Combine(folderPath, fileName);
+
+                            await ImageHelper.CompressWithSkia(file, filePath);
+
+                            multipleImages.Add(fileName);
+                        }
+                    }
+                }
+
+                // Call your domain/service layer
+                var result = await domain.RoomTypeImageUpload(
+                    singleImage,
+                    multipleImages,
+                    entity.RoomTypeID ?? 0,   // Assuming you have RoomTypeID in entity
+                    updatedBy
+                );
+
+                return Ok(new ResultModel()
+                {
+                    Status = (int)ResponseStatusCode.Success,
+                    Message = result.Message,
+                    Details = result.Details,
+                    Data = result,
+                    ErrorMessage = result.ErrorMessage
+                });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, new ResultModel()
+                {
+                    Status = (int)ResponseStatusCode.InternaServerError,
+                    Message = CommonRepositoryMessages.NotFoundMessageEN,
+                    Details = CommonRepositoryMessages.NotFoundMessageEN,
+                    ErrorMessage = ex.Message
+                });
+            }
+        }
+#endregion
     }
 }
