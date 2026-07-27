@@ -151,43 +151,69 @@ namespace HotelBooking.DataAccess.Base
         #endregion
 
         #region FindBy ID RoomType
-        public async Task<RoomTypeViewEntity> FindByIDRoomType(RoomTypeIDEntity entity, string storedProcedure)
+
+        public async Task<RoomTypeViewEntity> FindByIDRoomType(
+            RoomTypeIDEntity entity,
+            string storedProcedure)
         {
             RoomTypeViewEntity result = new RoomTypeViewEntity();
 
             try
             {
                 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+
                 DynamicParameters dynamicParameters = new DynamicParameters();
+
                 dynamicParameters.Add("@ID", entity.ID);
                 dynamicParameters.Add("@OperationType", 4);
-                var data = await _dbConnection.QuerySingleOrDefaultAsync<RoomTypeViewEntity>(storedProcedure, dynamicParameters, commandType: CommandType.StoredProcedure);
-                return data;
 
+                using var multi = await _dbConnection.QueryMultipleAsync(
+                    storedProcedure,
+                    dynamicParameters,
+                    commandType: CommandType.StoredProcedure);
+
+                // Result Set 1 : Room Type
+                var roomType = await multi.ReadSingleOrDefaultAsync<RoomTypeViewEntity>();
+
+                if (roomType != null)
+                {
+                    // Result Set 2 : Multiple Images
+                    var imageList = (await multi
+                        .ReadAsync<RoomTypeImageViewEntity>())
+                        .ToList();
+
+                    roomType.ImageList = imageList;
+
+                    return roomType;
+                }
+
+                result.Status = (int)ResponseStatusCode.NotFound;
+                result.Message = CommonRepositoryMessages.CannotFindAllMessage;
+                result.Details = CommonRepositoryMessages.CannotFindAllDetails;
+
+                return result;
             }
-            catch (SqlException sqlException)
+            catch (SqlException ex)
             {
-                logger.LogError(sqlException, sqlException.Message);
-                result.ErrorMessage = sqlException.Message;
+                logger.LogError(ex, ex.Message);
+
+                result.ErrorMessage = ex.Message;
                 result.Status = (int)ResponseStatusCode.InternaServerError;
                 result.Message = CommonRepositoryMessages.CannotFindAllMessage;
                 result.Details = CommonRepositoryMessages.CannotFindAllDetails;
-                throw;
             }
             catch (Exception ex)
             {
+                logger.LogError(ex, ex.Message);
+
                 result.Status = (int)ResponseStatusCode.InternaServerError;
                 result.Message = CommonRepositoryMessages.ExceptionMessage;
                 result.ErrorMessage = ex.Message;
-                throw;
-            }
-            finally
-            {
-
             }
 
-
+            return result;
         }
+
         #endregion
 
         #region Find All   RoomType
@@ -311,64 +337,162 @@ namespace HotelBooking.DataAccess.Base
 
         #region Room Type Image Upload
 
-        public async Task<ResultModel> RoomTypeImageUpload( string? image, List<string> imageList, int? roomTypeID, int? updatedBy)
+        public async Task<ResultModel> RoomTypeImageUpload(
+            string? image,
+            List<string> imageList,
+            int? roomTypeID,
+            int? updatedBy)
         {
             ResultModel result = new ResultModel();
 
             try
             {
-                DynamicParameters dynamicParameters = new DynamicParameters();
-
-                
-                dynamicParameters.Add("@RoomTypeID", roomTypeID);
-                dynamicParameters.Add("@Image", image);
-                dynamicParameters.Add("@OperationType", 2);     
-
-                var data = await _dbConnection.QueryFirstOrDefaultAsync<ResultModel>(
-                    "sp_ManageRoomTypeImages",                             
-                    dynamicParameters,
-                    commandType: CommandType.StoredProcedure
-                );
-
-                if (data != null)
+                // -----------------------------------------
+                // Validation
+                // -----------------------------------------
+                if (roomTypeID == null || roomTypeID <= 0)
                 {
-                    result.Message = data.Message;
-                    result.Details = data.Details;
-                    result.Status = (int)ResponseStatusCode.Success;
+                    result.Status = (int)ResponseStatusCode.NotFound;
+                    result.Message = "failure";
+                    result.Details = "Invalid RoomTypeID.";
+                    return result;
                 }
 
-                // Multiple Images (ImageList)
-                if (imageList != null && imageList.Count > 0)
+                // -----------------------------------------
+                // Main Image
+                // -----------------------------------------
+                if (!string.IsNullOrWhiteSpace(image))
                 {
-                    foreach (var img in imageList)
+                    DynamicParameters parameters = new DynamicParameters();
+
+                    parameters.Add(
+                        "@RoomTypeID",
+                        roomTypeID.Value,
+                        DbType.Int32);
+
+                    parameters.Add(
+                        "@Image",
+                        image,
+                        DbType.String);
+
+                    parameters.Add(
+                        "@ImageList",
+                        null,
+                        DbType.String);
+
+                    parameters.Add(
+                        "@UpdatedBy",
+                        updatedBy ?? 1,
+                        DbType.Int32);
+
+                    parameters.Add(
+                        "@OperationType",
+                        2,
+                        DbType.Int32);
+
+                    var mainImageResult =
+                        await _dbConnection.QueryFirstOrDefaultAsync<ResultModel>(
+                            "dbo.sp_ManageRoomTypeImages",
+                            parameters,
+                            commandType: CommandType.StoredProcedure);
+
+                    if (mainImageResult != null)
                     {
-                        DynamicParameters imgParams = new DynamicParameters();
-
-                        imgParams.Add("@RoomTypeID", roomTypeID);
-                        imgParams.Add("@ImageList", img);             
-                        imgParams.Add("@OperationType", 2);
-
-                        await _dbConnection.ExecuteAsync(
-                            "sp_ManageRoomTypeImages",                         
-                            imgParams,
-                            commandType: CommandType.StoredProcedure
-                        );
+                        result.Message = mainImageResult.Message;
+                        result.Details = mainImageResult.Details;
                     }
                 }
-            }
-            catch (SqlException sqlException)
-            {
-                logger.LogError(sqlException, sqlException.Message);
 
-                result.ErrorMessage = sqlException.Message;
-                result.Status = (int)ResponseStatusCode.InternaServerError;
-                result.Message = CommonRepositoryMessages.CannotFindAllMessage;
-                result.Details = CommonRepositoryMessages.CannotFindAllDetails;
+                // -----------------------------------------
+                // Multiple Images
+                // -----------------------------------------
+                if (imageList != null && imageList.Count > 0)
+                {
+                    foreach (string img in imageList)
+                    {
+                        if (string.IsNullOrWhiteSpace(img))
+                            continue;
+
+                        DynamicParameters parameters = new DynamicParameters();
+
+                        parameters.Add(
+                            "@RoomTypeID",
+                            roomTypeID.Value,
+                            DbType.Int32);
+
+                        parameters.Add(
+                            "@Image",
+                            null,
+                            DbType.String);
+
+                        parameters.Add(
+                            "@ImageList",
+                            img,
+                            DbType.String);
+
+                        parameters.Add(
+                            "@UpdatedBy",
+                            updatedBy ?? 1,
+                            DbType.Int32);
+
+                        parameters.Add(
+                            "@OperationType",
+                            2,
+                            DbType.Int32);
+
+                        var imageResult =
+                            await _dbConnection.QueryFirstOrDefaultAsync<ResultModel>(
+                                "dbo.sp_ManageRoomTypeImages",
+                                parameters,
+                                commandType: CommandType.StoredProcedure);
+
+                        if (imageResult != null)
+                        {
+                            result.Message = imageResult.Message;
+                            result.Details = imageResult.Details;
+                        }
+                    }
+                }
+
+                result.Status = (int)ResponseStatusCode.Success;
+
+                if (string.IsNullOrEmpty(result.Message))
+                {
+                    result.Message = "success";
+                    result.Details = "Room Type Images uploaded successfully.";
+                }
+            }
+            catch (SqlException ex)
+            {
+                logger.LogError(
+                    ex,
+                    "RoomTypeImageUpload SQL Error. RoomTypeID: {RoomTypeID}",
+                    roomTypeID);
+
+                result.Status =
+                    (int)ResponseStatusCode.InternaServerError;
+
+                result.Message =
+                    CommonRepositoryMessages.CannotFindAllMessage;
+
+                result.Details =
+                    CommonRepositoryMessages.CannotFindAllDetails;
+
+                result.ErrorMessage = ex.Message;
             }
             catch (Exception ex)
             {
-                result.Status = (int)ResponseStatusCode.InternaServerError;
-                result.Message = CommonRepositoryMessages.ExceptionMessage;
+                logger.LogError(
+                    ex,
+                    "RoomTypeImageUpload Error. RoomTypeID: {RoomTypeID}",
+                    roomTypeID);
+
+                result.Status =
+                    (int)ResponseStatusCode.InternaServerError;
+
+                result.Message =
+                    CommonRepositoryMessages.ExceptionMessage;
+
                 result.ErrorMessage = ex.Message;
             }
 

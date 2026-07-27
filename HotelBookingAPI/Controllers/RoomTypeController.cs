@@ -485,59 +485,74 @@ namespace HotelBooking.Controllers
         #endregion
 
         #region RoomType Image Upload
+
         [HttpPost("RoomTypeImageUpload")]
-        public async Task<IActionResult> RoomTypeImageUpload([FromForm] RoomTypeImageEntity entity)
+        public async Task<IActionResult> RoomTypeImageUpload(
+            [FromForm] RoomTypeImageEntity entity)
         {
             try
             {
                 int updatedBy = 1;
 
-                string singleImage = string.Empty;
+                string? singleImage = null;
                 List<string> multipleImages = new List<string>();
 
                 string folderPath = Path.Combine(
                     CommonRepositoryConstants.ImageFilePath,
-                    CommonRepositoryConstants.documentsFolder); 
+                    CommonRepositoryConstants.documentsFolder);
 
                 if (!Directory.Exists(folderPath))
+                {
                     Directory.CreateDirectory(folderPath);
+                }
 
-                // 1. Single Image
+                // Main Image
                 if (entity.Image != null && entity.Image.Length > 0)
                 {
                     singleImage = $"{Guid.NewGuid()}.webp";
-                    string filePath = Path.Combine(folderPath, singleImage);
-                    await ImageHelper.CompressWithSkia(entity.Image, filePath);
+
+                    string filePath = Path.Combine(
+                        folderPath,
+                        singleImage);
+
+                    await ImageHelper.CompressWithSkia(
+                        entity.Image,
+                        filePath);
                 }
 
-                // 2. Multiple Images (ImageList)
-                if (entity.ImageList != null && entity.ImageList.Count > 0)
+                // Multiple Images
+                if (entity.ImageList != null &&
+                    entity.ImageList.Count > 0)
                 {
                     foreach (var file in entity.ImageList)
                     {
-                        if (file != null && file.Length > 0)
-                        {
-                            string fileName = $"{Guid.NewGuid()}.webp";
-                            string filePath = Path.Combine(folderPath, fileName);
+                        if (file == null || file.Length == 0)
+                            continue;
 
-                            await ImageHelper.CompressWithSkia(file, filePath);
+                        string fileName =
+                            $"{Guid.NewGuid()}.webp";
 
-                            multipleImages.Add(fileName);
-                        }
+                        string filePath = Path.Combine(
+                            folderPath,
+                            fileName);
+
+                        await ImageHelper.CompressWithSkia(
+                            file,
+                            filePath);
+
+                        multipleImages.Add(fileName);
                     }
                 }
 
-                // Call your domain/service layer
                 var result = await domain.RoomTypeImageUpload(
                     singleImage,
                     multipleImages,
-                    entity.RoomTypeID ?? 0,   // Assuming you have RoomTypeID in entity
-                    updatedBy
-                );
+                    entity.RoomTypeID ?? 0,
+                    updatedBy);
 
-                return Ok(new ResultModel()
+                return Ok(new ResultModel
                 {
-                    Status = (int)ResponseStatusCode.Success,
+                    Status = result.Status,
                     Message = result.Message,
                     Details = result.Details,
                     Data = result,
@@ -546,15 +561,18 @@ namespace HotelBooking.Controllers
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, new ResultModel()
-                {
-                    Status = (int)ResponseStatusCode.InternaServerError,
-                    Message = CommonRepositoryMessages.NotFoundMessageEN,
-                    Details = CommonRepositoryMessages.NotFoundMessageEN,
-                    ErrorMessage = ex.Message
-                });
+                return StatusCode(
+                    (int)HttpStatusCode.InternalServerError,
+                    new ResultModel
+                    {
+                        Status = (int)ResponseStatusCode.InternaServerError,
+                        Message = CommonRepositoryMessages.NotFoundMessageEN,
+                        Details = CommonRepositoryMessages.NotFoundMessageEN,
+                        ErrorMessage = ex.Message
+                    });
             }
         }
+
         #endregion
 
         #region RoomType Image Upload for Panel

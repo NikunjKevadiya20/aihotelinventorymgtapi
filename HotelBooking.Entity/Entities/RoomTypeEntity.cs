@@ -35,7 +35,14 @@ namespace HotelBooking.Entity.Entities
         public string? Message { get; set; }
         public int? Status { get; set; }
         public string? ErrorMessage { get; set; }
+        public List<RoomTypeImageViewEntity> ImageList { get; set; } = new();
 
+    }
+    public class RoomTypeImageViewEntity
+    {
+        public int RoomTypeID { get; set; }
+
+        public string ImageList { get; set; } = string.Empty;
     }
     public class RoomTypeImageEntity
     {
