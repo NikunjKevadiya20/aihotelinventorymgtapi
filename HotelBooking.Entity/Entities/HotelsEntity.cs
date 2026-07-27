@@ -491,7 +491,7 @@ namespace HotelBooking.Entity.Entities
         public int? ID { get; set; }
         public int? HotelID { get; set; }
         public int? RoomCategoryID { get; set; }
-        public int? HotelBookingTicketID { get; set; }
+        public int? SOUTicketID { get; set; }
         public int? MealPlanID { get; set; }
         public string? Days { get; set; }
         public decimal? CoupleCost { get; set; }

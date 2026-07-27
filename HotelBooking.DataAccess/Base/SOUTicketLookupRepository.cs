@@ -492,7 +492,7 @@ namespace HotelBooking.DataAccess.Base
                     foreach (var anotherTicket in HotelBookingTicketViewEntity.AnotherTicket)
                     {
                         anotherTicket.AnotherTicketDetails = AnotherTikcetDetails
-                            .Where(x => x.HotelBookingTicketID == anotherTicket.ID)
+                            .Where(x => x.SOUTicketID == anotherTicket.ID)
                             .ToList();
                     }
                     HotelBookingTicketViewEntity.TimeSlot = (await data.ReadAsync<HotelBookingTicketTimeSlotEntity>()).ToList();
@@ -786,7 +786,6 @@ namespace HotelBooking.DataAccess.Base
         }
         #endregion
 
-
         #region Insert HotelBookingTicketSoldOutDate 
         public async Task<ResultModel> InsertHotelBookingTicketSoldOutDate(HotelBookingTicketSoldOutDateEntity entity, string storedProcedure)
         {
@@ -796,7 +795,7 @@ namespace HotelBooking.DataAccess.Base
             {
                 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
                 DynamicParameters dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@HotelBookingTicketID", entity.HotelBookingTicketID);
+                dynamicParameters.Add("@SOUTicketID", entity.SOUTicketID);
                 dynamicParameters.Add("@SoldOutDate", entity.SoldOutDate);
                 
                 dynamicParameters.Add("@OperationType", CommonRepositoryConstants.Insert);
@@ -876,7 +875,7 @@ namespace HotelBooking.DataAccess.Base
             {
                 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
                 DynamicParameters dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@HotelBookingTicketID", entity.HotelBookingTicketID);
+                dynamicParameters.Add("@SOUTicketID", entity.SOUTicketID);
                 dynamicParameters.Add("@OperationType", 2);
                 var data = await _dbConnection.QueryAsync<HotelBookingTicketSoldOutDateViewEntity>(storedProcedure, dynamicParameters, commandType: CommandType.StoredProcedure);
                 return data.ToList();
@@ -906,7 +905,6 @@ namespace HotelBooking.DataAccess.Base
 
         }
         #endregion
-
 
         #region InsertTicketAvailability
         public async Task<ResultModel> InsertTicketAvailability(TicketAvailabilityEntity entity, string storedProcedure)
@@ -1032,6 +1030,7 @@ namespace HotelBooking.DataAccess.Base
 
         }
         #endregion
+
         #region SoldOutDate
         public async Task<ResultModel> InsertSoldOutDateDay(HotelPriceRangeEntity entity, string storedProcedure)
         {
@@ -1043,7 +1042,7 @@ namespace HotelBooking.DataAccess.Base
                 DynamicParameters dynamicParameters = new DynamicParameters();
      
                 dynamicParameters.Add("@Days", entity.Days);
-                dynamicParameters.Add("@HotelBookingTicketID", entity.HotelBookingTicketID);
+                dynamicParameters.Add("@SOUTicketID", entity.SOUTicketID);
                 
                 dynamicParameters.Add("@FromDate", entity.FromDate);
                 dynamicParameters.Add("@ToDate", entity.ToDate);

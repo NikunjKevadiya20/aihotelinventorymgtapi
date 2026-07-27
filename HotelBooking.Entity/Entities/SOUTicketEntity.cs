@@ -59,7 +59,7 @@ namespace HotelBooking.Entity.Entities
     public class HotelBookingTicketImage
     {
         public int? ID { get; set; }
-        public int? HotelBookingTicketID { get; set; }
+        public int? SOUTicketID { get; set; }
         public IFormFile? MainImage { get; set; }
         public IFormFile? BannerImage { get; set; }
         public List<IFormFile>? Image { get; set; }
@@ -130,7 +130,7 @@ namespace HotelBooking.Entity.Entities
     public class HotelBookingTicketSoldOutDateVeiwEntity
     {
         public int? ID { get; set; }
-        public int? HotelBookingTicketID { get; set; }
+        public int? SOUTicketID { get; set; }
         public string? SoldOutDate { get; set; }
     }
 
@@ -198,13 +198,13 @@ namespace HotelBooking.Entity.Entities
     public class HotelBookingTicketImagesdataEntity
     {
         public int? ID { get; set; }
-        public int? HotelBookingTicketID { get; set; }
+        public int? SOUTicketID { get; set; }
         public string? Image { get; set; }
     }
     public class HotelBookingTicketDetailsdataEntity
     {
         public int? ID { get; set; }
-        public int? HotelBookingTicketID { get; set; }
+        public int? SOUTicketID { get; set; }
         public string? Title { get; set; }
         public int? Rate { get; set; }
 
@@ -222,14 +222,14 @@ namespace HotelBooking.Entity.Entities
 
     public class HotelBookingTicketSoldOutDateEntity
     {
-        public int? HotelBookingTicketID { get; set; }
+        public int? SOUTicketID { get; set; }
         public DateTime? SoldOutDate { get; set; }
     }
 
     public class HotelBookingTicketSoldOutDateViewEntity : MessageBaseEntity
     {
         public int? ID { get; set; }
-        public int? HotelBookingTicketID { get; set; }
+        public int? SOUTicketID { get; set; }
         public string? SoldOutDate { get; set; }
     }
 
