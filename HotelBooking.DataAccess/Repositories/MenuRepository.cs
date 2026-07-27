@@ -33,7 +33,7 @@ namespace HotelBooking.DataAccess.Repositories
 
         public async Task<List<MenuViewEntity>> FindAllMenu(MenuIDEntity entity)
         {
-            return await repository.FindAllMenu(entity, "sp_ManageMenuDetails");
+           return await repository.FindAllMenu(entity, "sp_ManageMenuDetails");
         }
         public async Task<List<MenuViewEntity>> FindAllActiveMenu()
         {
