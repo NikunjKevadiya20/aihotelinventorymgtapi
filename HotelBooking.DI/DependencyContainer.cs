@@ -77,6 +77,10 @@ namespace HotelBooking.DI
             services.AddScoped<IRoomTypeDomain, RoomTypeDomain>();
             services.AddScoped(typeof(IRoomTypeLookupRepositoryInterface), typeof(RoomTypeLookupRepository));
 
+            services.AddScoped<ITicketAttractionsRepository, TicketAttractionsRepository>();
+            services.AddScoped<ITicketAttractionsDomain, TicketAttractionsDomain>();
+            services.AddScoped(typeof(ITicketAttractionsLookupRepositoryInterface), typeof(TicketAttractionsLookupRepository));
+
         }
 
     }

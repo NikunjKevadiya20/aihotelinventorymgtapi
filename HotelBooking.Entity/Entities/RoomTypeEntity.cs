@@ -29,6 +29,7 @@ namespace HotelBooking.Entity.Entities
         public Int32 ID { set; get; }
         public string? RoomType { get; set; }
         public string? Prefix { get; set; }
+        public string? Image { get; set; }
         public Boolean? IsActive { get; set; }
         public string? Details { get; set; }
         public string? Message { get; set; }
