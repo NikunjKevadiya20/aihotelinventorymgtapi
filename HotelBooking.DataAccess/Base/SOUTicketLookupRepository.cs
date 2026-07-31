@@ -866,7 +866,7 @@ namespace HotelBooking.DataAccess.Base
         }
         #endregion
 
-        #region Find By HotelBookingTicketID HotelBookingTicketSoldOutDate
+        #region Find By HotelBooking Ticket SoldOutDate
         public async Task<List<HotelBookingTicketSoldOutDateViewEntity>> FindBYHotelBookingTicketSoldOutDate(HotelBookingTicketSoldOutDateEntity entity, string storedProcedure)
         {
             HotelBookingTicketSoldOutDateViewEntity result = new HotelBookingTicketSoldOutDateViewEntity();
