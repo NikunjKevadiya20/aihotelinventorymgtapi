@@ -40,6 +40,7 @@ namespace HotelBooking.Entity.Entities
     }
     public class RoomTypeImageViewEntity
     {
+        public int ID { get; set; }
         public int RoomTypeID { get; set; }
 
         public string ImageList { get; set; } = string.Empty;
