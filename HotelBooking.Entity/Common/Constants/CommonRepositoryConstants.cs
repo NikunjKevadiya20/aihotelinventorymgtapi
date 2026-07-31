@@ -89,8 +89,8 @@ namespace HotelBooking.Entity.Common
         public const string SMSGateway = "http://sms5.magicsms.co.in/V2/http-api.php?apikey=eVlt8XRsgGXnjwVz&senderid=AJMODI&format=json&";
         public const string SMTPAddress = "smtp.gmail.com";
         public const string SMTPPort = "587";
-        public const string EmailAddress = "booking@aalpine.in";
-        public const string EmailDisplayName = "HotelBooking Booking";
+        public const string EmailAddress = "hello@brandinsight.digital";
+        public const string EmailDisplayName = "Hotel Booking";
         public const string EmailPassword = "qcwd rvym vphn xvye";
 
         public const string SecretKey = "HotelBookingTOKENKEYSECRETWEBISTEPROJECTS01";
