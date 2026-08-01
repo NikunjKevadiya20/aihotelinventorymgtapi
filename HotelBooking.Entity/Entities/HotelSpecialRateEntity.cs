@@ -137,6 +137,7 @@
     public class RoomTypeEntity
     {
         public int ID { get; set; }
+        public int TotalAvailableRoom { get; set; }
         public string RoomType { get; set; } = string.Empty;
         public string Image { get; set; } = string.Empty;
         public List<RoomTypeImageEntity1> ImageList { get; set; } = new();
