@@ -108,7 +108,7 @@ namespace HotelBooking.DataAccess.Base
             }
         }
         #endregion
-        //public async Task<BookingViewInsertEntity> InsertBooking(BookingRequestEntity entity, string storedProcedure)
+
         public async Task<BookingViewInsertEntity> InsertBooking(BookingRequestEntity entity, string storedProcedure)
         {
             BookingViewInsertEntity result = new BookingViewInsertEntity();
@@ -120,11 +120,6 @@ namespace HotelBooking.DataAccess.Base
                 DynamicParameters dynamicParameters = new DynamicParameters();
 
                 dynamicParameters.Add("@TempID", entity.TempID);
-                dynamicParameters.Add("@Remarks", entity.Remarks);
-                dynamicParameters.Add("@IsBookingforelse", entity.IsBookingforelse);
-                dynamicParameters.Add("@GSTNo", entity.GSTNo);
-                dynamicParameters.Add("@Estimatedarrivaltime", entity.Estimatedarrivaltime);
-                dynamicParameters.Add("@NoOfPax", entity.NoOfPax);
 
                 dynamicParameters.Add("@OperationType", CommonRepositoryConstants.Insert);
 
