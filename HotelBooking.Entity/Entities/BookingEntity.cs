@@ -259,6 +259,7 @@ namespace HotelBooking.Entity.Entities
 
         public string? PaymentStatus { get; set; }
         public string? BookingStatus { get; set; }
+        public string? CreatedOn { get; set; }
 
         public int ItemCount { get; set; }
         public int TotalPages { get; set; }
