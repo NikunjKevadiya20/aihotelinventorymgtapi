@@ -97,6 +97,10 @@ namespace HotelBooking.DI
             services.AddScoped<ISOUTicketDomain, SOUTicketDomain>();
             services.AddScoped(typeof(ISOUTicketLookupRepositoryInterface), typeof(SOUTicketLookupRepository));
 
+            services.AddScoped<IOfferRepository, OfferRepository>();
+            services.AddScoped<IOfferDomain, OfferDomain>();
+            services.AddScoped(typeof(IOfferLookupRepositoryInterface), typeof(OfferLookupRepository));
+
         }
 
     }
