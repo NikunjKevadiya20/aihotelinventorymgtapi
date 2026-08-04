@@ -37,7 +37,6 @@ namespace HotelBooking.Entity.Entities
         public bool? IsActive { get; set; }
         public int? CreatedBy { get; set; }
         public int? UpdatedBy { get; set; }
-        public int? MealTypeID { get; set; }
         public string? Remarks {  get; set; }
         public bool? IsBookingforelse {  get; set; }
         public string? GSTNo {  get; set; }
@@ -49,17 +48,10 @@ namespace HotelBooking.Entity.Entities
     public class TempBookingDetailEntity
     {
         public int? RoomCategoryID { get; set; }
-
-
+        public int? MealTypeID { get; set; }
         public int? Room { get; set; }
-
         public int? Adults { get; set; }
-
         public int? Child { get; set; }
-
-        public decimal? SGst { get; set; }
-
-        public decimal? CGst { get; set; }
 
         public decimal? TotalPrice { get; set; }
     }

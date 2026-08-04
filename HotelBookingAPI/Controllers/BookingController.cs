@@ -1,16 +1,11 @@
-using Microsoft.AspNetCore.Authorization;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.Extensions.Logging;
 using HotelBooking.Domain.Interfaces;
 using HotelBooking.Entity.Common;
 using HotelBooking.Entity.Common.Entities;
 using HotelBooking.Entity.Common.Enums;
 using HotelBooking.Entity.Entities;
-using System.Net;
-using Microsoft.AspNetCore.Authorization;
-using System.Linq;
-using System;
 using HotelBooking.Helpers;
+using Microsoft.AspNetCore.Mvc;
+using System.Net;
 
 namespace HotelBooking.Controllers
 {

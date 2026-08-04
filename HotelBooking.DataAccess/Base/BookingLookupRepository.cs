@@ -48,13 +48,15 @@ namespace HotelBooking.DataAccess.Base
                 dynamicParameters.Add("@FromDate", entity.FromDate);
                 dynamicParameters.Add("@ToDate", entity.ToDate);
                 dynamicParameters.Add("@NoOfNight", entity.NoOfNight);
-                dynamicParameters.Add("@MealTypeID", entity.MealTypeID);
                 dynamicParameters.Add("@Remarks", entity.Remarks);
                 dynamicParameters.Add("@IsBookingforelse", entity.IsBookingforelse);
+                dynamicParameters.Add("@SGst", entity.SGst);
+                dynamicParameters.Add("@CGst", entity.CGst);
                 dynamicParameters.Add("@GSTNo", entity.GSTNo);
                 dynamicParameters.Add("@Estimatedarrivaltime", entity.Estimatedarrivaltime);
                 dynamicParameters.Add("@NoOfPax", entity.NoOfPax);
-          
+                dynamicParameters.Add("@TotalRoomCharges", entity.TotalRoomCharges);
+                dynamicParameters.Add("@FinalTotal", entity.FinalTotal);          
                 dynamicParameters.Add("@IsActive", entity.IsActive);
                 dynamicParameters.Add("@CreatedBy", entity.CreatedBy);
                 dynamicParameters.Add("@OperationType", CommonRepositoryConstants.Insert);
