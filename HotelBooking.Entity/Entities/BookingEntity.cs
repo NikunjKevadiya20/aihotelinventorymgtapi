@@ -281,27 +281,15 @@ namespace HotelBooking.Entity.Entities
         public DateTime? ToDate { get; set; }
 
         public int? NoOfNight { get; set; }
-        public int? MealTypeID { get; set; }
-        public string? MealType { get; set; }
-        public string? MealTypeDescription { get; set; }
-
-        public decimal? SGst { get; set; }
-
-        public decimal? CGst { get; set; }
-
         public decimal? TotalRoomCharges { get; set; }
-
         public decimal? FinalTotal { get; set; }
-
         public string? PaymentStatus { get; set; }
-
         public string? BookingStatus { get; set; }
-
         public bool? IsActive { get; set; }
-
         public bool? IsDeleted { get; set; }
-
         public int? CreatedBy { get; set; }
+        public decimal? SGst { get; set; }
+        public decimal? CGst { get; set; }
 
         public string? CreatedOn { get; set; }
 
@@ -335,10 +323,6 @@ namespace HotelBooking.Entity.Entities
         public int? Adults { get; set; }
 
         public int? Child { get; set; }
-
-        public decimal? SGst { get; set; }
-
-        public decimal? CGst { get; set; }
 
         public decimal? TotalPrice { get; set; }
 
