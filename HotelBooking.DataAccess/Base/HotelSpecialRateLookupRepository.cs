@@ -550,6 +550,11 @@ namespace HotelBooking.DataAccess.Base
                     {
                         ID = room.ID,
                         RoomType = room.RoomType,
+                        MaxGuest = room.MaxGuest,
+                        RoomArea = room.RoomArea,
+                        BedType = room.BedType,
+                        Description = room.Description,
+                        Amenities = room.Amenities,
                         Image = room.Image,
                         TotalAvailableRoom = room.TotalAvailableRoom,
 
