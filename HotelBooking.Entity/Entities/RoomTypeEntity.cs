@@ -7,6 +7,11 @@ namespace HotelBooking.Entity.Entities
         public int? ID { get; set; }
         public string? RoomType { get; set; }
         public string? Prefix { get; set; }
+        public int? MaxGuest { get; set; }
+        public decimal? RoomArea { get; set; }
+        public string? BedType { get; set; }
+        public string? Description { get; set; }
+        public string? Amenities { get; set; }
         public Boolean? IsActive { get; set; }
         public Int32? CreatedBy { set; get; }
         public Int32? UpdatedBy { set; get; }
@@ -29,6 +34,11 @@ namespace HotelBooking.Entity.Entities
         public Int32 ID { set; get; }
         public string? RoomType { get; set; }
         public string? Prefix { get; set; }
+        public int? MaxGuest { get; set; }
+        public decimal? RoomArea { get; set; }
+        public string? BedType { get; set; }
+        public string? Description { get; set; }
+        public string? Amenities { get; set; }
         public string? Image { get; set; }
         public Boolean? IsActive { get; set; }
         public string? Details { get; set; }

@@ -20,31 +20,23 @@ namespace HotelBooking.Entity.Entities
     {
         public int? ID { get; set; }
         public string? BookingNo { get; set; }
-
         public string? FirstName { get; set; }
         public string? LastName { get; set; }
         public string? MobileNo { get; set; }
         public string? EmailID { get; set; }
-
         public bool? IsPayAtHotel { get; set; }
         public string? PromoCode { get; set; }
-
+        public decimal? promoDiscount { get; set; }
         public DateTime? FromDate { get; set; }
         public DateTime? ToDate { get; set; }
-
         public int? NoOfNight { get; set; }
-
         public decimal? SGst { get; set; }
         public decimal? CGst { get; set; }
-
         public decimal? TotalRoomCharges { get; set; }
         public decimal? FinalTotal { get; set; }
-
         public bool? IsActive { get; set; }
-
         public int? CreatedBy { get; set; }
         public int? UpdatedBy { get; set; }
-
         public string? Remarks {  get; set; }
         public bool? IsBookingforelse {  get; set; }
         public string? GSTNo {  get; set; }
@@ -56,17 +48,10 @@ namespace HotelBooking.Entity.Entities
     public class TempBookingDetailEntity
     {
         public int? RoomCategoryID { get; set; }
-
-
+        public int? MealTypeID { get; set; }
         public int? Room { get; set; }
-
         public int? Adults { get; set; }
-
         public int? Child { get; set; }
-
-        public decimal? SGst { get; set; }
-
-        public decimal? CGst { get; set; }
 
         public decimal? TotalPrice { get; set; }
     }
@@ -259,6 +244,7 @@ namespace HotelBooking.Entity.Entities
 
         public string? PaymentStatus { get; set; }
         public string? BookingStatus { get; set; }
+        public string? CreatedOn { get; set; }
 
         public int ItemCount { get; set; }
         public int TotalPages { get; set; }
@@ -289,12 +275,15 @@ namespace HotelBooking.Entity.Entities
         public bool? IsPayAtHotel { get; set; }
 
         public string? PromoCode { get; set; }
-
+        public decimal? promoDiscount { get; set; }
         public DateTime? FromDate { get; set; }
 
         public DateTime? ToDate { get; set; }
 
         public int? NoOfNight { get; set; }
+        public int? MealTypeID { get; set; }
+        public string? MealType { get; set; }
+        public string? MealTypeDescription { get; set; }
 
         public decimal? SGst { get; set; }
 
@@ -353,6 +342,9 @@ namespace HotelBooking.Entity.Entities
 
         public decimal? TotalPrice { get; set; }
 
+        public int? MealTypeID { get; set; }
+        public string? MealType { get; set; }
+        public string? MealTypeDescription { get; set; }
         public string? CreatedOn { get; set; }
     }
     public class BookingViewEntity : MessageBaseEntity

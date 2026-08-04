@@ -34,6 +34,11 @@ namespace HotelBooking.DataAccess.Base
                 DynamicParameters dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@RoomType", entity.RoomType);
                 dynamicParameters.Add("@Prefix", entity.Prefix);
+                dynamicParameters.Add("@MaxGuest", entity.MaxGuest);
+                dynamicParameters.Add("@RoomArea", entity.RoomArea);
+                dynamicParameters.Add("@BedType", entity.BedType);
+                dynamicParameters.Add("@Description", entity.Description);
+                dynamicParameters.Add("@Amenities", entity.Amenities);
                 dynamicParameters.Add("@IsActive", entity.IsActive);
                 dynamicParameters.Add("@CreatedBy", entity.CreatedBy);
                 dynamicParameters.Add("@OperationType", CommonRepositoryConstants.Insert);
@@ -78,6 +83,11 @@ namespace HotelBooking.DataAccess.Base
                 dynamicParameters.Add("@ID", entity.ID);
                 dynamicParameters.Add("@RoomType", entity.RoomType);
                 dynamicParameters.Add("@Prefix", entity.Prefix);
+                dynamicParameters.Add("@MaxGuest", entity.MaxGuest);
+                dynamicParameters.Add("@RoomArea", entity.RoomArea);
+                dynamicParameters.Add("@BedType", entity.BedType);
+                dynamicParameters.Add("@Description", entity.Description);
+                dynamicParameters.Add("@Amenities", entity.Amenities);
                 dynamicParameters.Add("@IsActive", entity.IsActive);
                 dynamicParameters.Add("@UpdatedBy", entity.UpdatedBy);
                 dynamicParameters.Add("@OperationType", CommonRepositoryConstants.Update);

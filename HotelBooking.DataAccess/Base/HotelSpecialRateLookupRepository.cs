@@ -546,41 +546,37 @@ namespace HotelBooking.DataAccess.Base
                     }
 
                     result.RoomType = roomList
-                        .Select(room => new RoomTypeEntity
-                        {
-                            ID = room.ID,
+                    .Select(room => new RoomTypeEntity
+                    {
+                        ID = room.ID,
+                        RoomType = room.RoomType,
+                        MaxGuest = room.MaxGuest,
+                        RoomArea = room.RoomArea,
+                        BedType = room.BedType,
+                        Description = room.Description,
+                        Amenities = room.Amenities,
+                        Image = room.Image,
+                        TotalAvailableRoom = room.TotalAvailableRoom,
 
-                            RoomType = room.RoomType,
+                        ImageList = imageList
+                            .Where(image => image.RoomTypeID == room.ID)
+                            .ToList(),
 
-                            //-----------------------------------------
-                            // Multiple Images
-                            //-----------------------------------------
-                            ImageList = imageList
-                                .Where(image =>
-                                    image.RoomTypeID == room.ID)
-                                .ToList(),
-
-                            //-----------------------------------------
-                            // Meal Rate List
-                            //-----------------------------------------
-                            RateList = rateList
-                                .Where(rate =>
-                                    rate.RoomCategoryID == room.ID)
-                                .Select(rate => new RateEntity
-                                {
-                                    MealPlanID = rate.MealPlanID,
-                                    MealPlanName = rate.MealPlanName,
-                                    MealDescription = rate.MealDescription,
-
-                                    CoupleCost = rate.CoupleCost,
-                                    ExtraPersonCost = rate.ExtraPersonCost,
-                                    ExtraChildCost = rate.ExtraChildCost,
-
-                                    Discount = rate.Discount
-
-                                }).ToList()
-
-                        }).ToList();
+                        RateList = rateList
+                            .Where(rate => rate.RoomCategoryID == room.ID)
+                            .Select(rate => new RateEntity
+                            {
+                                MealPlanID = rate.MealPlanID,
+                                MealPlanName = rate.MealPlanName,
+                                MealDescription = rate.MealDescription,
+                                CoupleCost = rate.CoupleCost,
+                                ExtraPersonCost = rate.ExtraPersonCost,
+                                ExtraChildCost = rate.ExtraChildCost,
+                                Discount = rate.Discount
+                            })
+                            .ToList()
+                    })
+                    .ToList();
                 }
                 else
                 {

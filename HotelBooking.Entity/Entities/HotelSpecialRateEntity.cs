@@ -137,8 +137,14 @@
     public class RoomTypeEntity
     {
         public int ID { get; set; }
+        public int TotalAvailableRoom { get; set; }
         public string RoomType { get; set; } = string.Empty;
         public string Image { get; set; } = string.Empty;
+        public int? MaxGuest { get; set; }
+        public decimal? RoomArea { get; set; }
+        public string? BedType { get; set; }
+        public string? Description { get; set; }
+        public string? Amenities { get; set; }
         public List<RoomTypeImageEntity1> ImageList { get; set; } = new();
         public List<RateEntity> RateList { get; set; } = new();
     }
