@@ -101,6 +101,14 @@ namespace HotelBooking.DI
             services.AddScoped<IOfferDomain, OfferDomain>();
             services.AddScoped(typeof(IOfferLookupRepositoryInterface), typeof(OfferLookupRepository));
 
+            services.AddScoped<IAmenitiesTypeRepository, AmenitiesTypeRepository>();
+            services.AddScoped<IAmenitiesTypeDomain, AmenitiesTypeDomain>();
+            services.AddScoped(typeof(IAmenitiesTypeLookupRepositoryInterface), typeof(AmenitiesTypeLookupRepository));
+
+            services.AddScoped <ICompanyProfileRepository, CompanyProfileRepository>();
+            services.AddScoped<ICompanyProfileDomain, CompanyProfileDomain>();
+            services.AddScoped(typeof(ICompanyProfileLookupRepositoryInterface), typeof(CompanyProfileLookupRepository));
+
         }
 
     }
