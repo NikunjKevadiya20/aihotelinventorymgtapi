@@ -11,6 +11,7 @@ namespace HotelBooking.Entity.Entities
     public class AmenitiesEntity
     {
         public int? ID { get; set; }
+        public int? AmenitiesTypeID { get; set; }
         public string? PropertyID { get; set; }
         public string? AmenitiesName { get; set; }
         public bool? IsActive { get; set; }
@@ -31,6 +32,8 @@ namespace HotelBooking.Entity.Entities
     public class AmenitiesDataViewEntity : MessageBaseEntity
     {
         public int ID { get; set; }
+        public int? AmenitiesTypeID { get; set; }
+        public string? AmenitiesTypeName { get; set; }
         public string? PropertyID { get; set; }
         public string? PropertyName { get; set; }
         public string? AmenitiesName { get; set; }

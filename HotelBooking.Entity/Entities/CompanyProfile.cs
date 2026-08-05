@@ -11,6 +11,8 @@ namespace HotelBooking.Entity.Entities
     {
         public int? Id { get; set; }
         public string? Manager { get; set; }
+        public string? AmenitiesIDs { get; set; }
+        public string? AmenitiesNames { get; set; }
         public string? HotelEmail { get; set; }
         public string? ReservationsManager { get; set; }
         public string? ReservationsEmail { get; set; }

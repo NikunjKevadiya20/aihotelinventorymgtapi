@@ -40,6 +40,7 @@ namespace HotelBooking.DataAccess.Base
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@PropertyID", entity.PropertyID);
                 parameters.Add("@AmenitiesName", entity.AmenitiesName);              
+                parameters.Add("@AmenitiesTypeID", entity.AmenitiesTypeID);              
                 parameters.Add("@IsActive", entity.IsActive);
                 parameters.Add("@CreatedBy", entity.CreatedBy);
                 parameters.Add("@OperationType", CommonRepositoryConstants.Insert);
@@ -79,6 +80,7 @@ namespace HotelBooking.DataAccess.Base
                 parameters.Add("@ID", entity.ID);
                 parameters.Add("@PropertyID", entity.PropertyID);
                 parameters.Add("@AmenitiesName", entity.AmenitiesName);
+                parameters.Add("@AmenitiesTypeID", entity.AmenitiesTypeID);
                 parameters.Add("@IsActive", entity.IsActive);
                 parameters.Add("@UpdatedBy", entity.UpdatedBy);
                 parameters.Add("@OperationType", CommonRepositoryConstants.Update);
