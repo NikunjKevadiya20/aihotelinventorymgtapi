@@ -105,6 +105,8 @@ namespace HotelBooking.DataAccess.Base
                     result.Details = Convert.ToString(data.Details);
                     result.UserName = Convert.ToString(data.UserName);
                     result.IsUser = Convert.ToInt32(data.IsUser);            
+                    result.Organizationlogo = Convert.ToString(data.Organizationlogo);            
+                    result.OrganizationName = Convert.ToString(data.OrganizationName);            
 
                     if (data != null)
                     {
