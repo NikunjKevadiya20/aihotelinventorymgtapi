@@ -32,6 +32,7 @@ namespace HotelBooking.DataAccess.Base
             {
                 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
                 DynamicParameters dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@AmenitiesIDs", entity.AmenitiesIDs);
                 dynamicParameters.Add("@RoomType", entity.RoomType);
                 dynamicParameters.Add("@Prefix", entity.Prefix);
                 dynamicParameters.Add("@MaxGuest", entity.MaxGuest);
@@ -81,6 +82,7 @@ namespace HotelBooking.DataAccess.Base
                 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
                 DynamicParameters dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@ID", entity.ID);
+                dynamicParameters.Add("@AmenitiesIDs", entity.AmenitiesIDs);
                 dynamicParameters.Add("@RoomType", entity.RoomType);
                 dynamicParameters.Add("@Prefix", entity.Prefix);
                 dynamicParameters.Add("@MaxGuest", entity.MaxGuest);

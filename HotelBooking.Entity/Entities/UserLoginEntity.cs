@@ -18,6 +18,8 @@ namespace HotelBooking.Entity.Entities
         public string? UserName { get; set; }
         public string? Password { get; set; }
         public Boolean? isemployee { get; set; }
+        public string? Organizationlogo { get; set; }
+        public string? OrganizationName { get; set; }
 
     }
     public class LoginResponseEntity
@@ -42,6 +44,8 @@ namespace HotelBooking.Entity.Entities
         public int? account_id{get;set;}
         public Guid? account_guid { get; set;}
         public string? account_name { get; set; }
+        public string? Organizationlogo { get; set; }
+        public string? OrganizationName { get; set; }
         public IEnumerable<UserRightsAssign>? UserRightsAssign { get; set; }
 
     }

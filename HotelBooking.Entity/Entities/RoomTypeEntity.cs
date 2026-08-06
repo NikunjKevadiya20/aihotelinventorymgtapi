@@ -5,6 +5,7 @@ namespace HotelBooking.Entity.Entities
     public class RoomTypeDataEntity
     {
         public int? ID { get; set; }
+        public string? AmenitiesIDs { get; set; }
         public string? RoomType { get; set; }
         public string? Prefix { get; set; }
         public int? MaxGuest { get; set; }
@@ -32,6 +33,7 @@ namespace HotelBooking.Entity.Entities
     public class RoomTypeViewEntity
     {
         public Int32 ID { set; get; }
+        public string? AmenitiesIDs { get; set; }
         public string? RoomType { get; set; }
         public string? Prefix { get; set; }
         public int? MaxGuest { get; set; }
