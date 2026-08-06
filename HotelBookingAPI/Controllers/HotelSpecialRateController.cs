@@ -546,5 +546,72 @@ namespace HotelBooking.Controllers
             }
         }
         #endregion
+
+        #region Hotel Room Wise RateList ForPanel
+
+        [HttpPost("HotelRoomWiseRateListForPanel")]
+        [Authorize]
+        public async Task<IActionResult> HotelRoomWiseRateListForPanel(HotelListEntity entity)
+        {
+            try
+            {
+                var token = HttpContext.Request.Headers["Authorization"]
+                            .FirstOrDefault()?.Split(" ").Last();
+
+                int userId = JwtMiddleware.GetUserIdFromToken(token);
+
+                if (userId != 0)
+                {
+
+                    var result = await domain.HotelRoomWiseRateList(entity);
+
+                    if (result.Message == "success")
+                    {
+                        return StatusCode((int)HttpStatusCode.OK, new ResultModel()
+                        {
+                            Status = (int)ResponseStatusCode.Success,
+                            Message = Convert.ToString(result.Message),
+                            Details = Convert.ToString(result.Details),
+                            Data = result,
+                        });
+                    }
+                    else
+                    {
+                        return StatusCode((int)HttpStatusCode.BadRequest, new ResultModel()
+                        {
+                            Data = string.Empty,
+                            Message = Convert.ToString(result.Message),
+                            Details = Convert.ToString(result.Details),
+                            Status = (int)ResponseStatusCode.BadRequestError,
+                            ErrorMessage = Convert.ToString(result.ErrorMessage),
+                        });
+                    }
+                }
+                else
+                {
+                    return StatusCode((int)ResponseStatusCode.TokenExpired, new ResultModel()
+                    {
+                        Data = string.Empty,
+                        Message = CommonRepositoryMessages.NotFoundMessageEN,
+                        Details = CommonRepositoryMessages.NotFoundMessageEN,
+                        Status = (int)ResponseStatusCode.TokenExpired,
+
+                    });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, new ResultModel()
+                {
+                    Message = CommonRepositoryMessages.NotFoundMessageEN,
+                    Details = CommonRepositoryMessages.NotFoundMessageEN,
+                    ErrorMessage = ex.Message,
+                    Status = (int)ResponseStatusCode.InternaServerError,
+                });
+            }
+        }
+        #endregion
+
     }
 }
