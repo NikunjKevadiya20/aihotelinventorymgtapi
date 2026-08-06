@@ -1,6 +1,4 @@
-﻿using HotelBooking.Entity;
-using Microsoft.AspNetCore.Http;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,12 +6,11 @@ using System.Threading.Tasks;
 
 namespace HotelBooking.Entity.Entities
 {
-    public class AmenitiesEntity
+    public class AmenitiesTypeEntity
     {
         public int? ID { get; set; }
-        public int? AmenitiesTypeID { get; set; }
-        public string? PropertyID { get; set; }
-        public string? AmenitiesName { get; set; }
+        public int? AmenitiesID { get; set; }
+        public string? AmenityType { get; set; }
         public bool? IsActive { get; set; }
         public int? CreatedBy { get; set; }
         public int? UpdatedBy { get; set; }
@@ -21,22 +18,21 @@ namespace HotelBooking.Entity.Entities
         public string? Message { get; set; }
     }
 
-    public class AmenitiesIDEntity : MessageBaseEntity
+    public class AmenitiesTypeIDEntity : MessageBaseEntity
     {
         public int? ID { get; set; }
-        public string? AmenitiesName { get; set; }
+        public int? AmenitiesID { get; set; }
+        public string? AmenityType { get; set; }
         public int? UpdatedBy { get; set; }
         public bool? IsActive { get; set; }
     }
 
-    public class AmenitiesDataViewEntity : MessageBaseEntity
+    public class AmenitiesTypeDataViewEntity : MessageBaseEntity
     {
         public int ID { get; set; }
-        public int? AmenitiesTypeID { get; set; }
-        public string? AmenitiesTypeName { get; set; }
-        public string? PropertyID { get; set; }
-        public string? PropertyName { get; set; }
+        public int? AmenitiesID { get; set; }
         public string? AmenitiesName { get; set; }
+        public string? AmenityType { get; set; }
         public bool? IsActive { get; set; }
         public string? Details { get; set; }
         public string? Message { get; set; }
@@ -44,13 +40,7 @@ namespace HotelBooking.Entity.Entities
         public string? ErrorMessage { get; set; }
     }
 
-    public class AmenitiesImageDataEntity
-    {
-        public int? ID { get; set; }
-        public IFormFile? Icon { get; set; }
-    }
-
-    public class AmenitiesIDViewEntity : MessageBaseEntity
+    public class AmenitiesTypeIDViewEntity : MessageBaseEntity
     {
         public int? ID { get; set; }
     }

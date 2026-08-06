@@ -14,38 +14,35 @@ using System.Threading.Tasks;
 
 namespace HotelBooking.DataAccess.Base
 {
-    public class AmenitiesLookupRepository : IAmenitiesLookupRepositoryInterface
+    public class AmenitiesTypeLookupRepository : IAmenitiesTypeLookupRepositoryInterface
     {
         #region Global Variables
         private readonly IDbConnection _dbConnection;
         #endregion
 
-        private readonly ILogger<AmenitiesLookupRepository> logger;
-   
+        private readonly ILogger<AmenitiesTypeLookupRepository> logger;
 
-        public AmenitiesLookupRepository(ILogger<AmenitiesLookupRepository> _logger, IDbConnection dbConnection)
+        public AmenitiesTypeLookupRepository(ILogger<AmenitiesTypeLookupRepository> _logger, IDbConnection dbConnection)
         {
             logger = _logger;
             _dbConnection = dbConnection;
         }
 
-        #region Insert Amenities
-        public async Task<AmenitiesIDViewEntity> InsertAmenities(AmenitiesEntity entity, string storedProcedure)
+        #region Insert AmenitiesType
+        public async Task<AmenitiesTypeIDViewEntity> InsertAmenitiesType(AmenitiesTypeEntity entity, string storedProcedure)
         {
-            AmenitiesIDViewEntity result = new AmenitiesIDViewEntity();
-
+            AmenitiesTypeIDViewEntity result = new AmenitiesTypeIDViewEntity();
             try
             {
                 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
                 DynamicParameters parameters = new DynamicParameters();
-                parameters.Add("@PropertyID", entity.PropertyID);
-                parameters.Add("@AmenitiesName", entity.AmenitiesName);              
-                parameters.Add("@AmenitiesTypeID", entity.AmenitiesTypeID);              
+                parameters.Add("@AmenitiesID", entity.AmenitiesID);
+                parameters.Add("@AmenityType", entity.AmenityType);
                 parameters.Add("@IsActive", entity.IsActive);
                 parameters.Add("@CreatedBy", entity.CreatedBy);
-                parameters.Add("@OperationType", CommonRepositoryConstants.Insert);
+                parameters.Add("@OperationType", 1); // Insert
 
-                var data = await _dbConnection.QueryFirstOrDefaultAsync<AmenitiesIDViewEntity>(
+                var data = await _dbConnection.QueryFirstOrDefaultAsync<AmenitiesTypeIDViewEntity>(
                     storedProcedure, parameters, commandType: CommandType.StoredProcedure);
                 return data;
             }
@@ -68,22 +65,20 @@ namespace HotelBooking.DataAccess.Base
         }
         #endregion
 
-        #region Update Amenities
-        public async Task<ResultModel> UpdateAmenities(AmenitiesEntity entity, string storedProcedure)
+        #region Update AmenitiesType
+        public async Task<ResultModel> UpdateAmenitiesType(AmenitiesTypeEntity entity, string storedProcedure)
         {
             ResultModel result = new ResultModel();
-
             try
             {
                 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@ID", entity.ID);
-                parameters.Add("@PropertyID", entity.PropertyID);
-                parameters.Add("@AmenitiesName", entity.AmenitiesName);
-                parameters.Add("@AmenitiesTypeID", entity.AmenitiesTypeID);
+                parameters.Add("@AmenitiesID", entity.AmenitiesID);
+                parameters.Add("@AmenityType", entity.AmenityType);
                 parameters.Add("@IsActive", entity.IsActive);
                 parameters.Add("@UpdatedBy", entity.UpdatedBy);
-                parameters.Add("@OperationType", CommonRepositoryConstants.Update);
+                parameters.Add("@OperationType", 2); // Update
 
                 var data = await _dbConnection.QueryAsync(storedProcedure, parameters, commandType: CommandType.StoredProcedure);
                 result.Message = data.FirstOrDefault().Message;
@@ -103,22 +98,20 @@ namespace HotelBooking.DataAccess.Base
                 result.ErrorMessage = ex.Message;
                 result.Message = CommonRepositoryMessages.ExceptionMessage;
             }
-
             return result;
         }
         #endregion
 
-        #region Delete Amenities
-        public async Task<ResultModel> DeleteAmenities(AmenitiesIDEntity entity, string storedProcedure)
+        #region Delete AmenitiesType
+        public async Task<ResultModel> DeleteAmenitiesType(AmenitiesTypeIDEntity entity, string storedProcedure)
         {
             ResultModel result = new ResultModel();
-
             try
             {
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@ID", entity.ID);
                 parameters.Add("@UpdatedBy", entity.UpdatedBy);
-                parameters.Add("@OperationType", CommonRepositoryConstants.Delete);
+                parameters.Add("@OperationType", 1); // Delete
 
                 var data = await _dbConnection.QueryAsync(storedProcedure, parameters, commandType: CommandType.StoredProcedure);
                 result.Message = data.FirstOrDefault().Message;
@@ -138,23 +131,21 @@ namespace HotelBooking.DataAccess.Base
                 result.ErrorMessage = ex.Message;
                 result.Message = CommonRepositoryMessages.ExceptionMessage;
             }
-
             return result;
         }
         #endregion
 
-        #region Find By ID Amenities
-        public async Task<AmenitiesDataViewEntity> FindByIDAmenities(AmenitiesIDEntity entity, string storedProcedure)
+        #region Find By ID AmenitiesType
+        public async Task<AmenitiesTypeDataViewEntity> FindByIDAmenitiesType(AmenitiesTypeIDEntity entity, string storedProcedure)
         {
-            AmenitiesDataViewEntity result = new AmenitiesDataViewEntity();
-
+            AmenitiesTypeDataViewEntity result = new AmenitiesTypeDataViewEntity();
             try
             {
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@ID", entity.ID);
-                parameters.Add("@OperationType", CommonRepositoryConstants.FindByID);
+                parameters.Add("@OperationType", 2); // FindByID
 
-                var data = await _dbConnection.QuerySingleOrDefaultAsync<AmenitiesDataViewEntity>(
+                var data = await _dbConnection.QuerySingleOrDefaultAsync<AmenitiesTypeDataViewEntity>(
                     storedProcedure, parameters, commandType: CommandType.StoredProcedure);
                 return data;
             }
@@ -174,18 +165,18 @@ namespace HotelBooking.DataAccess.Base
         }
         #endregion
 
-        #region Find All Amenities
-        public async Task<List<AmenitiesDataViewEntity>> FindAllAmenities(AmenitiesIDEntity entity, string storedProcedure)
+        #region Find All AmenitiesType
+        public async Task<List<AmenitiesTypeDataViewEntity>> FindAllAmenitiesType(AmenitiesTypeIDEntity entity, string storedProcedure)
         {
-            AmenitiesDataViewEntity result = new AmenitiesDataViewEntity();
-
+            AmenitiesTypeDataViewEntity result = new AmenitiesTypeDataViewEntity();
             try
             {
                 DynamicParameters parameters = new DynamicParameters();
-                parameters.Add("@AmenitiesName", entity.AmenitiesName);
-                parameters.Add("@OperationType", CommonRepositoryConstants.FindAllItems);
+                parameters.Add("@AmenityType", entity.AmenityType);
+                parameters.Add("@AmenitiesID", entity.AmenitiesID);
+                parameters.Add("@OperationType", 3); // FindAll
 
-                var data = await _dbConnection.QueryAsync<AmenitiesDataViewEntity>(
+                var data = await _dbConnection.QueryAsync<AmenitiesTypeDataViewEntity>(
                     storedProcedure, parameters, commandType: CommandType.StoredProcedure);
                 return data.ToList();
             }
@@ -205,16 +196,16 @@ namespace HotelBooking.DataAccess.Base
         }
         #endregion
 
-        #region Find All Active Amenities
-        public async Task<List<AmenitiesDataViewEntity>> FindAllActiveAmenities(string storedProcedure)
+        #region Find All Active AmenitiesType
+        public async Task<List<AmenitiesTypeDataViewEntity>> FindAllActiveAmenitiesType(string storedProcedure)
         {
-            AmenitiesDataViewEntity result = new AmenitiesDataViewEntity();
-
+            AmenitiesTypeDataViewEntity result = new AmenitiesTypeDataViewEntity();
             try
             {
                 DynamicParameters parameters = new DynamicParameters();
-                parameters.Add("@OperationType", 5);
-                var data = await _dbConnection.QueryAsync<AmenitiesDataViewEntity>(
+                parameters.Add("@OperationType", 5); // FindAllActive
+
+                var data = await _dbConnection.QueryAsync<AmenitiesTypeDataViewEntity>(
                     storedProcedure, parameters, commandType: CommandType.StoredProcedure);
                 return data.ToList();
             }
@@ -234,18 +225,17 @@ namespace HotelBooking.DataAccess.Base
         }
         #endregion
 
-        #region Active/Inactive Amenities
-        public async Task<ResultModel> ActiveInActiveAmenities(AmenitiesIDEntity entity, string storedProcedure)
+        #region Active/Inactive AmenitiesType
+        public async Task<ResultModel> ActiveInActiveAmenitiesType(AmenitiesTypeIDEntity entity, string storedProcedure)
         {
             ResultModel result = new ResultModel();
-
             try
             {
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@ID", entity.ID);
                 parameters.Add("@IsActive", entity.IsActive);
                 parameters.Add("@UpdatedBy", entity.UpdatedBy);
-                parameters.Add("@OperationType", CommonRepositoryConstants.UpdateActive);
+                parameters.Add("@OperationType", 4); // Active/Inactive
 
                 var data = await _dbConnection.QueryAsync(storedProcedure, parameters, commandType: CommandType.StoredProcedure);
                 result.Message = data.FirstOrDefault().Message;
@@ -265,11 +255,8 @@ namespace HotelBooking.DataAccess.Base
                 result.ErrorMessage = ex.Message;
                 result.Message = CommonRepositoryMessages.ExceptionMessage;
             }
-
             return result;
         }
         #endregion
-
-     
     }
 }
