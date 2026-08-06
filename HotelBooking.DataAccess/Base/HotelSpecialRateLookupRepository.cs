@@ -6,6 +6,7 @@ using Dapper;
 using Microsoft.Extensions.Logging;
 using System.Data;
 using System.Data.SqlClient;
+using System.Text.RegularExpressions;
 
 namespace HotelBooking.DataAccess.Base
 {
@@ -23,6 +24,22 @@ namespace HotelBooking.DataAccess.Base
         {
             logger = _logger;
             _dbConnection = dbConnection;
+        }
+
+        // Helper to parse IDs from various formats like "1,2,3" or "[1,2]" or "['1','2']" or JSON-ish strings
+        private static HashSet<int> ParseAmenityIds(string? raw)
+        {
+            var set = new HashSet<int>();
+            if (string.IsNullOrWhiteSpace(raw)) return set;
+
+            // Find all integer sequences in the string. This handles CSV, brackets, quotes etc.
+            var matches = Regex.Matches(raw, "\\d+");
+            foreach (Match m in matches)
+            {
+                if (int.TryParse(m.Value, out var id)) set.Add(id);
+            }
+
+            return set;
         }
 
         #region Insert HotelSpecialRate
@@ -535,6 +552,15 @@ namespace HotelBooking.DataAccess.Base
                     .Read<RoomTypeImageEntity1>()
                     .ToList();
 
+                // Result Set 4 : Company Profile (Top 1)
+                var companyProfile = multi.Read<CompanyProfile>().FirstOrDefault();
+                
+                // Result Set 5 : Amenities Type
+                var amenitiesTypeList = multi.Read<AmenitiesTypeDataViewEntity>().ToList();
+                
+                // Result Set 6 : Amenities
+                var amenitiesList = multi.Read<AmenitiesDataViewEntity>().ToList();
+
                 if (roomList.Any())
                 {
                     result.Status = (int)ResponseStatusCode.Success;
@@ -555,6 +581,7 @@ namespace HotelBooking.DataAccess.Base
                         BedType = room.BedType,
                         Description = room.Description,
                         Amenities = room.Amenities,
+                        AmenitiesIDs = room.AmenitiesIDs,
                         Image = room.Image,
                         TotalAvailableRoom = room.TotalAvailableRoom,
 
@@ -577,6 +604,96 @@ namespace HotelBooking.DataAccess.Base
                             .ToList()
                     })
                     .ToList();
+
+                    // Attach company profile and map amenities types and amenities
+                    result.CompanyProfile = companyProfile;
+
+                    // Keep all amenities types returned and map amenities by AmenitiesTypeID
+                    result.AmenitiesType = amenitiesTypeList;
+
+                    // Filter amenities to those that have a matching AmenitiesTypeID present in amenitiesTypeList
+                    var amenityTypeIds = new HashSet<int>(amenitiesTypeList.Select(at => at.ID));
+
+                    // Parse company amenity ids robustly
+                    // Determine company amenity IDs. If company profile has no AmenitiesIDs set (null/empty),
+                    // we must return no amenities per requirement.
+                    var companyAmenityIds = new HashSet<int>();
+                    var companyHasAmenities = false;
+                    if (companyProfile != null && !string.IsNullOrWhiteSpace(companyProfile.AmenitiesIDs))
+                    {
+                        companyAmenityIds = ParseAmenityIds(companyProfile.AmenitiesIDs);
+                        companyHasAmenities = companyAmenityIds.Count > 0;
+                    }
+
+                    // Build collection of all amenities belonging to returned amenity types (used for per-room mapping)
+                    var allAmenitiesByType = amenitiesList
+                        .Where(a => a.AmenitiesTypeID.HasValue && amenityTypeIds.Contains(a.AmenitiesTypeID.Value))
+                        .ToList();
+
+                    // If company explicitly provides amenity IDs, filter by them. If not provided, return no amenities.
+                    var filteredAmenities = companyHasAmenities
+                        ? allAmenitiesByType.Where(a => a.ID != 0 && companyAmenityIds.Contains(a.ID)).ToList()
+                        : new List<AmenitiesDataViewEntity>();
+
+                    // Optionally filter out amenities types that have no matching amenities after applying company filter
+                    amenitiesTypeList = amenitiesTypeList
+                        .Where(at => filteredAmenities.Any(a => a.AmenitiesTypeID.HasValue && a.AmenitiesTypeID.Value == at.ID))
+                        .ToList();
+
+                    // Update the result's AmenitiesType to the filtered list
+                    result.AmenitiesType = amenitiesTypeList;
+
+                    // Map amenities into each amenities type's Amenities collection
+                    foreach (var at in amenitiesTypeList)
+                    {
+                        at.Amenities = filteredAmenities
+                            .Where(a => a.AmenitiesTypeID.HasValue && a.AmenitiesTypeID.Value == at.ID)
+                            .ToList();
+                    }
+
+                    // Map per-room amenities types using RoomType.AmenitiesIDs (comma-separated)
+                    foreach (var room in result.RoomType)
+                    {
+                        // Parse room amenity ids robustly
+                        var roomAmenityIds = ParseAmenityIds(room.AmenitiesIDs);
+
+                        var roomAmenitiesTypes = new List<AmenitiesTypeDataViewEntity>();
+
+                        foreach (var at in amenitiesTypeList)
+                        {
+                            // For per-room mapping: only include amenities that are listed in room.AmenitiesIDs.
+                            // If room.AmenitiesIDs is null/empty we should not include any amenities for that room.
+                            var amenitiesForType = allAmenitiesByType
+                                 .Where(a => a.AmenitiesTypeID.HasValue && a.AmenitiesTypeID.Value == at.ID
+                                             && roomAmenityIds.Count > 0 && a.ID != 0 && roomAmenityIds.Contains(a.ID))
+                                 .ToList();
+
+                            if (amenitiesForType.Any())
+                            {
+                                // create a shallow copy of the amenities type for this room
+                                var atCopy = new AmenitiesTypeDataViewEntity
+                                {
+                                    ID = at.ID,
+                                    AmenitiesID = at.AmenitiesID,
+                                    AmenitiesName = at.AmenitiesName,
+                                    AmenityType = at.AmenityType,
+                                    IsActive = at.IsActive,
+                                    Details = at.Details,
+                                    Message = at.Message,
+                                    Status = at.Status,
+                                    ErrorMessage = at.ErrorMessage,
+                                    Amenities = amenitiesForType
+                                };
+
+                                roomAmenitiesTypes.Add(atCopy);
+                            }
+                        }
+
+                        room.AmenitiesType = roomAmenitiesTypes;
+                    }
+
+                    // Do not set a top-level flat Amenities list; amenities are available under AmenitiesType[].Amenities
+
                 }
                 else
                 {

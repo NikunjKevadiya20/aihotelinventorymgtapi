@@ -81,6 +81,9 @@ namespace HotelBooking.Entity.Entities
         public Int32? UpdatedBy { get; set; }
         public DateTime? UpdatedOn { get; set; }
         public bool? IsDeleted { get; set; }
+
+        // Amenities types and associated amenities will be nested here for responses
+        public List<AmenitiesTypeDataViewEntity> AmenitiesType { get; set; } = new();
     }
     public class ExperienceImageDataEntity
     { 

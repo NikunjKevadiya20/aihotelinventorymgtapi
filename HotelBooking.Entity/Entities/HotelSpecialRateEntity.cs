@@ -133,6 +133,12 @@
     public class HotelListViewEntity : MessageBaseEntity
     {
         public List<RoomTypeEntity> RoomType { get; set; } = new();
+
+        // Added to include company profile and amenities data returned by stored procedure
+        public CompanyProfile? CompanyProfile { get; set; } = null;
+
+        // List of amenities types (tblAmenitiesType)
+        public List<AmenitiesTypeDataViewEntity> AmenitiesType { get; set; } = new();
     }
     public class RoomTypeEntity
     {
@@ -145,8 +151,12 @@
         public string? BedType { get; set; }
         public string? Description { get; set; }
         public string? Amenities { get; set; }
+        public string? AmenitiesIDs { get; set; }
         public List<RoomTypeImageEntity1> ImageList { get; set; } = new();
         public List<RateEntity> RateList { get; set; } = new();
+
+        // Per-room amenities types (each contains its own Amenities list filtered by this room's AmenitiesIDs)
+        public List<AmenitiesTypeDataViewEntity> AmenitiesType { get; set; } = new();
     }
     public class RoomTypeImageEntity1
     {
