@@ -110,16 +110,83 @@ namespace HotelBooking.DataAccess.Base
         }
         #endregion
 
+        //public async Task<BookingViewInsertEntity> InsertBooking(BookingRequestEntity entity, string storedProcedure)
+        //{
+        //    BookingViewInsertEntity result = new BookingViewInsertEntity();
+
+        //    try
+        //    {
+        //        Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+
+        //        DynamicParameters dynamicParameters = new DynamicParameters();
+
+        //        dynamicParameters.Add("@TempID", entity.TempID);
+        //        dynamicParameters.Add("@OperationType", CommonRepositoryConstants.Insert);
+
+        //        using var multi = await _dbConnection.QueryMultipleAsync(
+        //            storedProcedure,
+        //            dynamicParameters,
+        //            commandType: CommandType.StoredProcedure);
+
+        //        var booking = multi.Read<BookingViewInsertEntity>().FirstOrDefault();
+
+        //        if (booking != null)
+        //        {
+        //            booking.BookingDetails = multi
+        //                .Read<InsertBookingDetailEntity>()
+        //                .ToList();
+
+        //            result = booking;
+        //        }
+
+        //        return result;
+        //    }
+        //    catch (SqlException sqlException)
+        //    {
+        //        logger.LogError(sqlException, sqlException.Message);
+
+        //        result.ErrorMessage = sqlException.Message;
+        //        result.Status = (int)ResponseStatusCode.InternaServerError;
+        //        result.Message = CommonRepositoryMessages.CannotFindAllMessage;
+        //        result.Details = CommonRepositoryMessages.CannotFindAllDetails;
+
+        //        throw;
+        //    }
+        //    catch (Exception ex)
+        //    {
+        //        logger.LogError(ex, ex.Message);
+
+        //        result.Status = (int)ResponseStatusCode.InternaServerError;
+        //        result.Message = CommonRepositoryMessages.ExceptionMessage;
+        //        result.ErrorMessage = ex.Message;
+
+        //        throw;
+        //    }
+        //}
+        //private string GetMimeType(string filePath)
+        //{
+        //    string extension = Path.GetExtension(filePath)?.ToLowerInvariant();
+        //    return extension switch
+        //    {
+        //        ".png" => "image/png",
+        //        ".jpg" => "image/jpeg",
+        //        ".jpeg" => "image/jpeg",
+        //        ".gif" => "image/gif",
+        //        ".bmp" => "image/bmp",
+        //        _ => "image/png" // Default to PNG if unknown
+        //    };
+        //}
+
+
+
+
         public async Task<BookingViewInsertEntity> InsertBooking(BookingRequestEntity entity, string storedProcedure)
         {
             BookingViewInsertEntity result = new BookingViewInsertEntity();
-
             try
             {
                 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
-
                 DynamicParameters dynamicParameters = new DynamicParameters();
-
                 dynamicParameters.Add("@TempID", entity.TempID);
                 dynamicParameters.Add("@OperationType", CommonRepositoryConstants.Insert);
 
@@ -129,7 +196,6 @@ namespace HotelBooking.DataAccess.Base
                     commandType: CommandType.StoredProcedure);
 
                 var booking = multi.Read<BookingViewInsertEntity>().FirstOrDefault();
-
                 if (booking != null)
                 {
                     booking.BookingDetails = multi
@@ -137,32 +203,651 @@ namespace HotelBooking.DataAccess.Base
                         .ToList();
 
                     result = booking;
-                }
 
+                    // ====================== EMAIL + PDF LOGIC ======================
+                    if (booking.Message?.Trim().ToLower() == "success" && !string.IsNullOrWhiteSpace(booking.EmailID))
+                    {
+                        _ = Task.Run(async () =>
+                        {
+                            try
+                            {
+                                string companyName = "HotelBooking"; // Change if needed
+                                string fullName = $"{booking.FirstName} {booking.LastName}".Trim();
+                                if (string.IsNullOrWhiteSpace(fullName)) fullName = "Valued Guest";
+
+                                string bookingNo = booking.BookingNo ?? "N/A";
+                                string customerEmail = booking.EmailID;
+                                // You can hardcode or pull AdminMail from config / booking if available
+                                string adminEmail = ""; // e.g. "admin@chasmawale.com" or from config
+
+                                decimal totalRoomCharges = booking.TotalRoomCharges ?? 0;
+                                decimal discount = booking.promoDiscount ?? 0;
+                                decimal sGst = booking.SGst ?? 0;
+                                decimal cGst = booking.CGst ?? 0;
+                                decimal finalTotal = booking.FinalTotal ?? 0;
+                                int noOfNight = booking.NoOfNight ?? 0;
+                                int noOfPax = booking.NoOfPax ?? 0;
+
+                                string fromDate = booking.FromDate ?? "N/A";
+                                string toDate = booking.ToDate   ?? "N/A";
+                                string paymentStatus = booking.PaymentStatus ?? "N/A";
+                                string bookingStatus = booking.BookingStatus ?? "Confirmed";
+                                string payAtHotel = (booking.IsPayAtHotel == true) ? "Pay at Hotel" : "Online Payment";
+
+                                var bookingDetails = booking.BookingDetails ?? new List<InsertBookingDetailEntity>();
+
+                                // ==================== Logo as Base64 ====================
+                                string logoImgHtml = "<span style='color:white; font-size:28px; font-weight:bold;'>CHASMAWALE</span>";
+                                try
+                                {
+                                    string logoPath = "https://images.novotrips.com/SOLARMITRA/Uploads/Chasmawale/documents/white-logo.avif";
+                                    byte[] imageBytes;
+                                    using (var httpClient = new HttpClient { Timeout = TimeSpan.FromSeconds(8) })
+                                    {
+                                        imageBytes = await httpClient.GetByteArrayAsync(logoPath);
+                                    }
+                                    string base64 = Convert.ToBase64String(imageBytes);
+                                    string mime = GetMimeType(logoPath);
+                                    logoImgHtml = $"<img src='data:{mime};base64,{base64}' alt='Chasmawale Logo' style='max-height:52px; max-width:180px; height:auto; display:block; margin:0 auto;' />";
+                                }
+                                catch { }
+
+                                // ==================== Customer Email HTML ====================
+                                string customerSubject = $"Booking Confirmation #{bookingNo} - Thank You for Choosing {companyName}!";
+                                string customerHtml = $@"
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Booking Confirmation #{bookingNo}</title>
+</head>
+<body style='margin:0; padding:0; background:#f3f4f6; font-family: Arial, Helvetica, sans-serif; color:#1f2937;'>
+    <table width='100%' cellpadding='0' cellspacing='0' border='0' style='background:#f3f4f6; padding:30px 0;'>
+        <tr>
+            <td align='center'>
+                <table width='620' cellpadding='0' cellspacing='0' border='0' style='max-width:620px; background:#ffffff; border-radius:10px; overflow:hidden;'>
+                   
+                    <!-- Header -->
+                    <tr>
+                        <td align='center' style='background:#0f172a; padding:28px 24px;'>
+                           
+                            <h1 style='margin:16px 0 6px 0; font-size:22px; font-weight:700; color:#ffffff;'>Booking Confirmed</h1>
+                            <p style='margin:0; font-size:14px; color:#ffffff; opacity:0.9;'>Thank you for choosing us</p>
+                        </td>
+                    </tr>
+
+                    <!-- Content -->
+                    <tr>
+                        <td style='padding:28px 26px; font-size:15px; line-height:1.6; color:#1f2937;'>
+                            <p style='margin:0 0 12px 0;'>Dear <strong>{fullName}</strong>,</p>
+                            <p style='margin:0 0 20px 0;'>
+                                Greetings from <strong>{companyName}</strong>.<br><br>
+                                Your booking has been successfully confirmed.
+                            </p>
+
+                            <div style='font-size:16px; font-weight:600; margin:24px 0 12px; color:#0f172a; border-left:4px solid #2563eb; padding-left:10px;'>
+                                Booking Summary
+                            </div>
+                            <table width='100%' cellpadding='0' cellspacing='0' border='0' style='background:#f9fafb; border-radius:8px; overflow:hidden;'>
+                                <tr>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; color:#6b7280; width:40%;'>Booking No</td>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; font-weight:600;'>{bookingNo}</td>
+                                </tr>
+                                <tr>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; color:#6b7280;'>Check-in</td>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; font-weight:600;'>{fromDate}</td>
+                                </tr>
+                                <tr>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; color:#6b7280;'>Check-out</td>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; font-weight:600;'>{toDate}</td>
+                                </tr>
+                                <tr>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; color:#6b7280;'>Nights</td>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; font-weight:600;'>{noOfNight}</td>
+                                </tr>
+                                <tr>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; color:#6b7280;'>Guests</td>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; font-weight:600;'>{noOfPax}</td>
+                                </tr>
+                                <tr>
+                                    <td style='padding:12px 14px; color:#6b7280;'>Payment Mode</td>
+                                    <td style='padding:12px 14px; font-weight:600;'>{payAtHotel}</td>
+                                </tr>
+                            </table>
+
+                            <div style='font-size:16px; font-weight:600; margin:24px 0 12px; color:#0f172a; border-left:4px solid #2563eb; padding-left:10px;'>
+                                Room Details
+                            </div>
+                            <table width='100%' cellpadding='0' cellspacing='0' border='0' style='background:#f9fafb; border-radius:8px; overflow:hidden;'>
+                                <tr style='background:#e5e7eb;'>
+                                    <th style='text-align:left; padding:12px 14px; font-size:13px;'>Room Category</th>
+                                    <th style='text-align:center; padding:12px 14px; font-size:13px;'>Rooms</th>
+                                    <th style='text-align:center; padding:12px 14px; font-size:13px;'>Adults</th>
+                                    <th style='text-align:center; padding:12px 14px; font-size:13px;'>Child</th>
+                                    <th style='text-align:right; padding:12px 14px; font-size:13px;'>Total</th>
+                                </tr>
+                                {string.Join("", bookingDetails.Select(item => $@"
+                                <tr>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb;'>
+                                        {item.RoomCategoryName}<br>
+                                        <span style='font-size:12px; color:#6b7280;'>{item.MealType ?? ""} {(string.IsNullOrWhiteSpace(item.MealTypeDescription) ? "" : $"({item.MealTypeDescription})")}</span>
+                                    </td>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; text-align:center;'>{item.Room}</td>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; text-align:center;'>{item.Adults}</td>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; text-align:center;'>{item.Child}</td>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; text-align:right; font-weight:700; color:#2563eb;'>&#x20B9; {(item.TotalPrice ?? 0):N0}</td>
+                                </tr>"))}
+                            </table>
+
+                            <div style='font-size:16px; font-weight:600; margin:24px 0 12px; color:#0f172a; border-left:4px solid #2563eb; padding-left:10px;'>
+                                Payment Summary
+                            </div>
+                            <table width='100%' cellpadding='0' cellspacing='0' border='0' style='background:#f9fafb; border-radius:8px; overflow:hidden;'>
+                                <tr>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; color:#6b7280;'>Room Charges</td>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; text-align:right; font-weight:700; color:#2563eb;'>&#x20B9; {totalRoomCharges:N0}</td>
+                                </tr>
+                                <tr>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; color:#6b7280;'>Discount</td>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; text-align:right; font-weight:700; color:#2563eb;'>- &#x20B9; {discount:N0}</td>
+                                </tr>
+                                <tr>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; color:#6b7280;'>SGST</td>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; text-align:right; font-weight:700; color:#2563eb;'>&#x20B9; {sGst:N0}</td>
+                                </tr>
+                                <tr>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; color:#6b7280;'>CGST</td>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; text-align:right; font-weight:700; color:#2563eb;'>&#x20B9; {cGst:N0}</td>
+                                </tr>
+                                <tr>
+                                    <td style='padding:12px 14px; font-weight:700;'>Final Amount</td>
+                                    <td style='padding:12px 14px; text-align:right; font-weight:700; color:#2563eb;'>&#x20B9; {finalTotal:N0}</td>
+                                </tr>
+                            </table>
+
+                            <p style='margin:25px 0 0 0;'>We look forward to welcoming you.</p>
+                            <p style='margin:16px 0 0 0;'>Warm regards,<br><strong>{companyName} Team</strong></p>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td style='background:#f9fafb; text-align:center; padding:18px; font-size:12px; color:#6b7280;'>
+                            © {DateTime.Now.Year} {companyName}. All rights reserved.<br>
+                            This is an automated email.
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>";
+
+                                // ==================== PDF HTML ====================
+                                string pdfHtml = $@"
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>Booking #{bookingNo} - {companyName}</title>
+    <!--[if mso]>
+    <style type='text/css'>
+        body, table, td {{ font-family: Arial, Helvetica, sans-serif !important; }}
+    </style>
+    <![endif]-->
+    <style>
+        body {{
+            margin: 0;
+            padding: 0;
+            font-family: Arial, Helvetica, sans-serif;
+            font-size: 14px;
+            background: #ffffff;
+            color: #1e293b;
+            -webkit-text-size-adjust: 100%;
+            -ms-text-size-adjust: 100%;
+        }}
+        table {{
+            border-collapse: collapse;
+            mso-table-lspace: 0pt;
+            mso-table-rspace: 0pt;
+        }}
+        img {{
+            border: 0;
+            height: auto;
+            line-height: 100%;
+            outline: none;
+            text-decoration: none;
+            -ms-interpolation-mode: bicubic;
+        }}
+        .wrapper {{
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+        }}
+        .header-table {{
+            width: 100%;
+            background-color: #0f172a;
+        }}
+        .header-left {{
+            padding: 22px 28px;
+            vertical-align: middle;
+        }}
+        .header-left img {{
+            max-height: 42px;
+            max-width: 220px;
+            display: block;
+        }}
+        .header-right {{
+            padding: 22px 28px;
+            text-align: right;
+            vertical-align: middle;
+            color: #ffffff;
+        }}
+        .success-cell {{
+            background-color: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            padding: 12px 18px;
+            color: #065f46;
+            font-size: 14px;
+            border-radius: 6px;
+        }}
+        .content {{
+            padding: 24px;
+        }}
+        h2 {{
+            font-size: 16px;
+            margin: 28px 0 12px 0;
+            color: #0f172a;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 6px;
+        }}
+        .info-table, .items-table, .summary-table {{
+            width: 100%;
+            margin: 12px 0 20px 0;
+        }}
+        .info-table td,
+        .items-table th,
+        .items-table td,
+        .summary-table td {{
+            padding: 10px 12px;
+            border: 1px solid #e2e8f0;
+            text-align: left;
+            font-size: 13px;
+        }}
+        .items-table th {{
+            background-color: #f1f5f9;
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            letter-spacing: 0.3px;
+        }}
+        .footer {{
+            background-color: #f1f5f9;
+            padding: 16px;
+            text-align: center;
+            font-size: 12px;
+            color: #64748b;
+            border-top: 1px solid #e2e8f0;
+        }}
+    </style>
+</head>
+<body>
+    <center>
+        <table class='wrapper' cellpadding='0' cellspacing='0' border='0' width='100%' style='max-width:800px;'>
+            <tr>
+                <td>
+                    <!-- HEADER -->
+                    <table class='header-table' cellpadding='0' cellspacing='0' border='0' width='100%'>
+                        <tr>
+                            <td class='header-left' width='50%' align='left' style='padding:24px 30px; vertical-align:middle;'>
+                                {logoImgHtml}
+                            </td>
+                            <td class='header-right' width='50%' align='right' style='padding:24px 30px; vertical-align:middle; color:#ffffff;'>
+                                <div style='margin:0; font-size:22px; font-weight:700; line-height:1.25; color:#ffffff; letter-spacing:0.6px;'>
+                                    BOOKING<br>CONFIRMATION
+                                </div>
+                                <div style='margin-top:8px; font-size:13px; color:#ffffff; opacity:0.9; letter-spacing:0.3px;'>
+                                    Booking #{bookingNo}
+                                </div>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- SUCCESS BANNER -->
+                    <table cellpadding='0' cellspacing='0' border='0' width='100%' style='margin-top:20px;'>
+                        <tr>
+                            <td style='padding:0 24px;'>
+                                <table width='100%' cellpadding='0' cellspacing='0' border='0'>
+                                    <tr>
+                                        <td class='success-cell' style='background-color:#ecfdf5; border:1px solid #a7f3d0; padding:12px 18px; color:#065f46; font-size:14px;'>
+                                            <strong style='color:#059669;'>? Booking Confirmed</strong>
+                                            &nbsp;&nbsp;Thank you for choosing {companyName}.
+                                        </td>
+                                    </tr>
+                                </table>
+                            </td>
+                        </tr>
+                    </table>
+
+                    <!-- CONTENT -->
+                    <div class='content' style='padding:24px;'>
+                        <p style='margin:0 0 12px 0;'>Hello <strong>{fullName}</strong>,</p>
+                        <p style='margin:0 0 20px 0;'>We're pleased to confirm your booking. Here's a summary of your stay.</p>
+
+                        <h2 style='font-size:16px; margin:28px 0 12px 0; color:#0f172a; border-bottom:1px solid #e2e8f0; padding-bottom:6px;'>
+                            Booking Details
+                        </h2>
+                        <table class='info-table' cellpadding='0' cellspacing='0' border='0' width='100%' style='border-collapse:collapse;'>
+                            <tr>
+                                <td style='width:35%; padding:10px 12px; border:1px solid #e2e8f0;'><strong>Booking No</strong></td>
+                                <td style='padding:10px 12px; border:1px solid #e2e8f0;'>{bookingNo}</td>
+                            </tr>
+                            <tr>
+                                <td style='padding:10px 12px; border:1px solid #e2e8f0;'><strong>Guest Name</strong></td>
+                                <td style='padding:10px 12px; border:1px solid #e2e8f0;'>{fullName}</td>
+                            </tr>
+                            <tr>
+                                <td style='padding:10px 12px; border:1px solid #e2e8f0;'><strong>Check-in</strong></td>
+                                <td style='padding:10px 12px; border:1px solid #e2e8f0;'>{fromDate}</td>
+                            </tr>
+                            <tr>
+                                <td style='padding:10px 12px; border:1px solid #e2e8f0;'><strong>Check-out</strong></td>
+                                <td style='padding:10px 12px; border:1px solid #e2e8f0;'>{toDate}</td>
+                            </tr>
+                            <tr>
+                                <td style='padding:10px 12px; border:1px solid #e2e8f0;'><strong>Nights</strong></td>
+                                <td style='padding:10px 12px; border:1px solid #e2e8f0;'>{noOfNight}</td>
+                            </tr>
+                            <tr>
+                                <td style='padding:10px 12px; border:1px solid #e2e8f0;'><strong>Guests</strong></td>
+                                <td style='padding:10px 12px; border:1px solid #e2e8f0;'>{noOfPax}</td>
+                            </tr>
+                            <tr>
+                                <td style='padding:10px 12px; border:1px solid #e2e8f0;'><strong>Payment Mode</strong></td>
+                                <td style='padding:10px 12px; border:1px solid #e2e8f0;'>{payAtHotel}</td>
+                            </tr>
+                            <tr>
+                                <td style='padding:10px 12px; border:1px solid #e2e8f0;'><strong>Status</strong></td>
+                                <td style='padding:10px 12px; border:1px solid #e2e8f0;'>{bookingStatus}</td>
+                            </tr>
+                        </table>
+
+                        <h2 style='font-size:16px; margin:28px 0 12px 0; color:#0f172a; border-bottom:1px solid #e2e8f0; padding-bottom:6px;'>
+                            Room Details
+                        </h2>
+                        <table class='items-table' cellpadding='0' cellspacing='0' border='0' width='100%' style='border-collapse:collapse;'>
+                            <thead>
+                                <tr>
+                                    <th style='background-color:#f1f5f9; padding:10px 12px; border:1px solid #e2e8f0; text-align:left; font-size:12px;'>Room Category</th>
+                                    <th style='background-color:#f1f5f9; padding:10px 12px; border:1px solid #e2e8f0; text-align:left; font-size:12px;'>Meal Plan</th>
+                                    <th style='background-color:#f1f5f9; padding:10px 12px; border:1px solid #e2e8f0; text-align:center; font-size:12px;'>Rooms</th>
+                                    <th style='background-color:#f1f5f9; padding:10px 12px; border:1px solid #e2e8f0; text-align:center; font-size:12px;'>Adults</th>
+                                    <th style='background-color:#f1f5f9; padding:10px 12px; border:1px solid #e2e8f0; text-align:center; font-size:12px;'>Child</th>
+                                    <th style='background-color:#f1f5f9; padding:10px 12px; border:1px solid #e2e8f0; text-align:right; font-size:12px;'>Total</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {string.Join("", bookingDetails.Select(item => $@"
+                                <tr>
+                                    <td style='padding:10px 12px; border:1px solid #e2e8f0;'>{item.RoomCategoryName}</td>
+                                    <td style='padding:10px 12px; border:1px solid #e2e8f0;'>{item.MealType ?? "-"}</td>
+                                    <td style='padding:10px 12px; border:1px solid #e2e8f0; text-align:center;'>{item.Room}</td>
+                                    <td style='padding:10px 12px; border:1px solid #e2e8f0; text-align:center;'>{item.Adults}</td>
+                                    <td style='padding:10px 12px; border:1px solid #e2e8f0; text-align:center;'>{item.Child}</td>
+                                    <td style='padding:10px 12px; border:1px solid #e2e8f0; text-align:right; font-weight:600;'>&#x20B9; {(item.TotalPrice ?? 0):N0}</td>
+                                </tr>"))}
+                            </tbody>
+                        </table>
+
+                        <h2 style='font-size:16px; margin:28px 0 12px 0; color:#0f172a; border-bottom:1px solid #e2e8f0; padding-bottom:6px;'>
+                            Payment Summary
+                        </h2>
+                        <table class='summary-table' cellpadding='0' cellspacing='0' border='0' width='100%' style='border-collapse:collapse;'>
+                            <tr>
+                                <td style='padding:10px 12px; border:1px solid #e2e8f0;'>Room Charges</td>
+                                <td style='padding:10px 12px; border:1px solid #e2e8f0; text-align:right; font-weight:600;'>&#x20B9; {totalRoomCharges:N0}</td>
+                            </tr>
+                            <tr>
+                                <td style='padding:10px 12px; border:1px solid #e2e8f0;'>Discount</td>
+                                <td style='padding:10px 12px; border:1px solid #e2e8f0; text-align:right; font-weight:600;'>- &#x20B9; {discount:N0}</td>
+                            </tr>
+                            <tr>
+                                <td style='padding:10px 12px; border:1px solid #e2e8f0;'>SGST</td>
+                                <td style='padding:10px 12px; border:1px solid #e2e8f0; text-align:right; font-weight:600;'>&#x20B9; {sGst:N0}</td>
+                            </tr>
+                            <tr>
+                                <td style='padding:10px 12px; border:1px solid #e2e8f0;'>CGST</td>
+                                <td style='padding:10px 12px; border:1px solid #e2e8f0; text-align:right; font-weight:600;'>&#x20B9; {cGst:N0}</td>
+                            </tr>
+                            <tr>
+                                <td style='padding:10px 12px; border:1px solid #e2e8f0; background-color:#f8fafc;'><strong>Final Amount</strong></td>
+                                <td style='padding:10px 12px; border:1px solid #e2e8f0; text-align:right; background-color:#f8fafc;'><strong>&#x20B9; {finalTotal:N0}</strong></td>
+                            </tr>
+                        </table>
+                    </div>
+
+                    <!-- FOOTER -->
+                    <table width='100%' cellpadding='0' cellspacing='0' border='0'>
+                        <tr>
+                            <td class='footer' style='background-color:#f1f5f9; padding:16px; text-align:center; font-size:12px; color:#64748b; border-top:1px solid #e2e8f0;'>
+                                © {DateTime.Now.Year} {companyName} • System Generated Document
+                            </td>
+                        </tr>
+                    </table>
+                </td>
+            </tr>
+        </table>
+    </center>
+</body>
+</html>";
+
+                                // Generate PDF using Puppeteer
+                                var browserFetcher = new BrowserFetcher();
+                                await browserFetcher.DownloadAsync();
+                                await using var browser = await Puppeteer.LaunchAsync(new LaunchOptions { Headless = true });
+                                await using var page = await browser.NewPageAsync();
+                                await page.SetContentAsync(pdfHtml, new NavigationOptions { WaitUntil = new[] { WaitUntilNavigation.Networkidle0 } });
+                                byte[] pdfBytes = await page.PdfDataAsync(new PdfOptions
+                                {
+                                    Format = PuppeteerSharp.Media.PaperFormat.A4,
+                                    PrintBackground = true,
+                                    MarginOptions = new PuppeteerSharp.Media.MarginOptions
+                                    {
+                                        Top = "20px",
+                                        Bottom = "30px",
+                                        Left = "20px",
+                                        Right = "20px"
+                                    }
+                                });
+
+                                string filename = $"Booking_{bookingNo}_{DateTime.Now.Ticks}.pdf";
+                                string pdfFilePath = CommonRepositoryConstants.ImageFilePath;
+                                if (!Directory.Exists(pdfFilePath))
+                                {
+                                    Directory.CreateDirectory(pdfFilePath);
+                                }
+                                string physicalFileFullPath = System.IO.Path.Combine(pdfFilePath, filename);
+                                using (FileStream fileStream = new FileStream(physicalFileFullPath, FileMode.Create, FileAccess.Write))
+                                {
+                                    fileStream.Write(pdfBytes, 0, pdfBytes.Length);
+                                }
+
+                                // Send Emails
+                                var sendEmail = new HotelBooking.Entity.Common.Methods.SendEmail();
+                                sendEmail.MailSendSMTP(customerEmail, "", customerSubject, customerHtml, physicalFileFullPath);
+
+                                if (!string.IsNullOrWhiteSpace(adminEmail))
+                                {
+                                    string adminHtml = $@"
+<!DOCTYPE html>
+<html lang='en'>
+<head>
+    <meta charset='UTF-8'>
+    <meta name='viewport' content='width=device-width, initial-scale=1.0'>
+    <title>New Booking Received - #{bookingNo}</title>
+</head>
+<body style='margin:0; padding:0; background:#f3f4f6; font-family: Arial, Helvetica, sans-serif; color:#1f2937;'>
+    <table width='100%' cellpadding='0' cellspacing='0' border='0' style='background:#f3f4f6; padding:30px 0;'>
+        <tr>
+            <td align='center'>
+                <table width='620' cellpadding='0' cellspacing='0' border='0' style='max-width:620px; background:#ffffff; border-radius:10px; overflow:hidden;'>
+                   
+                    <!-- Header -->
+                    <tr>
+                        <td align='center' style='background:#0f172a; padding:28px 24px;'>
+                            {logoImgHtml}
+                            <h1 style='margin:16px 0 6px 0; font-size:22px; font-weight:700; color:#ffffff;'>New Booking Received</h1>
+                            <p style='margin:0; font-size:14px; color:#ffffff; opacity:0.9;'>Booking #{bookingNo}</p>
+                        </td>
+                    </tr>
+
+                    <!-- Content -->
+                    <tr>
+                        <td style='padding:28px 26px; font-size:15px; line-height:1.6; color:#1f2937;'>
+                            <p style='margin:0 0 12px 0;'>Hello Team,</p>
+                            <p style='margin:0 0 20px 0;'>A new booking has been placed. Please find the details below:</p>
+
+                            <div style='font-size:16px; font-weight:600; margin:24px 0 12px; color:#0f172a; border-left:4px solid #2563eb; padding-left:10px;'>
+                                Guest Information
+                            </div>
+                            <table width='100%' cellpadding='0' cellspacing='0' border='0' style='background:#f9fafb; border-radius:8px; overflow:hidden;'>
+                                <tr>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; width:40%; color:#6b7280;'>Guest Name</td>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; font-weight:600;'>{fullName}</td>
+                                </tr>
+                                <tr>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; color:#6b7280;'>Mobile</td>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; font-weight:600;'>{booking.MobileNo ?? "—"}</td>
+                                </tr>
+                                <tr>
+                                    <td style='padding:12px 14px; color:#6b7280;'>Email</td>
+                                    <td style='padding:12px 14px; font-weight:600;'>{customerEmail}</td>
+                                </tr>
+                            </table>
+
+                            <div style='font-size:16px; font-weight:600; margin:24px 0 12px; color:#0f172a; border-left:4px solid #2563eb; padding-left:10px;'>
+                                Booking Details
+                            </div>
+                            <table width='100%' cellpadding='0' cellspacing='0' border='0' style='background:#f9fafb; border-radius:8px; overflow:hidden;'>
+                                <tr>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; width:40%; color:#6b7280;'>Booking No</td>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; font-weight:600;'>{bookingNo}</td>
+                                </tr>
+                                <tr>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; color:#6b7280;'>Check-in / Check-out</td>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; font-weight:600;'>{fromDate} ? {toDate}</td>
+                                </tr>
+                                <tr>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; color:#6b7280;'>Nights / Guests</td>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; font-weight:600;'>{noOfNight} Night(s) / {noOfPax} Guest(s)</td>
+                                </tr>
+                                <tr>
+                                    <td style='padding:12px 14px; color:#6b7280;'>Final Amount</td>
+                                    <td style='padding:12px 14px; font-weight:700; color:#2563eb;'>&#x20B9; {finalTotal:N0}</td>
+                                </tr>
+                            </table>
+
+                            <div style='font-size:16px; font-weight:600; margin:24px 0 12px; color:#0f172a; border-left:4px solid #2563eb; padding-left:10px;'>
+                                Room Details
+                            </div>
+                            <table width='100%' cellpadding='0' cellspacing='0' border='0' style='background:#f9fafb; border-radius:8px; overflow:hidden;'>
+                                <tr style='background:#e5e7eb;'>
+                                    <th style='text-align:left; padding:12px 14px; font-size:13px;'>Room Category</th>
+                                    <th style='text-align:center; padding:12px 14px; font-size:13px;'>Rooms</th>
+                                    <th style='text-align:center; padding:12px 14px; font-size:13px;'>Adults</th>
+                                    <th style='text-align:center; padding:12px 14px; font-size:13px;'>Child</th>
+                                    <th style='text-align:right; padding:12px 14px; font-size:13px;'>Total</th>
+                                </tr>
+                                {string.Join("", bookingDetails.Select(item => $@"
+                                <tr>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb;'>
+                                        {item.RoomCategoryName}<br>
+                                        <span style='font-size:12px; color:#6b7280;'>{item.MealType ?? ""}</span>
+                                    </td>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; text-align:center;'>{item.Room}</td>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; text-align:center;'>{item.Adults}</td>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; text-align:center;'>{item.Child}</td>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; text-align:right; font-weight:700; color:#2563eb;'>&#x20B9; {(item.TotalPrice ?? 0):N0}</td>
+                                </tr>"))}
+                            </table>
+
+                            <div style='font-size:16px; font-weight:600; margin:24px 0 12px; color:#0f172a; border-left:4px solid #2563eb; padding-left:10px;'>
+                                Payment Summary
+                            </div>
+                            <table width='100%' cellpadding='0' cellspacing='0' border='0' style='background:#f9fafb; border-radius:8px; overflow:hidden;'>
+                                <tr>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; color:#6b7280;'>Room Charges</td>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; text-align:right; font-weight:700; color:#2563eb;'>&#x20B9; {totalRoomCharges:N0}</td>
+                                </tr>
+                                <tr>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; color:#6b7280;'>Discount</td>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; text-align:right; font-weight:700; color:#2563eb;'>- &#x20B9; {discount:N0}</td>
+                                </tr>
+                                <tr>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; color:#6b7280;'>SGST + CGST</td>
+                                    <td style='padding:12px 14px; border-bottom:1px solid #e5e7eb; text-align:right; font-weight:700; color:#2563eb;'>&#x20B9; {(sGst + cGst):N0}</td>
+                                </tr>
+                                <tr>
+                                    <td style='padding:12px 14px; font-weight:700;'>Final Amount</td>
+                                    <td style='padding:12px 14px; text-align:right; font-weight:700; color:#2563eb;'>&#x20B9; {finalTotal:N0}</td>
+                                </tr>
+                            </table>
+
+                            <p style='margin:25px 0 0 0;'>
+                                Please process this booking at the earliest.<br>
+                                You can view full details in the Admin Panel.
+                            </p>
+                            <p style='margin:16px 0 0 0;'>Regards,<br><strong>{companyName} Team</strong></p>
+                        </td>
+                    </tr>
+
+                    <!-- Footer -->
+                    <tr>
+                        <td style='background:#f9fafb; text-align:center; padding:18px; font-size:12px; color:#6b7280;'>
+                            © {DateTime.Now.Year} {companyName}. All rights reserved.<br>
+                            This is an automated email.
+                        </td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+</body>
+</html>";
+                                    sendEmail.MailSendSMTP(adminEmail, "", customerSubject, adminHtml, physicalFileFullPath);
+                                }
+                            }
+                            catch (Exception emailEx)
+                            {
+                                // Log if needed
+                            }
+                        });
+                    }
+                }
                 return result;
             }
             catch (SqlException sqlException)
             {
                 logger.LogError(sqlException, sqlException.Message);
-
                 result.ErrorMessage = sqlException.Message;
                 result.Status = (int)ResponseStatusCode.InternaServerError;
                 result.Message = CommonRepositoryMessages.CannotFindAllMessage;
                 result.Details = CommonRepositoryMessages.CannotFindAllDetails;
-
                 throw;
             }
             catch (Exception ex)
             {
                 logger.LogError(ex, ex.Message);
-
                 result.Status = (int)ResponseStatusCode.InternaServerError;
                 result.Message = CommonRepositoryMessages.ExceptionMessage;
                 result.ErrorMessage = ex.Message;
-
                 throw;
             }
         }
+
         private string GetMimeType(string filePath)
         {
             string extension = Path.GetExtension(filePath)?.ToLowerInvariant();
@@ -173,7 +858,8 @@ namespace HotelBooking.DataAccess.Base
                 ".jpeg" => "image/jpeg",
                 ".gif" => "image/gif",
                 ".bmp" => "image/bmp",
-                _ => "image/png" // Default to PNG if unknown
+                ".avif" => "image/avif",
+                _ => "image/png"
             };
         }
         public async Task<List<BookingListEntity>> FindAllBooking(BookingSearchEntity entity, string storedProcedure)

@@ -47,6 +47,7 @@ namespace HotelBooking.Entity.Entities
         public string? CheckInDescription { get; set; }
         public string? PaymentTermsType { get; set; }
         public string? PaymentTermsHeading { get; set; }
+        public string? PaymentTermsUrl { get; set; }
         public string? PaymentTermsDescription { get; set; }
         public string? PrivacyPolicyType { get; set; }
         public string? PrivacyPolicyUrl { get; set; }
@@ -81,6 +82,9 @@ namespace HotelBooking.Entity.Entities
         public Int32? UpdatedBy { get; set; }
         public DateTime? UpdatedOn { get; set; }
         public bool? IsDeleted { get; set; }
+
+        // Amenities types and associated amenities will be nested here for responses
+        public List<AmenitiesTypeDataViewEntity> AmenitiesType { get; set; } = new();
     }
     public class ExperienceImageDataEntity
     { 

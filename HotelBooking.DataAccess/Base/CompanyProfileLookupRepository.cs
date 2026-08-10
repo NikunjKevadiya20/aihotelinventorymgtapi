@@ -97,6 +97,7 @@ namespace HotelBooking.DataAccess.Base
                 dynamicParameters.Add("@StarRating", entity.StarRating);
                 dynamicParameters.Add("@WeekEndNights", entity.WeekEndNights);
                 dynamicParameters.Add("@AmenitiesIDs", entity.AmenitiesIDs);
+                dynamicParameters.Add("@PaymentTermsUrl", entity.PaymentTermsUrl);
                 dynamicParameters.Add("@IsActive", entity.IsActive);
                 dynamicParameters.Add("@CreatedBy", entity.CreatedBy);
                 dynamicParameters.Add("@UpdatedBy", entity.UpdatedBy);

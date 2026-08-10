@@ -38,6 +38,9 @@ namespace HotelBooking.Entity.Entities
         public string? Message { get; set; }
         public int? Status { get; set; }
         public string? ErrorMessage { get; set; }
+
+        // Mapped amenities for this amenities type
+        public List<AmenitiesDataViewEntity> Amenities { get; set; } = new();
     }
 
     public class AmenitiesTypeIDViewEntity : MessageBaseEntity
