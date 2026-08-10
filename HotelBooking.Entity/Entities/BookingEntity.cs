@@ -276,9 +276,9 @@ namespace HotelBooking.Entity.Entities
 
         public string? PromoCode { get; set; }
         public decimal? promoDiscount { get; set; }
-        public DateTime? FromDate { get; set; }
+        public string? FromDate { get; set; }
 
-        public DateTime? ToDate { get; set; }
+        public string? ToDate { get; set; }
 
         public int? NoOfNight { get; set; }
         public decimal? TotalRoomCharges { get; set; }
@@ -561,6 +561,7 @@ namespace HotelBooking.Entity.Entities
         public string? PaymentStatus { get; set; }
         public string? BookingStatus { get; set; }
         public bool? IsHotelDetails { get; set; }
+        public DateTime? CreatedOn { get; set; }
 
     }
 

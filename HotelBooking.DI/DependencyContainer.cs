@@ -109,6 +109,10 @@ namespace HotelBooking.DI
             services.AddScoped<ICompanyProfileDomain, CompanyProfileDomain>();
             services.AddScoped(typeof(ICompanyProfileLookupRepositoryInterface), typeof(CompanyProfileLookupRepository));
 
+            services.AddScoped <IGalleryRepository, GalleryRepository>();
+            services.AddScoped<IGalleryDomain, GalleryDomain>();
+            services.AddScoped(typeof(IGalleryLookupRepositoryInterface), typeof(GalleryLookupRepository));
+
         }
 
     }

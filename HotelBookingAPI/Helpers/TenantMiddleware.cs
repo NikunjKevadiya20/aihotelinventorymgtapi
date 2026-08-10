@@ -23,7 +23,7 @@ namespace HotelBooking.Helpers
             //       var website = context.Request.Headers["URL"]
             //.FirstOrDefault()?.Trim().ToLower();
 
-            var website = "VISIONTECHSOLUTIONS6";
+            var website = "SHINEKTECHNOLOGY4";
 
             if (string.IsNullOrEmpty(website))
             {

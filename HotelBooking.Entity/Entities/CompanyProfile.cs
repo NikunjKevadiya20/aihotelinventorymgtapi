@@ -47,6 +47,7 @@ namespace HotelBooking.Entity.Entities
         public string? CheckInDescription { get; set; }
         public string? PaymentTermsType { get; set; }
         public string? PaymentTermsHeading { get; set; }
+        public string? PaymentTermsUrl { get; set; }
         public string? PaymentTermsDescription { get; set; }
         public string? PrivacyPolicyType { get; set; }
         public string? PrivacyPolicyUrl { get; set; }

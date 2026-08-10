@@ -86,12 +86,13 @@ namespace HotelBooking.Entity.Common
         public const string EasebuzzSalt = "MU7YIKOH6";
         public const string EasebuzzEnv = "test";
 
-        public const string SMSGateway = "http://sms5.magicsms.co.in/V2/http-api.php?apikey=eVlt8XRsgGXnjwVz&senderid=AJMODI&format=json&";
+        public const string SMSGateway = "http://sms5.magicsms.co.in/V2/http-api.php?apikey=tBx0tWlskI0aHXEq&senderid=BSHOLI&format=json&";
         public const string SMTPAddress = "smtp.gmail.com";
         public const string SMTPPort = "587";
         public const string EmailAddress = "hello@brandinsight.digital";
-        public const string EmailDisplayName = "Hotel Booking";
-        public const string EmailPassword = "qcwd rvym vphn xvye";
+        public const string EmailPassword = "tsfp jqqp ygep pgqh";
+        public const string EmailDisplayName = "Chashmawale";
+  
 
         public const string SecretKey = "HotelBookingTOKENKEYSECRETWEBISTEPROJECTS01";
 

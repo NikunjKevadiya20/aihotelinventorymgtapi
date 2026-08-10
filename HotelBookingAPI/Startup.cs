@@ -229,11 +229,11 @@ namespace HotelBooking
             app.UseRouting();
             // Tenant middleware FIRST
             app.UseMiddleware<TenantMiddleware>();
+            app.UseMiddleware<JwtMiddleware>();
 
             app.UseAuthorization();
 
             // custom jwt auth middleware
-            app.UseMiddleware<JwtMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

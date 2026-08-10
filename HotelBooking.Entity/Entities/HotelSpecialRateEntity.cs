@@ -139,6 +139,7 @@
 
         // List of amenities types (tblAmenitiesType)
         public List<AmenitiesTypeDataViewEntity> AmenitiesType { get; set; } = new();
+        public List<GalleryDataViewEntity> GalleryImage { get; set; } = new();
     }
     public class RoomTypeEntity
     {

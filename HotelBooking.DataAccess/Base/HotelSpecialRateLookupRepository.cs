@@ -560,6 +560,7 @@ namespace HotelBooking.DataAccess.Base
                 
                 // Result Set 6 : Amenities
                 var amenitiesList = multi.Read<AmenitiesDataViewEntity>().ToList();
+                var GalleryImage = multi.Read<GalleryDataViewEntity>().ToList();
 
                 if (roomList.Any())
                 {
@@ -692,6 +693,7 @@ namespace HotelBooking.DataAccess.Base
                         room.AmenitiesType = roomAmenitiesTypes;
                     }
 
+                    result.GalleryImage = GalleryImage;
                     // Do not set a top-level flat Amenities list; amenities are available under AmenitiesType[].Amenities
 
                 }
