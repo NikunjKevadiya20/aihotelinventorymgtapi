@@ -44,6 +44,7 @@ namespace HotelBooking.DataAccess.Base
                 dynamicParameters.Add("@CreatedBy", entity.CreatedBy);
                 dynamicParameters.Add("@OperationType", CommonRepositoryConstants.Insert);
                 var data = await _dbConnection.QueryAsync(storedProcedure, dynamicParameters, commandType: CommandType.StoredProcedure);
+                result.ID = data.FirstOrDefault().ID;
                 result.Message = data.FirstOrDefault().Message;
                 result.Details = data.FirstOrDefault().Details;
 
