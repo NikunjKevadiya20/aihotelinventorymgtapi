@@ -20,10 +20,10 @@ namespace HotelBooking.Helpers
             IRedisService redis,
             IConfiguration configuration)
         {
-            //       var website = context.Request.Headers["URL"]
-            //.FirstOrDefault()?.Trim().ToLower();
+                   var website = context.Request.Headers["URL"]
+            .FirstOrDefault()?.Trim().ToLower();
 
-            var website = "AMITINFOTECK";
+            //var website = "AMITINFOTECK";
 
             if (string.IsNullOrEmpty(website))
             {
