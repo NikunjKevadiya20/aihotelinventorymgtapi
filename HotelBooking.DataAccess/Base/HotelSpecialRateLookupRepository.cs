@@ -515,9 +515,7 @@ namespace HotelBooking.DataAccess.Base
         #endregion
 
         #region Hotel Room Wise Rate List
-        public async Task<HotelListViewEntity> HotelRoomWiseRateList(
-            HotelListEntity entity,
-            string storedProcedure)
+        public async Task<HotelListViewEntity> HotelRoomWiseRateList(HotelListEntity entity,string storedProcedure)
         {
             HotelListViewEntity result = new HotelListViewEntity();
 
@@ -561,6 +559,9 @@ namespace HotelBooking.DataAccess.Base
                 // Result Set 6 : Amenities
                 var amenitiesList = multi.Read<AmenitiesDataViewEntity>().ToList();
                 var GalleryImage = multi.Read<GalleryDataViewEntity>().ToList();
+
+                // Result Set 8 : GST
+                var GST = multi.Read<GSTListViewEntity>().ToList();
 
                 if (roomList.Any())
                 {
@@ -694,6 +695,7 @@ namespace HotelBooking.DataAccess.Base
                     }
 
                     result.GalleryImage = GalleryImage;
+                    result.GSTList = GST;
                     // Do not set a top-level flat Amenities list; amenities are available under AmenitiesType[].Amenities
 
                 }
