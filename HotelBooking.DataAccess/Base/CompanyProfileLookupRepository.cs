@@ -61,7 +61,7 @@ namespace HotelBooking.DataAccess.Base
                 dynamicParameters.Add("@TermsAndConditionsUrl", entity.TermsAndConditionsUrl);
                 dynamicParameters.Add("@TermsAndConditionsText", entity.TermsAndConditionsText);
                 dynamicParameters.Add("@CreditCardTerms", entity.CreditCardTerms);
-                dynamicParameters.Add("@IsCloseOutTime", entity.IsCloseOutTime);
+                dynamicParameters.Add("@IsCloseOutTime", entity.IsCloseOutTime ?? false);
                 dynamicParameters.Add("@CheckInTime", entity.CheckInTime);
                 dynamicParameters.Add("@CheckOutTime", entity.CheckOutTime);
                 dynamicParameters.Add("@EstimatedArrivalFrom", entity.EstimatedArrivalFrom);
