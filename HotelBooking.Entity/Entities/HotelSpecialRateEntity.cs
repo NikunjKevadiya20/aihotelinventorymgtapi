@@ -140,6 +140,20 @@
         // List of amenities types (tblAmenitiesType)
         public List<AmenitiesTypeDataViewEntity> AmenitiesType { get; set; } = new();
         public List<GalleryDataViewEntity> GalleryImage { get; set; } = new();
+        public List<GSTListViewEntity> GSTList { get; set; } = new();
+    }
+    public class GSTListViewEntity
+    {
+        public int? ID { get; set; }
+        public int? GSTPersantage { get; set; }
+        public int? FromAmount { get; set; }
+        public int? ToAmount { get; set; }
+        public Boolean? IsActive { get; set; }
+        public string? Details { get; set; }
+        public string? Message { get; set; }
+        public int? Status { get; set; }
+        public string? ErrorMessage { get; set; }
+
     }
     public class RoomTypeEntity
     {
