@@ -82,6 +82,7 @@ namespace HotelBooking.Controllers
                 });
             }
         }
+
         [HttpGet("GetCompanyProfile")]
         [Authorize]
         public async Task<IActionResult> GetCompanyProfile()
@@ -192,5 +193,7 @@ namespace HotelBooking.Controllers
             }
         }
         #endregion
+
+
     }
 }

@@ -1,19 +1,20 @@
 ﻿using Dapper;
+using Dapper;
+using DapperParameters;
 using HotelBooking.Entity.Common;
 using HotelBooking.Entity.Common.Entities;
 using HotelBooking.Entity.Common.Enums;
 using HotelBooking.Entity.Entities;
 using Microsoft.Extensions.Logging;
+using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Data;
+using System.Data.SqlClient;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
-using Dapper;
-using Microsoft.Extensions.Logging;
-using System.Data;
-using System.Data.SqlClient;
 
 
 namespace HotelBooking.DataAccess.Base
@@ -22,11 +23,13 @@ namespace HotelBooking.DataAccess.Base
     {
         private readonly IDbConnection _dbConnection;
         private readonly ILogger<CompanyProfileLookupRepository> _logger;
+
         public CompanyProfileLookupRepository(ILogger<CompanyProfileLookupRepository> logger, IDbConnection dbConnection)
         {
             _logger = logger;
             _dbConnection = dbConnection;
         }
+
         public async Task<ResultModel> InsertCompanyProfile(CompanyProfile entity, string storedProcedure)
         {
             ResultModel result = new ResultModel();
@@ -97,11 +100,22 @@ namespace HotelBooking.DataAccess.Base
                 dynamicParameters.Add("@StarRating", entity.StarRating);
                 dynamicParameters.Add("@WeekEndNights", entity.WeekEndNights);
                 dynamicParameters.Add("@AmenitiesIDs", entity.AmenitiesIDs);
-                dynamicParameters.Add("@PaymentTermsUrl", entity.PaymentTermsUrl);
+                dynamicParameters.Add("@PaymentTermsUrl", entity.PaymentTermsUrl); 
+                dynamicParameters.Add("@TimeZone", entity.TimeZone);
+                dynamicParameters.Add("@PetPolicy", entity.PetPolicy);
+                dynamicParameters.Add("@NoofRooms", entity.NoofRooms);
+                dynamicParameters.Add("@NoofRoomsTypes", entity.NoofRoomsTypes);
+                dynamicParameters.Add("@NoofFloors", entity.NoofFloors);
+                dynamicParameters.Add("@PropertyCode", entity.PropertyCode);
                 dynamicParameters.Add("@IsActive", entity.IsActive);
                 dynamicParameters.Add("@CreatedBy", entity.CreatedBy);
                 dynamicParameters.Add("@UpdatedBy", entity.UpdatedBy);
-              
+                dynamicParameters.Add("@IsDeleted", entity.IsDeleted);
+
+                dynamicParameters.AddTable<CompanyProfileContact>(
+                    "@CompanyProfileContacts", "dbo.CompanyProfileContactUDTT",
+                    entity.CompanyProfileContacts ?? new List<CompanyProfileContact>());
+
                 dynamicParameters.Add("@OperationType", CommonRepositoryConstants.Insert);
                 var data = await _dbConnection.QueryAsync(storedProcedure, dynamicParameters, commandType: CommandType.StoredProcedure);
                 result.Message = data.FirstOrDefault().Message;
@@ -125,24 +139,47 @@ namespace HotelBooking.DataAccess.Base
             }
             return result;
         }
+
         public async Task<CompanyProfile> GetCompanyProfile(string storedProcedure)
         {
             CompanyProfile result = new CompanyProfile();
+
             try
             {
                 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+
                 DynamicParameters dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@OperationType", 3);
-                var data = await _dbConnection.QuerySingleOrDefaultAsync<CompanyProfile>(storedProcedure, dynamicParameters, commandType: CommandType.StoredProcedure);
-                return data;
+
+                using (var multi = await _dbConnection.QueryMultipleAsync(
+                    storedProcedure,
+                    dynamicParameters,
+                    commandType: CommandType.StoredProcedure))
+                {
+                    // First result: Company Profile
+                    result = await multi.ReadSingleOrDefaultAsync<CompanyProfile>();
+
+                    if (result == null)
+                    {
+                        return new CompanyProfile();
+                    }
+
+                    // Second result: Company Profile Contacts
+                    result.CompanyProfileList = (await multi.ReadAsync<CompanyProfileContactViewEntity>()).ToList();
+
+                }
+
+                return result;
             }
             catch (SqlException sqlException)
             {
                 _logger.LogError(sqlException, sqlException.Message);
+
                 result.ErrorMessage = sqlException.Message;
                 result.Status = (int)ResponseStatusCode.InternaServerError;
                 result.Message = CommonRepositoryMessages.CannotFindAllMessage;
                 result.Details = CommonRepositoryMessages.CannotFindAllDetails;
+
                 throw;
             }
             catch (Exception ex)
@@ -150,10 +187,10 @@ namespace HotelBooking.DataAccess.Base
                 result.Status = (int)ResponseStatusCode.InternaServerError;
                 result.Message = CommonRepositoryMessages.ExceptionMessage;
                 result.ErrorMessage = ex.Message;
+
                 throw;
             }
         }
-
 
         #region Experience Image Update
         public async Task<ResultModel> CompanyProfileImageUpdate(string? Image,  int? UpdatedBy, string storedProcedure)
@@ -188,5 +225,6 @@ namespace HotelBooking.DataAccess.Base
             }
         }
         #endregion
+
     }
 }

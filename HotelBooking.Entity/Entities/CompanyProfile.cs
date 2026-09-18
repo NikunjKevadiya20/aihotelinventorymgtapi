@@ -76,12 +76,23 @@ namespace HotelBooking.Entity.Entities
         public string? Currency { get; set; }
         public decimal? StarRating { get; set; }
         public string? WeekEndNights { get; set; }
+        public string? TimeZone { get; set; }
+        public string? PetPolicy { get; set; }
+        public int? NoofRooms { get; set; }
+        public int? NoofRoomsTypes { get; set; }
+        public int? NoofFloors { get; set; }
+        public string? PropertyCode { get; set; }
         public bool? IsActive { get; set; }
         public Int32? CreatedBy { get; set; }
         public DateTime? CreatedOn { get; set; }
         public Int32? UpdatedBy { get; set; }
         public DateTime? UpdatedOn { get; set; }
         public bool? IsDeleted { get; set; }
+
+        public List<CompanyProfileContact>? CompanyProfileContacts { get; set; }
+
+        //For View Entity
+        public List<CompanyProfileContactViewEntity>? CompanyProfileList { get; set; }
 
         // Amenities types and associated amenities will be nested here for responses
         public List<AmenitiesTypeDataViewEntity> AmenitiesType { get; set; } = new();
@@ -93,5 +104,21 @@ namespace HotelBooking.Entity.Entities
     public class CompanyProfileIDEntity : MessageBaseEntity
     {
         public int? Id { get; set; }
+    }
+    public class CompanyProfileContact
+    {
+        public int? ID { get; set; }
+        public string? Manager { get; set; }
+        public string? Email { get; set; }
+        public string? Telephone { get; set; }
+        public string? Type { get; set; }
+    }
+    public class CompanyProfileContactViewEntity
+    {
+        public int? ID { get; set; }
+        public string? Manager { get; set; }
+        public string? Email { get; set; }
+        public string? Telephone { get; set; }
+        public string? Type { get; set; }
     }
 }
