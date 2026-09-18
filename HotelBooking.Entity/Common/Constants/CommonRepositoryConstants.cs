@@ -91,7 +91,7 @@ namespace HotelBooking.Entity.Common
         public const string SMTPPort = "587";
         public const string EmailAddress = "hello@brandinsight.digital";
         public const string EmailPassword = "tsfp jqqp ygep pgqh";
-        public const string EmailDisplayName = "Chashmawale";
+        public const string EmailDisplayName = "HotelBooking";
   
 
         public const string SecretKey = "HotelBookingTOKENKEYSECRETWEBISTEPROJECTS01";

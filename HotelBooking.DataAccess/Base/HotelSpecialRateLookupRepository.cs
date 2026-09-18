@@ -562,16 +562,58 @@ namespace HotelBooking.DataAccess.Base
 
                 // Result Set 8 : GST
                 var GST = multi.Read<GSTListViewEntity>().ToList();
+                var SoldOutDate = multi.Read<SoldOutDateEntity>().ToList();
 
-                if (roomList.Any())
+                var hasAnyData = roomList.Any() || amenitiesTypeList.Any() || amenitiesList.Any() || GalleryImage.Any() || GST.Any() || rateList.Any();
+
+                if (hasAnyData)
                 {
                     result.Status = (int)ResponseStatusCode.Success;
 
-                    if (rateList.Any())
+                    // Determine an appropriate message/details from available result sets.
+                    string? successMessage = null;
+                    string? successDetails = null;
+
+                    if (rateList.Any() && !string.IsNullOrWhiteSpace(rateList.First().Message))
                     {
-                        result.Message = rateList.First().Message;
-                        result.Details = rateList.First().Details;
+                        successMessage = rateList.First().Message;
+                        successDetails = rateList.First().Details;
                     }
+                    else if (amenitiesTypeList.Any() && !string.IsNullOrWhiteSpace(amenitiesTypeList.First().Message))
+                    {
+                        successMessage = amenitiesTypeList.First().Message;
+                        successDetails = amenitiesTypeList.First().Details;
+                    }
+                    else if (amenitiesList.Any() && !string.IsNullOrWhiteSpace(amenitiesList.First().Message))
+                    {
+                        successMessage = amenitiesList.First().Message;
+                        successDetails = amenitiesList.First().Details;
+                    }
+                    else if (GalleryImage.Any() && !string.IsNullOrWhiteSpace(GalleryImage.First().Message))
+                    {
+                        successMessage = GalleryImage.First().Message;
+                        successDetails = GalleryImage.First().Details;
+                    }
+                    else if (GST.Any() && !string.IsNullOrWhiteSpace(GST.First().Message))
+                    {
+                        successMessage = GST.First().Message;
+                        successDetails = GST.First().Details;
+                    }
+                    else if (companyProfile != null && !string.IsNullOrWhiteSpace(companyProfile.Message))
+                    {
+                        successMessage = companyProfile.Message;
+                        successDetails = companyProfile.Details;
+                    }
+
+                    // Fallback default
+                    if (string.IsNullOrWhiteSpace(successMessage))
+                    {
+                        successMessage = "success";
+                        successDetails = "Hotel data found successfully";
+                    }
+
+                    result.Message = successMessage;
+                    result.Details = successDetails;
 
                     result.RoomType = roomList
                     .Select(room => new RoomTypeEntity
@@ -696,6 +738,7 @@ namespace HotelBooking.DataAccess.Base
 
                     result.GalleryImage = GalleryImage;
                     result.GSTList = GST;
+                    result.SoldOutDate = SoldOutDate;
                     // Do not set a top-level flat Amenities list; amenities are available under AmenitiesType[].Amenities
 
                 }

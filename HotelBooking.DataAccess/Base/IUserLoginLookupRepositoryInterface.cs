@@ -12,6 +12,9 @@ namespace HotelBooking.DataAccess.Base
         Task<LoginResponseEntity> CheckRefreshToken(UserToken entity, string storedProcedure);
         Task<ResultModel> ManageUserChangePassword(ChangePasswordRequestEntity entity, string storedProcedure);
         Task<ResultModel> ManageUserResetPassword(ChangePasswordRequestEntity entity, string storedProcedure);
+        Task<EmailOtpVerificationEntity> OtpGenerateByEmail(EmailOtpVerificationEntity entity, string storedProcedure);
+        Task<EmailOtpVerificationEntity> OtpVerifyByEmail(EmailOtpVerificationEntity entity, string storedProcedure);
+        Task<ResultModel> UpdateCancellation(EmailOtpCancellationEntity entity, string storedProcedure);
     }
 }
 

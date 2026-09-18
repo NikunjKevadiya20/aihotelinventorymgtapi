@@ -16,6 +16,7 @@ namespace HotelBooking.DataAccess.Interfaces
         Task<List<DashboardInquiryData>> GetDashboardInquiry(DashboardCustomerRequestEntity entity);
 
         Task<List<DashboardTomorrowCheckInData>> GetDashboardTomorrowCheckIn();
+        Task<ReleaseTempBookingViewEntity> ReleaseTempBooking(ReleaseTempBookingEntity entity);
 
 
         //Task<PDFDownloadResponse> PDFDownload(BookingRequestEntity entity);

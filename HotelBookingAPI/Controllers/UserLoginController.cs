@@ -33,14 +33,19 @@ namespace HotelBooking.Controllers
         {
             try
             {
-                //var token = HttpContext.Request.Headers["Authorization"]
-                // .FirstOrDefault()?.Split(" ").Last();
-
-                //int userId = JwtMiddleware.GetUserIdFromToken(token);
-                //int isUser = JwtMiddleware.GetIsUserFromToken(token);
-         
-
                 var result = await domain.UserLogin(entity);
+
+                // Company subscription expired check (set in repository)
+                if (string.Equals(result.Message, "company_expired", StringComparison.OrdinalIgnoreCase))
+                {
+                    return StatusCode((int)HttpStatusCode.BadRequest, new ResultModel()
+                    {
+                        Status = (int)ResponseStatusCode.BadRequestError,
+                        Message = "failed",
+                        Details = result.Details,
+                        Data = string.Empty
+                    });
+                }
                 if (result.Message == "success")
                 {
                     return StatusCode((int)HttpStatusCode.OK, new ResultModel()
@@ -322,7 +327,205 @@ namespace HotelBooking.Controllers
             }
         }
         #endregion
+          #region   OtpGenerateByEmail
+        [HttpPost("OtpGenerateByEmail")]
+        // [Authorize]
+        public async Task<IActionResult> OtpGenerateByEmail(EmailOtpVerificationEntity entity)
+        {
 
+            try
+            {
+                //var token = HttpContext.Request.Headers["Authorization"]
+                //.FirstOrDefault()?.Split(" ").Last();
+
+                //int userId = JwtMiddleware.GetUserIdFromToken(token);
+                int userId = 1;
+
+                if (userId != 0)
+                {
+
+                    var result = await domain.OtpGenerateByEmail(entity);
+                    if (result.Message == "success")
+                    {
+                        return StatusCode((int)HttpStatusCode.OK, new ResultModel()
+                        {
+                            Status = (int)ResponseStatusCode.Success,
+                            Message = Convert.ToString(result.Message),
+                            Details = Convert.ToString(result.Details),
+                            Data = result,
+                        });
+                    }
+                    else
+                    {
+                        return StatusCode((int)HttpStatusCode.NotFound, new ResultModel()
+                        {
+                            Data = string.Empty,
+                            Message = Convert.ToString(result.Message),
+                            Details = Convert.ToString(result.Details),
+                            Status = (int)ResponseStatusCode.NotFound,
+                            ErrorMessage = Convert.ToString(result.ErrorMessage),
+                        });
+                    }
+                }
+                else
+                {
+                    return StatusCode((int)ResponseStatusCode.TokenExpired, new ResultModel()
+                    {
+                        Data = string.Empty,
+                        Message = CommonRepositoryMessages.NotFoundMessageEN,
+                        Details = CommonRepositoryMessages.NotFoundMessageEN,
+                        Status = (int)ResponseStatusCode.TokenExpired,
+
+                    });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, new ResultModel()
+                {
+                    Message = CommonRepositoryMessages.NotFoundMessageEN,
+                    Details = CommonRepositoryMessages.NotFoundMessageEN,
+                    ErrorMessage = ex.Message,
+                    Status = (int)ResponseStatusCode.InternaServerError,
+                });
+            }
+
+        }
+        #endregion
+        #region   OtpVerifyByEmail
+        [HttpPost("OtpVerifyByEmail")]
+        // [Authorize]
+        public async Task<IActionResult> OtpVerifyByEmail(EmailOtpVerificationEntity entity)
+        {
+
+            try
+            {
+                //var token = HttpContext.Request.Headers["Authorization"]
+                //.FirstOrDefault()?.Split(" ").Last();
+
+                //int userId = JwtMiddleware.GetUserIdFromToken(token);
+                int userId = 1;
+
+                if (userId != 0)
+                {
+
+                    var result = await domain.OtpVerifyByEmail(entity);
+                    if (result.Message == "success")
+                    {
+                        return StatusCode((int)HttpStatusCode.OK, new ResultModel()
+                        {
+                            Status = (int)ResponseStatusCode.Success,
+                            Message = Convert.ToString(result.Message),
+                            Details = Convert.ToString(result.Details),
+                            Data = result,
+                        });
+                    }
+                    else
+                    {
+                        return StatusCode((int)HttpStatusCode.NotFound, new ResultModel()
+                        {
+                            Data = string.Empty,
+                            Message = Convert.ToString(result.Message),
+                            Details = Convert.ToString(result.Details),
+                            Status = (int)ResponseStatusCode.NotFound,
+                            ErrorMessage = Convert.ToString(result.ErrorMessage),
+                        });
+                    }
+                }
+                else
+                {
+                    return StatusCode((int)ResponseStatusCode.TokenExpired, new ResultModel()
+                    {
+                        Data = string.Empty,
+                        Message = CommonRepositoryMessages.NotFoundMessageEN,
+                        Details = CommonRepositoryMessages.NotFoundMessageEN,
+                        Status = (int)ResponseStatusCode.TokenExpired,
+
+                    });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, new ResultModel()
+                {
+                    Message = CommonRepositoryMessages.NotFoundMessageEN,
+                    Details = CommonRepositoryMessages.NotFoundMessageEN,
+                    ErrorMessage = ex.Message,
+                    Status = (int)ResponseStatusCode.InternaServerError,
+                });
+            }
+
+        }
+        #endregion.
+
+        #region   UpdateCancellation
+        [HttpPost("UpdateCancellation")]
+        // [Authorize]
+        public async Task<IActionResult> UpdateCancellation(EmailOtpCancellationEntity entity)
+        {
+
+            try
+            {
+                //var token = HttpContext.Request.Headers["Authorization"]
+                //.FirstOrDefault()?.Split(" ").Last();
+
+                //int userId = JwtMiddleware.GetUserIdFromToken(token);
+                int userId = 1;
+
+                if (userId != 0)
+                {
+
+                    var result = await domain.UpdateCancellation(entity);
+                    if (result.Message == "success")
+                    {
+                        return StatusCode((int)HttpStatusCode.OK, new ResultModel()
+                        {
+                            Status = (int)ResponseStatusCode.Success,
+                            Message = Convert.ToString(result.Message),
+                            Details = Convert.ToString(result.Details),
+                            Data = result,
+                        });
+                    }
+                    else
+                    {
+                        return StatusCode((int)HttpStatusCode.NotFound, new ResultModel()
+                        {
+                            Data = string.Empty,
+                            Message = Convert.ToString(result.Message),
+                            Details = Convert.ToString(result.Details),
+                            Status = (int)ResponseStatusCode.NotFound,
+                            ErrorMessage = Convert.ToString(result.ErrorMessage),
+                        });
+                    }
+                }
+                else
+                {
+                    return StatusCode((int)ResponseStatusCode.TokenExpired, new ResultModel()
+                    {
+                        Data = string.Empty,
+                        Message = CommonRepositoryMessages.NotFoundMessageEN,
+                        Details = CommonRepositoryMessages.NotFoundMessageEN,
+                        Status = (int)ResponseStatusCode.TokenExpired,
+
+                    });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, new ResultModel()
+                {
+                    Message = CommonRepositoryMessages.NotFoundMessageEN,
+                    Details = CommonRepositoryMessages.NotFoundMessageEN,
+                    ErrorMessage = ex.Message,
+                    Status = (int)ResponseStatusCode.InternaServerError,
+                });
+            }
+
+        }
+        #endregion
 
     }
 

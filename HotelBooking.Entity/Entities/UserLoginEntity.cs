@@ -77,4 +77,16 @@ namespace HotelBooking.Entity.Entities
 
 
     }
+    public class EmailOtpVerificationEntity : MessageBaseEntity
+    {
+        public string? EmailID { get; set; }
+        public int? OTP { get; set; }
+        public string? Image { get; set; }
+    }
+    public class EmailOtpCancellationEntity : MessageBaseEntity
+    {
+        public string? EmailID { get; set; }
+        public int? OTP { get; set; }
+        public int? ID { get; set; }
+    }
 }

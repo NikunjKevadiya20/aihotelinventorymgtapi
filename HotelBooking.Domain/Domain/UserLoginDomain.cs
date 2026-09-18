@@ -52,5 +52,17 @@ namespace HotelBooking.Domain.Domains
             return await repository.ManageUserResetPassword(entity);
 
         }
+        public async Task<EmailOtpVerificationEntity> OtpGenerateByEmail(EmailOtpVerificationEntity entity)
+        {
+            return await repository.OtpGenerateByEmail(entity);
+        }
+        public async Task<EmailOtpVerificationEntity> OtpVerifyByEmail(EmailOtpVerificationEntity entity)
+        {
+            return await repository.OtpVerifyByEmail(entity);
+        }
+        public async Task<ResultModel> UpdateCancellation(EmailOtpCancellationEntity entity)
+        {
+            return await repository.UpdateCancellation(entity);
+        }
     }
 }

@@ -15,6 +15,7 @@ namespace HotelBooking.DataAccess.Base
         Task<List<DashboardInquiryData>> GetDashboardInquiry(DashboardCustomerRequestEntity entity, string storedProcedure);
 
         Task<List<DashboardTomorrowCheckInData>> GetDashboardTomorrowCheckIn(string storedProcedure);
+        Task<ReleaseTempBookingViewEntity> ReleaseTempBooking(ReleaseTempBookingEntity entity, string storedProcedure);
       
         //Task<PDFDownloadResponse> PDFDownload(BookingRequestEntity entity, string storedProcedure);
 

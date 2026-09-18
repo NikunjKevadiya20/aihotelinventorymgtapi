@@ -47,6 +47,11 @@ namespace HotelBooking.DataAccess.Repositories
         {
             return await repository.GetDashboardTomorrowCheckIn( "sp_ManageGetBookingDetails");
         }
+
+        public async Task<ReleaseTempBookingViewEntity> ReleaseTempBooking(ReleaseTempBookingEntity entity)
+        {
+            return await repository.ReleaseTempBooking(entity, "sp_ReleaseTempBooking");
+        }
         //public async Task<PDFDownloadResponse> PDFDownload(BookingRequestEntity entity)
         //{
         //    return await repository.PDFDownload(entity, "sp_ManageBookingPDFGenerate");

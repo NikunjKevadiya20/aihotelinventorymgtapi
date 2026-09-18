@@ -52,6 +52,7 @@ namespace HotelBooking.Entity.Entities
         public string? RefundStatus { get; set; }
         public bool? Captured { get; set; }
         public string? Description { get; set; }
+        public string? ErrorSource { get; set; }
         public string? CardId { get; set; }
         public string? Bank { get; set; }
         public string? Wallet { get; set; }

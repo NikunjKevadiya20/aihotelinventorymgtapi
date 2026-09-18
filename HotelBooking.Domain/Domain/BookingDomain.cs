@@ -49,6 +49,11 @@ namespace HotelBooking.Domain.Domain
         {
             return await repository.GetDashboardTomorrowCheckIn();
         }
+
+        public async Task<ReleaseTempBookingViewEntity> ReleaseTempBooking(ReleaseTempBookingEntity entity)
+        {
+            return await repository.ReleaseTempBooking(entity);
+        }
         //public async Task<PDFDownloadResponse> PDFDownload(BookingRequestEntity entity)
         //{
         //    return await repository.PDFDownload(entity);

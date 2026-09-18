@@ -32,6 +32,18 @@ namespace HotelBooking.DataAccess.Repositories
         {
             return await repository.ManageUserResetPassword(entity, "sp_ManageLogin");
         }
+        public async Task<EmailOtpVerificationEntity> OtpGenerateByEmail(EmailOtpVerificationEntity entity)
+        {
+            return await repository.OtpGenerateByEmail(entity, "sp_ManageOtpVerify");
+        }
+        public async Task<EmailOtpVerificationEntity> OtpVerifyByEmail(EmailOtpVerificationEntity entity)
+        {
+            return await repository.OtpVerifyByEmail(entity, "sp_ManageOtpVerifyByEmail");
+        }
+        public async Task<ResultModel> UpdateCancellation(EmailOtpCancellationEntity entity)
+        {
+            return await repository.UpdateCancellation(entity, "sp_ManageOtpVerify");
+        }
     }
 
 }

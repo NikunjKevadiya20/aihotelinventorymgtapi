@@ -38,6 +38,8 @@ namespace HotelBooking.Entity.Entities
         public int? CreatedBy { get; set; }
         public int? UpdatedBy { get; set; }
         public string? Remarks {  get; set; }
+        public string? someoneElseFirstName {  get; set; }
+        public string? someoneElseLastName {  get; set; }
         public bool? IsBookingforelse {  get; set; }
         public string? GSTNo {  get; set; }
         public string? Estimatedarrivaltime {  get; set; }
@@ -188,6 +190,10 @@ namespace HotelBooking.Entity.Entities
         public string? Estimatedarrivaltime { get; set; }
         public int? NoOfPax { get; set; }
     }
+    public class ReleaseTempBookingEntity
+    {
+               public int? ID { get; set; }
+    }
 
     public class BookingResponseEntity
     {
@@ -277,7 +283,8 @@ namespace HotelBooking.Entity.Entities
         public string? PromoCode { get; set; }
         public decimal? promoDiscount { get; set; }
         public string? FromDate { get; set; }
-
+        public string? someoneElseFirstName { get; set; }
+        public string? someoneElseLastName { get; set; }
         public string? ToDate { get; set; }
 
         public int? NoOfNight { get; set; }
@@ -307,6 +314,11 @@ namespace HotelBooking.Entity.Entities
         public int? NoOfPax { get; set; }
 
         public List<InsertBookingDetailEntity>? BookingDetails { get; set; }
+        public CompanyProfile? CompanyInfo { get; set; }   
+    }
+    public class ReleaseTempBookingViewEntity : MessageBaseEntity
+    {
+        public int? ID { get; set; }
     }
     public class InsertBookingDetailEntity
     {

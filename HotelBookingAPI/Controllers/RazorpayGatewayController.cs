@@ -192,7 +192,7 @@ namespace HotelBooking.Controllers
                         booking_no = request.booking_no,
                         ErrorCode = paymentDetail.ContainsKey("error_code") ? paymentDetail["error_code"]?.ToString() : null,
                         ErrorDescription = paymentDetail.ContainsKey("error_description") ? paymentDetail["error_description"]?.ToString() : null,
-                        ErrorHotelBookingrce = paymentDetail.ContainsKey("error_HotelBookingrce") ? paymentDetail["error_HotelBookingrce"]?.ToString() : null,
+                        ErrorSource = paymentDetail.ContainsKey("error_HotelBookingrce") ? paymentDetail["error_HotelBookingrce"]?.ToString() : null,
                         ErrorStep = paymentDetail.ContainsKey("error_step") ? paymentDetail["error_step"]?.ToString() : null,
                         ErrorReason = paymentDetail.ContainsKey("error_reason") ? paymentDetail["error_reason"]?.ToString() : null,
                         CreatedAt = paymentDetail.ContainsKey("created_at") ? Convert.ToInt32(paymentDetail["created_at"]) : (int?)null,

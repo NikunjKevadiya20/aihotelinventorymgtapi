@@ -218,7 +218,6 @@ namespace HotelBooking
                 app.UseSwaggerUI(c => c.SwaggerEndpoint("/swagger/v1/swagger.json", "HotelBookingAPI v1"));
 
             }
-            app.UseAuthentication();
 
             app.UseCors(x => x
             .AllowAnyMethod()
@@ -226,6 +225,7 @@ namespace HotelBooking
             .SetIsOriginAllowed(origin => true) // allow any origin
             .AllowCredentials()); // allow credentials
 
+            app.UseAuthentication();
             app.UseRouting();
             // Tenant middleware FIRST
             app.UseMiddleware<TenantMiddleware>();

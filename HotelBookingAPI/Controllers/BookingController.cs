@@ -84,16 +84,16 @@ namespace HotelBooking.Controllers
 
         #region Find All Booking
         [HttpPost("FindAllBooking")]
-        [Authorize]
+        //[Authorize]
         public async Task<IActionResult> FindAllBooking(BookingSearchEntity entity)
         {
             try
             {
-                var token = HttpContext.Request.Headers["Authorization"]
-                    .FirstOrDefault()?.Split(" ").Last();
+                //var token = HttpContext.Request.Headers["Authorization"]
+                //    .FirstOrDefault()?.Split(" ").Last();
 
-                int userId = JwtMiddleware.GetUserIdFromToken(token);
-
+                //int userId = JwtMiddleware.GetUserIdFromToken(token);
+                int userId = 1;
                 if (userId != 0)
                 {
                     var result = await domain.FindAllBooking(entity);
@@ -128,6 +128,7 @@ namespace HotelBooking.Controllers
             }
         }
         #endregion
+       
 
         #region Insert Booking (final)
         [HttpPost("InsertBooking")]
@@ -254,6 +255,19 @@ namespace HotelBooking.Controllers
                 if (userId != 0)
                 {
                     var result = await domain.DashboardCount(entity);
+
+                    // If company subscription expired, return custom 420 RefreshTokenExpired
+                    if (string.Equals(result.Message, "company_expired", StringComparison.OrdinalIgnoreCase))
+                    {
+                        return StatusCode((int)ResponseStatusCode.RefreshTokenExpired, new ResultModel()
+                        {
+                            Status = (int)ResponseStatusCode.RefreshTokenExpired,
+                            Message = "failed",
+                            Details = result.Details,
+                            Data = string.Empty
+                        });
+                    }
+
                     return StatusCode((int)HttpStatusCode.OK, new ResultModel()
                     {
                         Status = (int)ResponseStatusCode.Success,
@@ -687,6 +701,67 @@ namespace HotelBooking.Controllers
                         Details = string.Empty,
                         Data = result,
                     });
+                }
+                else
+                {
+                    return StatusCode((int)ResponseStatusCode.TokenExpired, new ResultModel()
+                    {
+                        Data = string.Empty,
+                        Message = CommonRepositoryMessages.NotFoundMessageEN,
+                        Details = CommonRepositoryMessages.NotFoundMessageEN,
+                        Status = (int)ResponseStatusCode.TokenExpired,
+                    });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, new ResultModel()
+                {
+                    Message = CommonRepositoryMessages.NotFoundMessageEN,
+                    Details = CommonRepositoryMessages.NotFoundMessageEN,
+                    ErrorMessage = ex.Message,
+                    Status = (int)ResponseStatusCode.InternaServerError,
+                });
+            }
+        }
+        #endregion
+
+        #region ReleaseTempBooking
+        [HttpPost("ReleaseTempBooking")]
+        //[Authorize]
+        public async Task<IActionResult> ReleaseTempBooking(ReleaseTempBookingEntity entity)
+        {
+            try
+            {
+                //var token = HttpContext.Request.Headers["Authorization"]
+                //    .FirstOrDefault()?.Split(" ").Last();
+
+                //int userId = JwtMiddleware.GetUserIdFromToken(token);
+                int userId = 1;
+                if (userId != 0)
+                {
+                    var result = await domain.ReleaseTempBooking(entity);
+                    if (result.Message == "success")
+                    {
+                        return StatusCode((int)HttpStatusCode.OK, new ResultModel()
+                        {
+                            Status = (int)ResponseStatusCode.Success,
+                            Message = Convert.ToString(result.Message),
+                            Details = Convert.ToString(result.Details),
+                            Data = result,
+                        });
+                    }
+                    else
+                    {
+                        return StatusCode((int)HttpStatusCode.BadRequest, new ResultModel()
+                        {
+                            Data = string.Empty,
+                            Message = Convert.ToString(result.Message),
+                            Details = Convert.ToString(result.Details),
+                            Status = (int)ResponseStatusCode.BadRequestError,
+                            ErrorMessage = Convert.ToString(result.ErrorMessage),
+                        });
+                    }
                 }
                 else
                 {

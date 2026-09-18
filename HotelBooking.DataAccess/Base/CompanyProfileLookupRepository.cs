@@ -101,7 +101,7 @@ namespace HotelBooking.DataAccess.Base
                 dynamicParameters.Add("@IsActive", entity.IsActive);
                 dynamicParameters.Add("@CreatedBy", entity.CreatedBy);
                 dynamicParameters.Add("@UpdatedBy", entity.UpdatedBy);
-                dynamicParameters.Add("@IsDeleted", entity.IsDeleted);
+              
                 dynamicParameters.Add("@OperationType", CommonRepositoryConstants.Insert);
                 var data = await _dbConnection.QueryAsync(storedProcedure, dynamicParameters, commandType: CommandType.StoredProcedure);
                 result.Message = data.FirstOrDefault().Message;

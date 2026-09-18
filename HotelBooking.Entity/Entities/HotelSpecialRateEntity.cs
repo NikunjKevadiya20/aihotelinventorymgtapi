@@ -141,7 +141,17 @@
         public List<AmenitiesTypeDataViewEntity> AmenitiesType { get; set; } = new();
         public List<GalleryDataViewEntity> GalleryImage { get; set; } = new();
         public List<GSTListViewEntity> GSTList { get; set; } = new();
+        public List<SoldOutDateEntity> SoldOutDate { get; set; } = new();
     }
+
+    public class SoldOutDateEntity
+    {
+        public int? ID { get; set; }
+        public int? SOUTicketID { get; set; }
+        public string? SoldOutDate { get; set; }
+        public DateTime? CreatedOn { get; set; }
+    }
+
     public class GSTListViewEntity
     {
         public int? ID { get; set; }

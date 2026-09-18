@@ -112,13 +112,13 @@ namespace HotelBooking.Helpers
             var website = context.Request.Headers["URL"]
                 .FirstOrDefault()?.Trim().ToLower();
 
-            //var website = "VISIONTECHSOLUTIONS6";
+            //var website = "99522";
 
             // New PropertyId Header
             var propertyId = context.Request.Headers["PropertyId"]
                 .FirstOrDefault()?.Trim();
 
-            //var propertyId = "o31f2HMvPoq08pr6Q5MEM1ORHSIhjVZm";
+            //var propertyId = "OHtTuHib7oi07JbCuWRJhNlEqx2h952a";
 
             // Either URL or PropertyId is required
             if (string.IsNullOrEmpty(website) &&
@@ -170,12 +170,12 @@ namespace HotelBooking.Helpers
                             OrganizationCode,
                             OrganizationName
                         FROM tblOrganization
-                        WHERE Website = @Website
+                        WHERE OrganizationCode = @OrganizationCode
                         AND IsActive = 1
                         AND IsDeleted = 0",
                         new
                         {
-                            Website = website
+                            OrganizationCode = website
                         });
 
                     if (tenant == null)

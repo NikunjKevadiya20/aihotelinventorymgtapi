@@ -12,5 +12,8 @@ namespace HotelBooking.Domain.Interfaces
         Task<LoginResponseEntity> CheckRefreshToken(UserToken entity);
         Task<ResultModel> ManageUserChangePassword(ChangePasswordRequestEntity entity);
         Task<ResultModel> ManageUserResetPassword(ChangePasswordRequestEntity entity);
+        Task<EmailOtpVerificationEntity> OtpGenerateByEmail(EmailOtpVerificationEntity entity);
+        Task<EmailOtpVerificationEntity> OtpVerifyByEmail(EmailOtpVerificationEntity entity);
+        Task<ResultModel> UpdateCancellation(EmailOtpCancellationEntity entity);
     }
 }

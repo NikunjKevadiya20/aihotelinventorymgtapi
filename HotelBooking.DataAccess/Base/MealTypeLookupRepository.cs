@@ -100,7 +100,7 @@ namespace HotelBooking.DataAccess.Base
                 result.Status = (int)ResponseStatusCode.InternaServerError;
                 result.Message = CommonRepositoryMessages.ExceptionMessage;
                 result.ErrorMessage = ex.Message;
-
+                      
             }
             finally
             {
