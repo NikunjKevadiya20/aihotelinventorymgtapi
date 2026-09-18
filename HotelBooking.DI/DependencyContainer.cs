@@ -113,6 +113,18 @@ namespace HotelBooking.DI
             services.AddScoped<IGalleryDomain, GalleryDomain>();
             services.AddScoped(typeof(IGalleryLookupRepositoryInterface), typeof(GalleryLookupRepository));
 
+            services.AddScoped<IOTARepository, OTARepository>();
+            services.AddScoped<IOTADomain, OTADomain>();
+            services.AddScoped(typeof(IOTALookupRepositoryInterface), typeof(OTALookupRepository));
+
+            services.AddScoped<IRoomViewRepository, RoomViewRepository>();
+            services.AddScoped<IRoomViewDomain, RoomViewDomain>();
+            services.AddScoped(typeof(IRoomViewLookupRepositoryInterface), typeof(RoomViewLookupRepository));
+
+            services.AddScoped<IBadTypeRepository, BadTypeRepository>();
+            services.AddScoped<IBadTypeDomain, BadTypeDomain>();
+            services.AddScoped(typeof(IBadTypeLookupRepositoryInterface), typeof(BadTypeLookupRepository));
+
         }
 
     }

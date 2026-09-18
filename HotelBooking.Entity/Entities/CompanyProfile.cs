@@ -95,7 +95,7 @@ namespace HotelBooking.Entity.Entities
         public List<CompanyProfileContactViewEntity>? CompanyProfileList { get; set; }
 
         // Amenities types and associated amenities will be nested here for responses
-        public List<AmenitiesTypeDataViewEntity> AmenitiesType { get; set; } = new();
+        public List<AmenitiesTypeDataViewEntity>? AmenitiesType { get; set; } = new();
     }
     public class ExperienceImageDataEntity
     { 
