@@ -1,32 +1,40 @@
-﻿using HotelBooking.Domain.Interfaces;
+﻿using AutoMapper;
+using Dapper;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Logging;
+using HotelBooking.Domain.Domains;
+using HotelBooking.Domain.Interfaces;
 using HotelBooking.Entity.Common;
 using HotelBooking.Entity.Common.Entities;
 using HotelBooking.Entity.Common.Enums;
-using HotelBooking.Entity.Common.Helper;
 using HotelBooking.Entity.Entities;
 using HotelBooking.Helpers;
-using Microsoft.AspNetCore.Mvc;
+using System.Data.SqlClient;
+using System.Data;
 using System.Net;
 
 namespace HotelBooking.Controllers
 {
+
     [Route("api/[controller]")]
     [ApiController]
-    public class AmenitiesController : ControllerBase
+    public class RoomCategoryController : Controller
     {
-        private readonly IAmenitiesDomain domain;
-        private readonly ILogger<AmenitiesController> _logger;
+        private readonly IRoomCategoryDomain domain;
 
-        public AmenitiesController(ILogger<AmenitiesController> logger, IAmenitiesDomain AmenitiesDomain)
+        private readonly IWebHostEnvironment _webHostEnvironment;
+
+        public RoomCategoryController(ILogger<RoomCategoryController> _logger, IRoomCategoryDomain _RoomCategoryDomain)
         {
-            _logger = logger;
-            domain = AmenitiesDomain;
+            domain = _RoomCategoryDomain;
         }
 
-        #region Insert Amenities
-        [HttpPost("InsertAmenities")]
+
+        #region Insert RoomCategory
+
+        [HttpPost("InsertRoomCategory")]
         [Authorize]
-        public async Task<IActionResult> InsertAmenities(AmenitiesEntity entity)
+        public async Task<IActionResult> InsertRoomCategory(RoomCategoryEntity entity)
         {
             try
             {
@@ -34,12 +42,11 @@ namespace HotelBooking.Controllers
                     .FirstOrDefault()?.Split(" ").Last();
 
                 int userId = JwtMiddleware.GetUserIdFromToken(token);
-
                 entity.CreatedBy = userId;
                 if (userId != 0)
                 {
 
-                    var result = await domain.InsertAmenities(entity);
+                    var result = await domain.InsertRoomCategory(entity);
 
                     if (result.Message == "success")
                     {
@@ -89,22 +96,22 @@ namespace HotelBooking.Controllers
         }
         #endregion
 
-        #region Update Amenities
-        [HttpPost("UpdateAmenities")]
+        #region Update RoomCategory
+        [HttpPost("UpdateRoomCategory")]
         [Authorize]
-        public async Task<IActionResult> UpdateAmenities(AmenitiesEntity entity)
+        public async Task<IActionResult> UpdateRoomCategory(RoomCategoryEntity entity)
         {
+
             try
             {
                 var token = HttpContext.Request.Headers["Authorization"]
                  .FirstOrDefault()?.Split(" ").Last();
 
                 int userId = JwtMiddleware.GetUserIdFromToken(token);
-
                 entity.UpdatedBy = userId;
                 if (userId != 0)
                 {
-                    var result = await domain.UpdateAmenities(entity);
+                    var result = await domain.UpdateRoomCategory(entity);
                     if (result.Message == "success")
                     {
                         return StatusCode((int)HttpStatusCode.OK, new ResultModel()
@@ -150,26 +157,27 @@ namespace HotelBooking.Controllers
                     Status = (int)ResponseStatusCode.InternaServerError,
                 });
             }
+
         }
         #endregion
 
-        #region Delete Amenities
-        [HttpPost("DeleteAmenities")]
+        #region Delete RoomCategory
+        [HttpPost("DeleteRoomCategory")]
         [Authorize]
-        public async Task<IActionResult> DeleteAmenities(AmenitiesIDEntity entity)
+        public async Task<IActionResult> DeleteRoomCategory(RoomCategoryIDEntity entity)
         {
+
             try
             {
                 var token = HttpContext.Request.Headers["Authorization"]
                 .FirstOrDefault()?.Split(" ").Last();
 
                 int userId = JwtMiddleware.GetUserIdFromToken(token);
-
                 entity.UpdatedBy = userId;
                 if (userId != 0)
                 {
 
-                    var result = await domain.DeleteAmenities(entity);
+                    var result = await domain.DeleteRoomCategory(entity);
                     if (result.Message == "success")
                     {
                         return StatusCode((int)HttpStatusCode.OK, new ResultModel()
@@ -215,14 +223,16 @@ namespace HotelBooking.Controllers
                     Status = (int)ResponseStatusCode.InternaServerError,
                 });
             }
+
         }
         #endregion
 
-        #region Find By ID Amenities
-        [HttpPost("FindByIDAmenities")]
+        #region Find By ID RoomCategory
+        [HttpPost("FindByIDRoomCategory")]
         [Authorize]
-        public async Task<IActionResult> FindByIDAmenities(AmenitiesIDEntity entity)
+        public async Task<IActionResult> FindByIDRoomCategory(RoomCategoryIDEntity entity)
         {
+
             try
             {
                 var token = HttpContext.Request.Headers["Authorization"]
@@ -233,7 +243,7 @@ namespace HotelBooking.Controllers
                 if (userId != 0)
                 {
 
-                    var result = await domain.FindByIDAmenities(entity);
+                    var result = await domain.FindByIDRoomCategory(entity);
                     if (result.Message == "success")
                     {
                         return StatusCode((int)HttpStatusCode.OK, new ResultModel()
@@ -279,14 +289,16 @@ namespace HotelBooking.Controllers
                     Status = (int)ResponseStatusCode.InternaServerError,
                 });
             }
+
         }
         #endregion
 
-        #region Find All Amenities
-        [HttpPost("FindAllAmenities")]
+        #region Find All RoomCategory
+        [HttpPost("FindAllRoomCategory")]
         [Authorize]
-        public async Task<IActionResult> FindAllAmenities(AmenitiesIDEntity entity)
+        public async Task<IActionResult> FindAllRoomCategory(RoomCategoryIDEntity entity)
         {
+
             try
             {
                 var token = HttpContext.Request.Headers["Authorization"]
@@ -294,11 +306,76 @@ namespace HotelBooking.Controllers
 
                 int userId = JwtMiddleware.GetUserIdFromToken(token);
 
-
                 if (userId != 0)
                 {
 
-                    var result = await domain.FindAllAmenities(entity);
+                    var result = await domain.FindAllRoomCategory(entity);
+                    if (result[0].Message == "success")
+                    {
+                        return StatusCode((int)HttpStatusCode.OK, new ResultModel()
+                        {
+
+                            Status = (int)ResponseStatusCode.Success,
+                            Message = Convert.ToString(result[0].Message),
+                            Details = Convert.ToString(result[0].Details),
+                            Data = result,
+                        });
+                    }
+                    else
+                    {
+                        return StatusCode((int)HttpStatusCode.NotFound, new ResultModel()
+                        {
+                            Data = string.Empty,
+                            Message = Convert.ToString(result[0].Message),
+                            Details = Convert.ToString(result[0].Details),
+                            Status = (int)ResponseStatusCode.NotFound,
+                            ErrorMessage = Convert.ToString(result[0].ErrorMessage),
+                        });
+                    }
+                }
+                else
+                {
+                    return StatusCode((int)ResponseStatusCode.TokenExpired, new ResultModel()
+                    {
+                        Data = string.Empty,
+                        Message = CommonRepositoryMessages.NotFoundMessageEN,
+                        Details = CommonRepositoryMessages.NotFoundMessageEN,
+                        Status = (int)ResponseStatusCode.TokenExpired,
+
+                    });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, new ResultModel()
+                {
+                    Message = CommonRepositoryMessages.NotFoundMessageEN,
+                    Details = CommonRepositoryMessages.NotFoundMessageEN,
+                    ErrorMessage = ex.Message,
+                    Status = (int)ResponseStatusCode.InternaServerError,
+                });
+            }
+
+        }
+        #endregion
+
+        #region Find All Active RoomCategory
+        [HttpGet("FindAllActiveRoomCategory")]
+
+        public async Task<IActionResult> FindAllActiveRoomCategory()
+        {
+
+            try
+            {
+                //var token = HttpContext.Request.Headers["Authorization"]
+                //.FirstOrDefault()?.Split(" ").Last();
+
+                int userId = 1; // JwtMiddleware.GetUserIdFromToken(token);
+
+                if (userId != 0)
+                {
+                    var result = await domain.FindAllActiveRoomCategory();
                     if (result[0].Message == "success")
                     {
                         return StatusCode((int)HttpStatusCode.OK, new ResultModel()
@@ -344,55 +421,16 @@ namespace HotelBooking.Controllers
                     Status = (int)ResponseStatusCode.InternaServerError,
                 });
             }
+
         }
         #endregion
 
-        #region Find All Active Amenities
-        [HttpGet("FindAllActiveAmenities")]
-        public async Task<IActionResult> FindAllActiveAmenities()
-        {
-            try
-            {
-                var result = await domain.FindAllActiveAmenities();
-
-                if (result.Count > 0 && result[0].Message == "success")
-                {
-                    return Ok(new ResultModel()
-                    {
-                        Status = (int)ResponseStatusCode.Success,
-                        Message = result[0].Message,
-                        Details = result[0].Details,
-                        Data = result
-                    });
-                }
-
-                return NotFound(new ResultModel()
-                {
-                    Status = (int)ResponseStatusCode.NotFound,
-                    Message = result.FirstOrDefault()?.Message ?? CommonRepositoryMessages.NotFoundMessageEN,
-                    Details = result.FirstOrDefault()?.Details,
-                    ErrorMessage = result.FirstOrDefault()?.ErrorMessage
-                });
-            }
-            catch (Exception ex)
-            {
-                _logger.LogError(ex, "Error in FindAllActiveAmenities");
-                return StatusCode((int)HttpStatusCode.InternalServerError, new ResultModel()
-                {
-                    Status = (int)ResponseStatusCode.InternaServerError,
-                    Message = CommonRepositoryMessages.NotFoundMessageEN,
-                    Details = CommonRepositoryMessages.NotFoundMessageEN,
-                    ErrorMessage = ex.Message
-                });
-            }
-        }
-        #endregion
-
-        #region Active/Inactive Amenities
-        [HttpPost("ActiveInActiveAmenities")]
+        #region ActiveInActive RoomCategory
+        [HttpPost("ActiveInActiveRoomCategory")]
         [Authorize]
-        public async Task<IActionResult> ActiveInActiveAmenities(AmenitiesIDEntity entity)
+        public async Task<IActionResult> ActiveInActiveRoomCategory(RoomCategoryIDEntity entity)
         {
+
             try
             {
                 var token = HttpContext.Request.Headers["Authorization"]
@@ -403,7 +441,7 @@ namespace HotelBooking.Controllers
                 if (userId != 0)
                 {
 
-                    var result = await domain.ActiveInActiveAmenities(entity);
+                    var result = await domain.ActiveInActiveRoomCategory(entity);
                     if (result.Message == "success")
                     {
                         return StatusCode((int)HttpStatusCode.OK, new ResultModel()
@@ -449,94 +487,8 @@ namespace HotelBooking.Controllers
                     Status = (int)ResponseStatusCode.InternaServerError,
                 });
             }
+
         }
         #endregion
-
-        #region Amenities Icon Update
-
-        [Authorize]
-        [HttpPost("AmenitiesIconUpload")]
-        public async Task<ResultModel> AmenitiesIconUpdate(
-            [FromForm] AmenitiesImageDataEntity docs)
-        {
-            try
-            {
-                var token = HttpContext.Request.Headers["Authorization"]
-                    .FirstOrDefault()?
-                    .Split(" ")
-                    .Last();
-
-                int userId = JwtMiddleware.GetUserIdFromToken(token);
-                int updatedBy = userId;
-
-                string icon = string.Empty;
-
-                // ==========================================
-                // ICON UPLOAD
-                // ==========================================
-
-                if (docs.Icon != null && docs.Icon.Length > 0)
-                {
-                    string originalFileName =
-                        Path.GetFileName(docs.Icon.FileName);
-
-                    string fileName =
-                        Path.GetFileName(originalFileName);
-
-                    icon = $"{DateTime.Now.Ticks}.webp";
-
-                    string physicalFolderPath = Path.Combine(
-                        CommonRepositoryConstants.ImageFilePath,
-                        CommonRepositoryConstants.documentsFolder
-                    );
-
-                    if (!Directory.Exists(physicalFolderPath))
-                    {
-                        Directory.CreateDirectory(physicalFolderPath);
-                    }
-
-                    string physicalFileFullPath =
-                        Path.Combine(physicalFolderPath, icon);
-
-                    await ImageHelper.CompressWithSkia(
-                        docs.Icon,
-                        physicalFileFullPath
-                    );
-                }
-
-                // ==========================================
-                // UPDATE ICON IN DATABASE
-                // ==========================================
-
-                var result = await domain.AmenitiesIconUpdate(
-                    icon,
-                    docs.ID,
-                    updatedBy
-                );
-
-                return new ResultModel()
-                {
-                    Data = result,
-                    Message = CommonRepositoryMessages.FindAllMessage,
-                    Details = Convert.ToString(result.Details),
-                    Status = (int)ResponseStatusCode.Success,
-                    ErrorMessage = Convert.ToString(result.ErrorMessage)
-                };
-            }
-            catch (Exception ex)
-            {
-                return new ResultModel()
-                {
-                    Message = CommonRepositoryMessages.NotFoundMessageEN,
-                    Details = CommonRepositoryMessages.NotFoundMessageEN,
-                    ErrorMessage = ex.Message,
-                    Status = (int)ResponseStatusCode.InternaServerError
-                };
-            }
-        }
-
-        #endregion
-
-
     }
 }

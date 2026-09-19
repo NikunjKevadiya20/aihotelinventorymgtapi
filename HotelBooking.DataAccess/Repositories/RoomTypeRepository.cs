@@ -22,11 +22,11 @@ namespace HotelBooking.DataAccess.Repositories
         }
         public async Task<ResultModel> DeleteRoomType(RoomTypeIDEntity entity)
         {
-            return await repository.DeleteRoomType(entity, "sp_ManageRoomType");
+            return await repository.DeleteRoomType(entity, "sp_ManageRoomTypeFindByID");
         }
         public async Task<RoomTypeViewEntity> FindByIDRoomType(RoomTypeIDEntity entity)
         {
-            return await repository.FindByIDRoomType(entity, "sp_ManageRoomType");
+            return await repository.FindByIDRoomType(entity, "sp_ManageRoomTypeFindByID");
         }
         public async Task<List<RoomTypeViewEntity>> FindAllRoomType(RoomTypeIDEntity entity)
         {
@@ -38,7 +38,7 @@ namespace HotelBooking.DataAccess.Repositories
         }
         public async Task<ResultModel> ActiveInActiveRoomType(RoomTypeIDEntity entity)
         {
-            return await repository.ActiveInActiveRoomType(entity, "sp_ManageRoomType");
+            return await repository.ActiveInActiveRoomType(entity, "sp_ManageRoomTypeFindByID");
         }
         public async Task<ResultModel> RoomTypeImageUpload(string? image,List<string> imageList, int? roomTypeID, int? updatedBy)
         {

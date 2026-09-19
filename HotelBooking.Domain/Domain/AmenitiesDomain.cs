@@ -53,7 +53,11 @@ namespace HotelBooking.Domain.Domain
         {
             return await repository.ActiveInActiveAmenities(entity);
         }
+        public async Task<ResultModel> AmenitiesIconUpdate(string? Icon,int? ID,int? UpdatedBy)
+        {
+            return await repository.AmenitiesIconUpdate(Icon,ID,UpdatedBy);
+        }
 
-        
+
     }
 }

@@ -15,23 +15,23 @@ using System.Text;
 
 namespace HotelBooking.DataAccess.Base
 {
-    public class BadTypeLookupRepository : IBadTypeLookupRepositoryInterface
+    public class AccessibilityLookupRepository : IAccessibilityLookupRepositoryInterface
     {
 
         #region Global Variables
         private readonly IDbConnection _dbConnection;
-        private readonly ILogger<BadTypeLookupRepository> logger;
+        private readonly ILogger<AccessibilityLookupRepository> logger;
         #endregion
 
-        public BadTypeLookupRepository(ILogger<BadTypeLookupRepository> _logger, IDbConnection dbConnection)
+        public AccessibilityLookupRepository(ILogger<AccessibilityLookupRepository> _logger, IDbConnection dbConnection)
         {
             logger = _logger;
             _dbConnection = dbConnection;
         }
 
 
-        #region Insert BadType
-        public async Task<ResultModel> InsertBadType(BadTypeEntity entity, string storedProcedure)
+        #region Insert Accessibility
+        public async Task<ResultModel> InsertAccessibility(AccessibilityEntity entity, string storedProcedure)
         {
             ResultModel result = new ResultModel();
 
@@ -40,7 +40,6 @@ namespace HotelBooking.DataAccess.Base
                 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
                 DynamicParameters dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@Title", entity.Title);
-                dynamicParameters.Add("@Size", entity.Size);
                 dynamicParameters.Add("@IsActive", entity.IsActive);
                 dynamicParameters.Add("@CreatedBy", entity.CreatedBy);
                 dynamicParameters.Add("@operationtype", CommonRepositoryConstants.Insert);
@@ -73,8 +72,8 @@ namespace HotelBooking.DataAccess.Base
         }
         #endregion
 
-        #region Update BadType
-        public async Task<ResultModel> UpdateBadType(BadTypeEntity entity, string storedProcedure)
+        #region Update Accessibility
+        public async Task<ResultModel> UpdateAccessibility(AccessibilityEntity entity, string storedProcedure)
         {
             ResultModel result = new ResultModel();
 
@@ -84,7 +83,6 @@ namespace HotelBooking.DataAccess.Base
                 DynamicParameters dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@ID", entity.ID);
                 dynamicParameters.Add("@Title", entity.Title);
-                dynamicParameters.Add("@Size", entity.Size);
                 dynamicParameters.Add("@IsActive", entity.IsActive);
                 dynamicParameters.Add("@CreatedBy", entity.CreatedBy);
                 dynamicParameters.Add("@operationtype", CommonRepositoryConstants.Update);
@@ -117,8 +115,8 @@ namespace HotelBooking.DataAccess.Base
         }
         #endregion
 
-        #region Delete BadType
-        public async Task<ResultModel> DeleteBadType(BadTypeIDEntity entity, string storedProcedure)
+        #region Delete Accessibility
+        public async Task<ResultModel> DeleteAccessibility(AccessibilityIDEntity entity, string storedProcedure)
         {
             ResultModel result = new ResultModel();
 
@@ -157,10 +155,10 @@ namespace HotelBooking.DataAccess.Base
         }
         #endregion
 
-        #region FindBy ID BadType
-        public async Task<BadTypeViewEntity> FindByIDBadType(BadTypeIDEntity entity, string storedProcedure)
+        #region FindBy ID Accessibility
+        public async Task<AccessibilityViewEntity> FindByIDAccessibility(AccessibilityIDEntity entity, string storedProcedure)
         {
-            BadTypeViewEntity result = new BadTypeViewEntity();
+            AccessibilityViewEntity result = new AccessibilityViewEntity();
 
             try
             {
@@ -168,7 +166,7 @@ namespace HotelBooking.DataAccess.Base
                 DynamicParameters dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@ID", entity.ID);
                 dynamicParameters.Add("@operationtype", CommonRepositoryConstants.FindByID);
-                var data = await _dbConnection.QuerySingleOrDefaultAsync<BadTypeViewEntity>(storedProcedure, dynamicParameters, commandType: CommandType.StoredProcedure);
+                var data = await _dbConnection.QuerySingleOrDefaultAsync<AccessibilityViewEntity>(storedProcedure, dynamicParameters, commandType: CommandType.StoredProcedure);
                 return data;
 
             }
@@ -196,19 +194,18 @@ namespace HotelBooking.DataAccess.Base
         }
         #endregion
 
-        #region Find All BadType
-        public async Task<List<BadTypeViewEntity>> FindAllBadType(BadTypeIDEntity entity, string storedProcedure)
+        #region Find All Accessibility
+        public async Task<List<AccessibilityViewEntity>> FindAllAccessibility(AccessibilityIDEntity entity, string storedProcedure)
         {
-            BadTypeViewEntity result = new BadTypeViewEntity();
+            AccessibilityViewEntity result = new AccessibilityViewEntity();
 
             try
             {
                 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
                 DynamicParameters dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@Title", entity.Title);
-                dynamicParameters.Add("@Size", entity.Size);
                 dynamicParameters.Add("@operationtype", CommonRepositoryConstants.FindAllItems);
-                var data = await _dbConnection.QueryAsync<BadTypeViewEntity>(storedProcedure, dynamicParameters, commandType: CommandType.StoredProcedure);
+                var data = await _dbConnection.QueryAsync<AccessibilityViewEntity>(storedProcedure, dynamicParameters, commandType: CommandType.StoredProcedure);
                 return data.ToList();
 
             }
@@ -237,17 +234,17 @@ namespace HotelBooking.DataAccess.Base
         }
         #endregion
 
-        #region Find All Active BadType
-        public async Task<List<BadTypeViewEntity>> FindAllActiveBadType(string storedProcedure)
+        #region Find All Active Accessibility
+        public async Task<List<AccessibilityViewEntity>> FindAllActiveAccessibility(string storedProcedure)
         {
-            BadTypeViewEntity result = new BadTypeViewEntity();
+            AccessibilityViewEntity result = new AccessibilityViewEntity();
 
             try
             {
                 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
                 DynamicParameters dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@operationtype", CommonRepositoryConstants.FindAllActive);
-                var data = await _dbConnection.QueryAsync<BadTypeViewEntity>(storedProcedure, dynamicParameters, commandType: CommandType.StoredProcedure);
+                var data = await _dbConnection.QueryAsync<AccessibilityViewEntity>(storedProcedure, dynamicParameters, commandType: CommandType.StoredProcedure);
                 return data.ToList();
 
             }
@@ -276,8 +273,8 @@ namespace HotelBooking.DataAccess.Base
         }
         #endregion
 
-        #region Active InActive BadType
-        public async Task<ResultModel> ActiveInActiveBadType(BadTypeIDEntity entity, string storedProcedure)
+        #region Active InActive Accessibility
+        public async Task<ResultModel> ActiveInActiveAccessibility(AccessibilityIDEntity entity, string storedProcedure)
         {
             ResultModel result = new ResultModel();
 

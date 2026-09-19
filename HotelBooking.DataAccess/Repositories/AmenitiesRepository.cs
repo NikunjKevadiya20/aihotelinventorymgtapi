@@ -53,7 +53,11 @@ namespace HotelBooking.DataAccess.Repositories
         {
             return await repository.ActiveInActiveAmenities(entity, "sp_ManageAmenitiesFindDelete");
         }
+        public async Task<ResultModel> AmenitiesIconUpdate(string? Icon,int? ID,int? UpdatedBy)
+        {
+            return await repository.AmenitiesIconUpdate(Icon,ID,UpdatedBy,"sp_ManageAmenitiesInsert");
+        }
 
-        
+
     }
 }

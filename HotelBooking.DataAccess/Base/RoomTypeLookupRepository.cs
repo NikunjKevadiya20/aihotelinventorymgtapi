@@ -1,4 +1,5 @@
 ﻿using Dapper;
+using DapperParameters;
 using HotelBooking.Entity.Common;
 using HotelBooking.Entity.Common.Entities;
 using HotelBooking.Entity.Common.Enums;
@@ -40,8 +41,25 @@ namespace HotelBooking.DataAccess.Base
                 dynamicParameters.Add("@BedType", entity.BedType);
                 dynamicParameters.Add("@Description", entity.Description);
                 dynamicParameters.Add("@Amenities", entity.Amenities);
+                dynamicParameters.Add("@OTARoomCode", entity.OTARoomCode);
+                dynamicParameters.Add("@BoAdults", entity.BoAdults);
+                dynamicParameters.Add("@BoChildren", entity.BoChildren);
+                dynamicParameters.Add("@MoAdults", entity.MoAdults);
+                dynamicParameters.Add("@MoChildren", entity.MoChildren);
+                dynamicParameters.Add("@MoInfant", entity.MoInfant);
+                dynamicParameters.Add("@Floor", entity.Floor);
+                dynamicParameters.Add("@RoomCategoryID", entity.RoomCategoryID);
+                dynamicParameters.Add("@AccessibilityID", entity.AccessibilityID);
+                dynamicParameters.Add("@RoomViewID", entity.RoomViewID);
+                dynamicParameters.Add("@Smoking", entity.Smoking);
+                dynamicParameters.Add("@SizeType", entity.SizeType);
                 dynamicParameters.Add("@IsActive", entity.IsActive);
                 dynamicParameters.Add("@CreatedBy", entity.CreatedBy);
+                dynamicParameters.AddTable<RoomTypeBed>(
+                    "@RoomTypeBeds",
+                    "dbo.UDTT_RoomTypeBed",
+                    entity.RoomTypeBeds ?? new List<RoomTypeBed>()
+                );
                 dynamicParameters.Add("@OperationType", CommonRepositoryConstants.Insert);
                 var data = await _dbConnection.QueryAsync(storedProcedure, dynamicParameters, commandType: CommandType.StoredProcedure);
                 result.ID = data.FirstOrDefault().ID;
@@ -91,8 +109,25 @@ namespace HotelBooking.DataAccess.Base
                 dynamicParameters.Add("@BedType", entity.BedType);
                 dynamicParameters.Add("@Description", entity.Description);
                 dynamicParameters.Add("@Amenities", entity.Amenities);
+                dynamicParameters.Add("@OTARoomCode", entity.OTARoomCode);
+                dynamicParameters.Add("@BoAdults", entity.BoAdults);
+                dynamicParameters.Add("@BoChildren", entity.BoChildren);
+                dynamicParameters.Add("@MoAdults", entity.MoAdults);
+                dynamicParameters.Add("@MoChildren", entity.MoChildren);
+                dynamicParameters.Add("@MoInfant", entity.MoInfant);
+                dynamicParameters.Add("@Floor", entity.Floor);
+                dynamicParameters.Add("@RoomCategoryID", entity.RoomCategoryID);
+                dynamicParameters.Add("@AccessibilityID", entity.AccessibilityID);
+                dynamicParameters.Add("@RoomViewID", entity.RoomViewID);
+                dynamicParameters.Add("@Smoking", entity.Smoking);
+                dynamicParameters.Add("@SizeType", entity.SizeType);
                 dynamicParameters.Add("@IsActive", entity.IsActive);
                 dynamicParameters.Add("@UpdatedBy", entity.UpdatedBy);
+                dynamicParameters.AddTable<RoomTypeBed>(
+                    "@RoomTypeBeds",
+                    "dbo.UDTT_RoomTypeBed",
+                    entity.RoomTypeBeds ?? new List<RoomTypeBed>()
+                );
                 dynamicParameters.Add("@OperationType", CommonRepositoryConstants.Update);
                 var data = await _dbConnection.QueryAsync(storedProcedure, dynamicParameters, commandType: CommandType.StoredProcedure);
                 result.Message = data.FirstOrDefault().Message;
@@ -165,9 +200,7 @@ namespace HotelBooking.DataAccess.Base
 
         #region FindBy ID RoomType
 
-        public async Task<RoomTypeViewEntity> FindByIDRoomType(
-            RoomTypeIDEntity entity,
-            string storedProcedure)
+        public async Task<RoomTypeViewEntity> FindByIDRoomType(RoomTypeIDEntity entity, string storedProcedure)
         {
             RoomTypeViewEntity result = new RoomTypeViewEntity();
 
@@ -196,6 +229,14 @@ namespace HotelBooking.DataAccess.Base
                         .ToList();
 
                     roomType.ImageList = imageList;
+
+                    // RESULT SET 3 : ROOM TYPE BED
+
+                    var roomTypeBeds = (await multi
+                        .ReadAsync<RoomTypeBedViewEntity>())
+                        .ToList();
+
+                    roomType.RoomTypeBeds = roomTypeBeds;
 
                     return roomType;
                 }

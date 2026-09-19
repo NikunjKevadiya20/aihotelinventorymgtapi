@@ -16,7 +16,8 @@ namespace HotelBooking.DataAccess.Base
         Task<AmenitiesDataViewEntity> FindByIDAmenities(AmenitiesIDEntity entity, string storedProcedure);
         Task<List<AmenitiesDataViewEntity>> FindAllAmenities(AmenitiesIDEntity entity, string storedProcedure);
         Task<List<AmenitiesDataViewEntity>> FindAllActiveAmenities(string storedProcedure);
-        Task<ResultModel> ActiveInActiveAmenities(AmenitiesIDEntity entity, string storedProcedure);
-       
+        Task<ResultModel> ActiveInActiveAmenities(AmenitiesIDEntity entity, string storedProcedure); 
+        Task<ResultModel> AmenitiesIconUpdate(string? Icon,int? ID,int? UpdatedBy,string storedProcedure);
+
     }
 }

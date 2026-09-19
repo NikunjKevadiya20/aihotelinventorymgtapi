@@ -17,6 +17,7 @@ namespace HotelBooking.DataAccess.Interfaces
         Task<List<AmenitiesDataViewEntity>> FindAllAmenities(AmenitiesIDEntity entity);
         Task<List<AmenitiesDataViewEntity>> FindAllActiveAmenities();
         Task<ResultModel> ActiveInActiveAmenities(AmenitiesIDEntity entity);
-       
+        Task<ResultModel> AmenitiesIconUpdate(string? Icon, int? ID, int? UpdatedBy);
+
     }
 }

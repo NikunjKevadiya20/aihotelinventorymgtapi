@@ -18,23 +18,23 @@ namespace HotelBooking.Controllers
 
     [Route("api/[controller]")]
     [ApiController]
-    public class BadTypeController : Controller
+    public class AccessibilityController : Controller
     {
-        private readonly IBadTypeDomain domain;
+        private readonly IAccessibilityDomain domain;
 
         private readonly IWebHostEnvironment _webHostEnvironment;
 
-        public BadTypeController(ILogger<BadTypeController> _logger, IBadTypeDomain _BadTypeDomain)
+        public AccessibilityController(ILogger<AccessibilityController> _logger, IAccessibilityDomain _AccessibilityDomain)
         {
-            domain = _BadTypeDomain;
+            domain = _AccessibilityDomain;
         }
 
 
-        #region Insert BadType
+        #region Insert Accessibility
 
-        [HttpPost("InsertBadType")]
+        [HttpPost("InsertAccessibility")]
         [Authorize]
-        public async Task<IActionResult> InsertBadType(BadTypeEntity entity)
+        public async Task<IActionResult> InsertAccessibility(AccessibilityEntity entity)
         {
             try
             {
@@ -46,7 +46,7 @@ namespace HotelBooking.Controllers
                 if (userId != 0)
                 {
 
-                    var result = await domain.InsertBadType(entity);
+                    var result = await domain.InsertAccessibility(entity);
 
                     if (result.Message == "success")
                     {
@@ -96,10 +96,10 @@ namespace HotelBooking.Controllers
         }
         #endregion
 
-        #region Update BadType
-        [HttpPost("UpdateBadType")]
+        #region Update Accessibility
+        [HttpPost("UpdateAccessibility")]
         [Authorize]
-        public async Task<IActionResult> UpdateBadType(BadTypeEntity entity)
+        public async Task<IActionResult> UpdateAccessibility(AccessibilityEntity entity)
         {
 
             try
@@ -111,7 +111,7 @@ namespace HotelBooking.Controllers
                 entity.UpdatedBy = userId;
                 if (userId != 0)
                 {
-                    var result = await domain.UpdateBadType(entity);
+                    var result = await domain.UpdateAccessibility(entity);
                     if (result.Message == "success")
                     {
                         return StatusCode((int)HttpStatusCode.OK, new ResultModel()
@@ -161,10 +161,10 @@ namespace HotelBooking.Controllers
         }
         #endregion
 
-        #region Delete BadType
-        [HttpPost("DeleteBadType")]
+        #region Delete Accessibility
+        [HttpPost("DeleteAccessibility")]
         [Authorize]
-        public async Task<IActionResult> DeleteBadType(BadTypeIDEntity entity)
+        public async Task<IActionResult> DeleteAccessibility(AccessibilityIDEntity entity)
         {
 
             try
@@ -177,7 +177,7 @@ namespace HotelBooking.Controllers
                 if (userId != 0)
                 {
 
-                    var result = await domain.DeleteBadType(entity);
+                    var result = await domain.DeleteAccessibility(entity);
                     if (result.Message == "success")
                     {
                         return StatusCode((int)HttpStatusCode.OK, new ResultModel()
@@ -227,10 +227,10 @@ namespace HotelBooking.Controllers
         }
         #endregion
 
-        #region Find By ID BadType
-        [HttpPost("FindByIDBadType")]
+        #region Find By ID Accessibility
+        [HttpPost("FindByIDAccessibility")]
         [Authorize]
-        public async Task<IActionResult> FindByIDBadType(BadTypeIDEntity entity)
+        public async Task<IActionResult> FindByIDAccessibility(AccessibilityIDEntity entity)
         {
 
             try
@@ -243,7 +243,7 @@ namespace HotelBooking.Controllers
                 if (userId != 0)
                 {
 
-                    var result = await domain.FindByIDBadType(entity);
+                    var result = await domain.FindByIDAccessibility(entity);
                     if (result.Message == "success")
                     {
                         return StatusCode((int)HttpStatusCode.OK, new ResultModel()
@@ -293,10 +293,10 @@ namespace HotelBooking.Controllers
         }
         #endregion
 
-        #region Find All BadType
-        [HttpPost("FindAllBadType")]
+        #region Find All Accessibility
+        [HttpPost("FindAllAccessibility")]
         [Authorize]
-        public async Task<IActionResult> FindAllBadType(BadTypeIDEntity entity)
+        public async Task<IActionResult> FindAllAccessibility(AccessibilityIDEntity entity)
         {
 
             try
@@ -309,7 +309,7 @@ namespace HotelBooking.Controllers
                 if (userId != 0)
                 {
 
-                    var result = await domain.FindAllBadType(entity);
+                    var result = await domain.FindAllAccessibility(entity);
                     if (result[0].Message == "success")
                     {
                         return StatusCode((int)HttpStatusCode.OK, new ResultModel()
@@ -360,10 +360,10 @@ namespace HotelBooking.Controllers
         }
         #endregion
 
-        #region Find All Active BadType
-        [HttpGet("FindAllActiveBadType")]
+        #region Find All Active Accessibility
+        [HttpGet("FindAllActiveAccessibility")]
 
-        public async Task<IActionResult> FindAllActiveBadType()
+        public async Task<IActionResult> FindAllActiveAccessibility()
         {
 
             try
@@ -375,7 +375,7 @@ namespace HotelBooking.Controllers
 
                 if (userId != 0)
                 {
-                    var result = await domain.FindAllActiveBadType();
+                    var result = await domain.FindAllActiveAccessibility();
                     if (result[0].Message == "success")
                     {
                         return StatusCode((int)HttpStatusCode.OK, new ResultModel()
@@ -425,10 +425,10 @@ namespace HotelBooking.Controllers
         }
         #endregion
 
-        #region ActiveInActive BadType
-        [HttpPost("ActiveInActiveBadType")]
+        #region ActiveInActive Accessibility
+        [HttpPost("ActiveInActiveAccessibility")]
         [Authorize]
-        public async Task<IActionResult> ActiveInActiveBadType(BadTypeIDEntity entity)
+        public async Task<IActionResult> ActiveInActiveAccessibility(AccessibilityIDEntity entity)
         {
 
             try
@@ -441,7 +441,7 @@ namespace HotelBooking.Controllers
                 if (userId != 0)
                 {
 
-                    var result = await domain.ActiveInActiveBadType(entity);
+                    var result = await domain.ActiveInActiveAccessibility(entity);
                     if (result.Message == "success")
                     {
                         return StatusCode((int)HttpStatusCode.OK, new ResultModel()

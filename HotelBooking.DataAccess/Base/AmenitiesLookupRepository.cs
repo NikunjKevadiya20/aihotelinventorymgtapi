@@ -1,8 +1,12 @@
 ﻿using Dapper;
-using HotelBooking.Entity.Entities;
 using HotelBooking.Entity.Common;
 using HotelBooking.Entity.Common.Entities;
 using HotelBooking.Entity.Common.Enums;
+using HotelBooking.Entity.Common.Helper;
+using HotelBooking.Entity.Entities;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
 using System.Collections.Generic;
@@ -39,6 +43,8 @@ namespace HotelBooking.DataAccess.Base
                 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@PropertyID", entity.PropertyID);
+                parameters.Add("@OTAID", entity.OTAID);
+                parameters.Add("@Description", entity.Description);
                 parameters.Add("@AmenitiesName", entity.AmenitiesName);              
                 parameters.Add("@AmenitiesTypeID", entity.AmenitiesTypeID);              
                 parameters.Add("@IsActive", entity.IsActive);
@@ -79,6 +85,8 @@ namespace HotelBooking.DataAccess.Base
                 DynamicParameters parameters = new DynamicParameters();
                 parameters.Add("@ID", entity.ID);
                 parameters.Add("@PropertyID", entity.PropertyID);
+                parameters.Add("@OTAID", entity.OTAID);
+                parameters.Add("@Description", entity.Description);
                 parameters.Add("@AmenitiesName", entity.AmenitiesName);
                 parameters.Add("@AmenitiesTypeID", entity.AmenitiesTypeID);
                 parameters.Add("@IsActive", entity.IsActive);
@@ -270,6 +278,54 @@ namespace HotelBooking.DataAccess.Base
         }
         #endregion
 
-     
+        #region Amenities Icon Upload
+        public async Task<ResultModel> AmenitiesIconUpdate(string? Icon,int? ID,int? UpdatedBy,string storedProcedure)
+        {
+            ResultModel result = new ResultModel();
+
+            try
+            {
+                Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+
+                DynamicParameters dynamicParameters = new DynamicParameters();
+
+                dynamicParameters.Add("@ID", ID);
+                dynamicParameters.Add("@Icon", Icon);
+                dynamicParameters.Add("@UpdatedBy", UpdatedBy);
+                dynamicParameters.Add("@OperationType", 3);
+
+                var data = await _dbConnection.QueryAsync(
+                    storedProcedure,
+                    dynamicParameters,
+                    commandType: CommandType.StoredProcedure);
+
+                var firstData = data.FirstOrDefault();
+
+                if (firstData != null)
+                {
+                    result.Message = firstData.Message;
+                    result.Details = firstData.Details;
+                }
+            }
+            catch (SqlException sqlException)
+            {
+                logger.LogError(sqlException, sqlException.Message);
+
+                result.ErrorMessage = sqlException.Message;
+                result.Status = (int)ResponseStatusCode.InternaServerError;
+                result.Message = CommonRepositoryMessages.CannotFindAllMessage;
+                result.Details = CommonRepositoryMessages.CannotFindAllDetails;
+            }
+            catch (Exception ex)
+            {
+                result.Status = (int)ResponseStatusCode.InternaServerError;
+                result.Message = CommonRepositoryMessages.ExceptionMessage;
+                result.ErrorMessage = ex.Message;
+            }
+
+            return result;
+        }
+        #endregion
+
     }
 }

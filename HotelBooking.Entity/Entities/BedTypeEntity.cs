@@ -6,7 +6,7 @@ using System.Threading.Tasks;
 
 namespace HotelBooking.Entity.Entities
 {
-    public class BadTypeEntity
+    public class BedTypeEntity
     {
         public int? ID { get; set; }
         public string? Title { get; set; }
@@ -19,7 +19,7 @@ namespace HotelBooking.Entity.Entities
 
     }
 
-    public class BadTypeIDEntity : MessageBaseEntity
+    public class BedTypeIDEntity : MessageBaseEntity
     {
         public int? ID { get; set; }
         public string? Title { get; set; }
@@ -28,7 +28,7 @@ namespace HotelBooking.Entity.Entities
         public Boolean? IsActive { get; set; }
     }
 
-    public class BadTypeViewEntity
+    public class BedTypeViewEntity
     {
         public int? ID { get; set; }
         public string? Title { get; set; }

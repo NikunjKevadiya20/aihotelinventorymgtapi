@@ -121,9 +121,17 @@ namespace HotelBooking.DI
             services.AddScoped<IRoomViewDomain, RoomViewDomain>();
             services.AddScoped(typeof(IRoomViewLookupRepositoryInterface), typeof(RoomViewLookupRepository));
 
-            services.AddScoped<IBadTypeRepository, BadTypeRepository>();
-            services.AddScoped<IBadTypeDomain, BadTypeDomain>();
-            services.AddScoped(typeof(IBadTypeLookupRepositoryInterface), typeof(BadTypeLookupRepository));
+            services.AddScoped<IBedTypeRepository, BedTypeRepository>();
+            services.AddScoped<IBedTypeDomain, BedTypeDomain>();
+            services.AddScoped(typeof(IBedTypeLookupRepositoryInterface), typeof(BedTypeLookupRepository));
+
+            services.AddScoped<IRoomCategoryRepository, RoomCategoryRepository>();
+            services.AddScoped<IRoomCategoryDomain, RoomCategoryDomain>();
+            services.AddScoped(typeof(IRoomCategoryLookupRepositoryInterface), typeof(RoomCategoryLookupRepository));
+
+            services.AddScoped<IAccessibilityRepository, AccessibilityRepository>();
+            services.AddScoped<IAccessibilityDomain, AccessibilityDomain>();
+            services.AddScoped(typeof(IAccessibilityLookupRepositoryInterface), typeof(AccessibilityLookupRepository));
 
         }
 
