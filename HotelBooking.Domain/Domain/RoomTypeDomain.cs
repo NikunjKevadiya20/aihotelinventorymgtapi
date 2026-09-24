@@ -48,5 +48,14 @@ namespace HotelBooking.Domain.Domain
         {
             return await repository.DeleteImage(entity);
         }
+        public async Task<List<RoomTypeImageViewEntity>> FindAllRoomTypeImage(RoomTypeIDEntity entity)
+        {
+            return await repository.FindAllRoomTypeImage(entity);
+        }
+
+        public async Task<ResultModel> CommonImageUpload(string? image, string? altTag, string? title, int? updatedBy)
+        {
+            return await repository.CommonImageUpload(image, altTag, title, updatedBy);
+        }
     }
 }

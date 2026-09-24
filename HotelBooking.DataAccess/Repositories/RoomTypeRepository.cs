@@ -44,9 +44,17 @@ namespace HotelBooking.DataAccess.Repositories
         {
             return await repository.RoomTypeImageUpload(image, imageList, roomTypeID, updatedBy );
         }
+        public async Task<ResultModel> CommonImageUpload(string? image, string? altTag, string? title, int? updatedBy)
+        {
+            return await repository.CommonImageUpload(image, altTag, title, updatedBy);
+        }
         public async Task<ResultModel> DeleteImage(DeleteImageEntity entity)
         {
             return await repository.DeleteImage(entity, "sp_ManageRoomTypeImages");
+        }
+        public async Task<List<RoomTypeImageViewEntity>> FindAllRoomTypeImage(RoomTypeIDEntity entity)
+        {
+            return await repository.FindAllRoomTypeImage(entity, "sp_ManageRoomTypeFindAll");
         }
 
     }

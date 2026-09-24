@@ -288,7 +288,7 @@ namespace HotelBooking.Controllers
         }
         #endregion
 
-        #region Find All   RoomType
+        #region Find All RoomType
         [HttpPost("FindAllRoomType")]
 
         public async Task<IActionResult> FindAllRoomType(RoomTypeIDEntity entity)
@@ -717,6 +717,199 @@ namespace HotelBooking.Controllers
                             Details = Convert.ToString(result.Details),
                             Status = (int)ResponseStatusCode.BadRequestError,
                             ErrorMessage = Convert.ToString(result.ErrorMessage),
+                        });
+                    }
+                }
+                else
+                {
+                    return StatusCode((int)ResponseStatusCode.TokenExpired, new ResultModel()
+                    {
+                        Data = string.Empty,
+                        Message = CommonRepositoryMessages.NotFoundMessageEN,
+                        Details = CommonRepositoryMessages.NotFoundMessageEN,
+                        Status = (int)ResponseStatusCode.TokenExpired,
+
+                    });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, new ResultModel()
+                {
+                    Message = CommonRepositoryMessages.NotFoundMessageEN,
+                    Details = CommonRepositoryMessages.NotFoundMessageEN,
+                    ErrorMessage = ex.Message,
+                    Status = (int)ResponseStatusCode.InternaServerError,
+                });
+            }
+
+        }
+        #endregion
+
+        #region Common Image Upload
+
+        [HttpPost("CommonImageUpload")]
+        [Authorize]
+        public async Task<IActionResult> CommonImageUpload([FromForm] CommonImageEntity entity)
+        {
+            try
+            {
+                var token = HttpContext.Request.Headers["Authorization"]
+                            .FirstOrDefault()?.Split(" ").Last();
+
+                int userId = JwtMiddleware.GetUserIdFromToken(token);
+
+                if (userId == 0)
+                {
+                    return StatusCode(
+                        (int)ResponseStatusCode.TokenExpired,
+                        new ResultModel()
+                        {
+                            Data = string.Empty,
+                            Message = CommonRepositoryMessages.NotFoundMessageEN,
+                            Details = CommonRepositoryMessages.NotFoundMessageEN,
+                            Status = (int)ResponseStatusCode.TokenExpired,
+                        });
+                }
+
+                // Use userId as updatedBy
+                int updatedBy = userId;
+
+                string singleImage = string.Empty;
+
+                string folderPath = Path.Combine(
+                    CommonRepositoryConstants.ImageFilePath,
+                    CommonRepositoryConstants.documentsFolder);
+
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+
+                // -----------------------------------------
+                // Single Image
+                // -----------------------------------------
+                if (entity.Image != null && entity.Image.Length > 0)
+                {
+                    singleImage = $"{Guid.NewGuid()}.webp";
+
+                    string filePath = Path.Combine(
+                        folderPath,
+                        singleImage);
+
+                    await ImageHelper.CompressWithSkia(
+                        entity.Image,
+                        filePath);
+                }
+
+                // -----------------------------------------
+                // Validation
+                // -----------------------------------------
+                if (string.IsNullOrWhiteSpace(singleImage))
+                {
+                    return StatusCode(
+                        (int)ResponseStatusCode.BadRequestError,
+                        new ResultModel()
+                        {
+                            Data = string.Empty,
+                            Message = "failure",
+                            Details = "Image is required.",
+                            Status = (int)ResponseStatusCode.BadRequestError,
+                        });
+                }
+
+                // -----------------------------------------
+                // Save Image Details
+                // -----------------------------------------
+                var result = await domain.CommonImageUpload(
+                    singleImage,
+                    entity.AltTag,
+                    entity.Title,
+                    updatedBy);
+
+                // -----------------------------------------
+                // Success Response
+                // -----------------------------------------
+                if (result.Message == "success"
+                    || result.Status == (int)ResponseStatusCode.Success)
+                {
+                    return StatusCode(
+                        (int)HttpStatusCode.OK,
+                        new ResultModel()
+                        {
+                            Status = (int)ResponseStatusCode.Success,
+                            Message = Convert.ToString(result.Message),
+                            Details = Convert.ToString(result.Details),
+                            Data = result,
+                        });
+                }
+                else
+                {
+                    return StatusCode(
+                        (int)HttpStatusCode.NotFound,
+                        new ResultModel()
+                        {
+                            Data = string.Empty,
+                            Message = Convert.ToString(result.Message),
+                            Details = Convert.ToString(result.Details),
+                            Status = (int)ResponseStatusCode.NotFound,
+                            ErrorMessage = Convert.ToString(result.ErrorMessage),
+                        });
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(
+                    (int)HttpStatusCode.InternalServerError,
+                    new ResultModel()
+                    {
+                        Message = CommonRepositoryMessages.NotFoundMessageEN,
+                        Details = CommonRepositoryMessages.NotFoundMessageEN,
+                        ErrorMessage = ex.Message,
+                        Status = (int)ResponseStatusCode.InternaServerError,
+                    });
+            }
+        }
+
+        #endregion
+
+        #region Find All RoomType Image
+        [HttpPost("FindAllRoomTypeImage")]
+        [Authorize]
+        public async Task<IActionResult> FindAllRoomTypeImage(RoomTypeIDEntity entity)
+        {
+
+            try
+            {
+                var token = HttpContext.Request.Headers["Authorization"]
+                .FirstOrDefault()?.Split(" ").Last();
+
+                int userId = JwtMiddleware.GetUserIdFromToken(token);
+
+                if (userId != 0)
+                {
+
+                    var result = await domain.FindAllRoomTypeImage(entity);
+                    if (result[0].Message == "success")
+                    {
+                        return StatusCode((int)HttpStatusCode.OK, new ResultModel()
+                        {
+                            Status = (int)ResponseStatusCode.Success,
+                            Message = Convert.ToString(result[0].Message),
+                            Details = Convert.ToString(result[0].Details),
+                            Data = result,
+                        });
+                    }
+                    else
+                    {
+                        return StatusCode((int)HttpStatusCode.NotFound, new ResultModel()
+                        {
+                            Data = string.Empty,
+                            Message = Convert.ToString(result[0].Message),
+                            Details = Convert.ToString(result[0].Details),
+                            Status = (int)ResponseStatusCode.NotFound,
+                            ErrorMessage = Convert.ToString(result[0].ErrorMessage),
                         });
                     }
                 }

@@ -41,6 +41,7 @@ namespace HotelBooking.Entity.Entities
         public string? PropertyID { get; set; }
         public string? PropertyName { get; set; }
         public string? AmenitiesName { get; set; }
+        public string? Icon { get; set; }
         public bool? IsActive { get; set; }
         public string? Details { get; set; }
         public string? Message { get; set; }

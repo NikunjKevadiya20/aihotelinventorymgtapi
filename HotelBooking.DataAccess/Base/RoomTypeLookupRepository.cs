@@ -270,7 +270,7 @@ namespace HotelBooking.DataAccess.Base
 
         #endregion
 
-        #region Find All   RoomType
+        #region Find All RoomType
         public async Task<List<RoomTypeViewEntity>> FindAllRoomType(RoomTypeIDEntity entity, string storedProcedure)
         {
             RoomTypeViewEntity result = new RoomTypeViewEntity();
@@ -555,6 +555,133 @@ namespace HotelBooking.DataAccess.Base
 
         #endregion
 
+        #region Common Image Upload
+
+        public async Task<ResultModel> CommonImageUpload(
+            string? image,
+            string? altTag,
+            string? title,
+            int? updatedBy)
+        {
+            ResultModel result = new ResultModel();
+
+            try
+            {
+                // -----------------------------------------
+                // Validation
+                // -----------------------------------------
+                if (string.IsNullOrWhiteSpace(image))
+                {
+                    result.Status =
+                        (int)ResponseStatusCode.BadRequestError;
+
+                    result.Message = "failure";
+                    result.Details = "Image is required.";
+
+                    return result;
+                }
+
+                // -----------------------------------------
+                // Image Upload
+                // -----------------------------------------
+                DynamicParameters parameters = new DynamicParameters();
+
+                parameters.Add(
+                    "@Image",
+                    image,
+                    DbType.String);
+
+                parameters.Add(
+                    "@AltTag",
+                    altTag,
+                    DbType.String);
+
+                parameters.Add(
+                    "@Title",
+                    title,
+                    DbType.String);
+
+                parameters.Add(
+                    "@UpdatedBy",
+                    updatedBy ?? 1,
+                    DbType.Int32);
+
+                parameters.Add(
+                    "@OperationType",
+                    1,
+                    DbType.Int32);
+
+                var imageResult =
+                    await _dbConnection.QueryFirstOrDefaultAsync<ResultModel>(
+                        "dbo.sp_ManageRoomTypeImages",
+                        parameters,
+                        commandType: CommandType.StoredProcedure);
+
+                if (imageResult != null)
+                {
+                    result.Status = imageResult.Status;
+                    result.Message = imageResult.Message;
+                    result.Details = imageResult.Details;
+                    result.ErrorMessage = imageResult.ErrorMessage;
+                    result.Data = imageResult.Data;
+                }
+
+                // -----------------------------------------
+                // Success Response
+                // -----------------------------------------
+                if (string.IsNullOrEmpty(result.Message))
+                {
+                    result.Status =
+                        (int)ResponseStatusCode.Success;
+
+                    result.Message = "success";
+                    result.Details = "Image uploaded successfully.";
+                }
+                else if (result.Status == 0)
+                {
+                    result.Status =
+                        (int)ResponseStatusCode.Success;
+                }
+            }
+            catch (SqlException ex)
+            {
+                logger.LogError(
+                    ex,
+                    "CommonImageUpload SQL Error. UpdatedBy: {UpdatedBy}",
+                    updatedBy);
+
+                result.Status =
+                    (int)ResponseStatusCode.InternaServerError;
+
+                result.Message =
+                    CommonRepositoryMessages.CannotFindAllMessage;
+
+                result.Details =
+                    CommonRepositoryMessages.CannotFindAllDetails;
+
+                result.ErrorMessage = ex.Message;
+            }
+            catch (Exception ex)
+            {
+                logger.LogError(
+                    ex,
+                    "CommonImageUpload Error. UpdatedBy: {UpdatedBy}",
+                    updatedBy);
+
+                result.Status =
+                    (int)ResponseStatusCode.InternaServerError;
+
+                result.Message =
+                    CommonRepositoryMessages.ExceptionMessage;
+
+                result.ErrorMessage = ex.Message;
+            }
+
+            return result;
+        }
+
+        #endregion
+
         #region Delete Image
         public async Task<ResultModel> DeleteImage(DeleteImageEntity entity, string storedProcedure)
         {
@@ -592,6 +719,45 @@ namespace HotelBooking.DataAccess.Base
             }
 
             return result;
+        }
+        #endregion
+
+        #region Find All RoomType Image
+        public async Task<List<RoomTypeImageViewEntity>> FindAllRoomTypeImage(RoomTypeIDEntity entity, string storedProcedure)
+        {
+            RoomTypeImageViewEntity result = new RoomTypeImageViewEntity();
+
+            try
+            {
+                Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+                DynamicParameters dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@OperationType", 4);
+                var data = await _dbConnection.QueryAsync<RoomTypeImageViewEntity>(storedProcedure, dynamicParameters, commandType: CommandType.StoredProcedure);
+                return data.ToList();
+
+            }
+            catch (SqlException sqlException)
+            {
+                logger.LogError(sqlException, sqlException.Message);
+                result.ErrorMessage = sqlException.Message;
+                result.Status = (int)ResponseStatusCode.InternaServerError;
+                result.Message = CommonRepositoryMessages.CannotFindAllMessage;
+                result.Details = CommonRepositoryMessages.CannotFindAllDetails;
+                throw;
+            }
+            catch (Exception ex)
+            {
+                result.Status = (int)ResponseStatusCode.InternaServerError;
+                result.Message = CommonRepositoryMessages.ExceptionMessage;
+                result.ErrorMessage = ex.Message;
+                throw;
+            }
+            finally
+            {
+
+            }
+
+
         }
         #endregion
 

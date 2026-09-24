@@ -76,6 +76,8 @@ namespace HotelBooking.Entity.Entities
         public string? RoomViewName { get; set; }
         public string? Smoking { get; set; }
         public string? SizeType { get; set; }
+        public string? MultiImageIDs { get; set; }
+        public int? MainImageID { get; set; }
         public Boolean? IsActive { get; set; }
         public string? Details { get; set; }
         public string? Message { get; set; }
@@ -88,9 +90,13 @@ namespace HotelBooking.Entity.Entities
 
     public class RoomTypeImageViewEntity
     {
-        public int ID { get; set; }
-        public int RoomTypeID { get; set; }
-        public string ImageList { get; set; } = string.Empty;
+        public int? ID { get; set; }
+        public int? RoomTypeID { get; set; }
+        public string? ImageList { get; set; }
+        public string? Details { get; set; }
+        public string? Message { get; set; }
+        public int? Status { get; set; }
+        public string? ErrorMessage { get; set; }
     }
 
     public class RoomTypeBedViewEntity
@@ -111,5 +117,12 @@ namespace HotelBooking.Entity.Entities
     {
         public int? RoomTypeID { get; set; }
 
+    }
+    public class CommonImageEntity
+    {
+        public IFormFile? Image { get; set; }
+        public string? AltTag { get; set; }
+        public string? Title { get; set; }
+        public int? UpdatedBy { get; set; }
     }
 }

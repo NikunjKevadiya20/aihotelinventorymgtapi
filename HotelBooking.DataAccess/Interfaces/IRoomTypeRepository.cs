@@ -15,5 +15,7 @@ namespace HotelBooking.DataAccess.Interfaces
         Task<ResultModel> ActiveInActiveRoomType(RoomTypeIDEntity entity);
         Task<ResultModel> RoomTypeImageUpload(string? image, List<string> imageList, int? roomTypeID, int? updatedBy);
         Task<ResultModel> DeleteImage(DeleteImageEntity entity);
+        Task<List<RoomTypeImageViewEntity>> FindAllRoomTypeImage(RoomTypeIDEntity entity);
+        Task<ResultModel> CommonImageUpload(string? image, string? altTag, string? title, int? updatedBy);
     }
 }
