@@ -20,6 +20,14 @@ namespace HotelBooking.Domain.Domain
         {
             return await repository.UpdateRoomType(entity);
         }
+        public async Task<ResultModel> UpdateRoomTypeOccupancy(RoomTypeDataEntity entity)
+        {
+            return await repository.UpdateRoomTypeOccupancy(entity);
+        }
+        public async Task<ResultModel> UpdateRoomTypeAmenities(RoomTypeDataEntity entity)
+        {
+            return await repository.UpdateRoomTypeAmenities(entity);
+        }
         public async Task<ResultModel> DeleteRoomType(RoomTypeIDEntity entity)
         {
             return await repository.DeleteRoomType(entity);
@@ -56,6 +64,26 @@ namespace HotelBooking.Domain.Domain
         public async Task<ResultModel> CommonImageUpload(string? image, string? altTag, string? title, int? updatedBy)
         {
             return await repository.CommonImageUpload(image, altTag, title, updatedBy);
+        }
+
+        public async Task<ResultModel> InsertRoomTypeBed(RoomTypeBed entity)
+        {
+            return await repository.InsertRoomTypeBed(entity);
+        }
+
+        public async Task<ResultModel> UpdateRoomTypeBed(RoomTypeBed entity)
+        {
+            return await repository.UpdateRoomTypeBed(entity);
+        }
+
+        public async Task<ResultModel> DeleteRoomTypeBed(RoomTypeBed entity)
+        {
+            return await repository.DeleteRoomTypeBed(entity);
+        }
+
+        public async Task<List<RoomTypeBedViewEntity>> FindAllRoomTypeBed()
+        {
+            return await repository.FindAllRoomTypeBed();
         }
     }
 }

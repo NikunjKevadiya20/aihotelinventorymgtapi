@@ -33,7 +33,8 @@ namespace HotelBooking.DataAccess.Base
             {
                 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
                 DynamicParameters dynamicParameters = new DynamicParameters();                
-                dynamicParameters.Add("@RoomType", entity.RoomType);
+                dynamicParameters.Add("@RoomType", entity.RoomType); 
+                dynamicParameters.Add("@SizeType", entity.SizeType);
                 dynamicParameters.Add("@OTARoomCode", entity.OTARoomCode);
                 dynamicParameters.Add("@RoomCategoryID", entity.RoomCategoryID);
                 dynamicParameters.Add("@TotalRoom", entity.TotalRoom);
@@ -45,6 +46,7 @@ namespace HotelBooking.DataAccess.Base
                 dynamicParameters.Add("@RoomStyleID", entity.RoomStyleID);
                 dynamicParameters.Add("@Floor", entity.Floor); 
                 dynamicParameters.Add("@SuitableforID", entity.SuitableforID);
+                dynamicParameters.Add("@DisplayName", entity.DisplayName);
                 dynamicParameters.Add("@IsActive", entity.IsActive);
                 dynamicParameters.Add("@CreatedBy", entity.CreatedBy);
                 dynamicParameters.Add("@OperationType", CommonRepositoryConstants.Insert);
@@ -89,6 +91,7 @@ namespace HotelBooking.DataAccess.Base
                 DynamicParameters dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@ID", entity.ID);
                 dynamicParameters.Add("@RoomType", entity.RoomType);
+                dynamicParameters.Add("@SizeType", entity.SizeType);
                 dynamicParameters.Add("@OTARoomCode", entity.OTARoomCode);
                 dynamicParameters.Add("@RoomCategoryID", entity.RoomCategoryID);
                 dynamicParameters.Add("@TotalRoom", entity.TotalRoom);
@@ -100,9 +103,113 @@ namespace HotelBooking.DataAccess.Base
                 dynamicParameters.Add("@RoomStyleID", entity.RoomStyleID);
                 dynamicParameters.Add("@Floor", entity.Floor);
                 dynamicParameters.Add("@SuitableforID", entity.SuitableforID);
+                dynamicParameters.Add("@DisplayName", entity.DisplayName);
                 dynamicParameters.Add("@IsActive", entity.IsActive);
                 dynamicParameters.Add("@UpdatedBy", entity.UpdatedBy);
                 dynamicParameters.Add("@OperationType", CommonRepositoryConstants.Update);
+                var data = await _dbConnection.QueryAsync(storedProcedure, dynamicParameters, commandType: CommandType.StoredProcedure);
+                result.Message = data.FirstOrDefault().Message;
+                result.Details = data.FirstOrDefault().Details;
+
+            }
+            catch (SqlException sqlException)
+            {
+                logger.LogError(sqlException, sqlException.Message);
+                result.ErrorMessage = sqlException.Message;
+                result.Status = (int)ResponseStatusCode.InternaServerError;
+                result.Message = CommonRepositoryMessages.CannotFindAllMessage;
+                result.Details = CommonRepositoryMessages.CannotFindAllDetails;
+
+            }
+            catch (Exception ex)
+            {
+                result.Status = (int)ResponseStatusCode.InternaServerError;
+                result.Message = CommonRepositoryMessages.ExceptionMessage;
+                result.ErrorMessage = ex.Message;
+
+            }
+            finally
+            {
+            }
+
+            return result;
+        }
+        #endregion
+
+        #region Update RoomTypeOccupancy
+        public async Task<ResultModel> UpdateRoomTypeOccupancy(RoomTypeDataEntity entity, string storedProcedure)
+        {
+            ResultModel result = new ResultModel();
+
+            try
+            {
+                Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+                DynamicParameters dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@ID", entity.ID);
+                dynamicParameters.Add("@BoAdults", entity.BoAdults);
+                dynamicParameters.Add("@BoChildren", entity.BoChildren);
+                dynamicParameters.Add("@MoAdults", entity.MoAdults);
+                dynamicParameters.Add("@MoChildren", entity.MoChildren);
+                dynamicParameters.Add("@MoInfant", entity.MoInfant);
+                dynamicParameters.Add("@AccessibilityID", entity.AccessibilityID);
+                dynamicParameters.Add("@AdultsMinAge", entity.AdultsMinAge);
+                dynamicParameters.Add("@AdultsMaxAge", entity.AdultsMaxAge);
+                dynamicParameters.Add("@ChildrenMinAge", entity.ChildrenMinAge);
+                dynamicParameters.Add("@ChildrenMaxAge", entity.ChildrenMaxAge);
+                dynamicParameters.Add("@InfantMinAge", entity.InfantMinAge);
+                dynamicParameters.Add("@InfantMaxAge", entity.InfantMaxAge);
+                dynamicParameters.Add("@ConnectingRoom", entity.ConnectingRoom);
+                dynamicParameters.Add("@CompatibleRoomTypeIDs", entity.CompatibleRoomTypeIDs);
+                dynamicParameters.Add("@IsActive", entity.IsActive);
+                dynamicParameters.Add("@UpdatedBy", entity.UpdatedBy);
+                dynamicParameters.AddTable<RoomTypeBedEntity>(
+                    "@RoomTypeBeds",
+                    "dbo.UDTT_RoomTypeBed",
+                    entity.RoomTypeBeds ?? new List<RoomTypeBedEntity>()
+                );
+                dynamicParameters.Add("@OperationType", CommonRepositoryConstants.Update);
+                var data = await _dbConnection.QueryAsync(storedProcedure, dynamicParameters, commandType: CommandType.StoredProcedure);
+                result.Message = data.FirstOrDefault().Message;
+                result.Details = data.FirstOrDefault().Details;
+
+            }
+            catch (SqlException sqlException)
+            {
+                logger.LogError(sqlException, sqlException.Message);
+                result.ErrorMessage = sqlException.Message;
+                result.Status = (int)ResponseStatusCode.InternaServerError;
+                result.Message = CommonRepositoryMessages.CannotFindAllMessage;
+                result.Details = CommonRepositoryMessages.CannotFindAllDetails;
+
+            }
+            catch (Exception ex)
+            {
+                result.Status = (int)ResponseStatusCode.InternaServerError;
+                result.Message = CommonRepositoryMessages.ExceptionMessage;
+                result.ErrorMessage = ex.Message;
+
+            }
+            finally
+            {
+            }
+
+            return result;
+        }
+        #endregion
+
+        #region Update RoomTypeAmenities
+        public async Task<ResultModel> UpdateRoomTypeAmenities(RoomTypeDataEntity entity, string storedProcedure)
+        {
+            ResultModel result = new ResultModel();
+
+            try
+            {
+                Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+                DynamicParameters dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@ID", entity.ID);
+                dynamicParameters.Add("@AmenitiesIDs", entity.AmenitiesIDs);
+                dynamicParameters.Add("@UpdatedBy", entity.UpdatedBy);
+                dynamicParameters.Add("@OperationType", 4);
                 var data = await _dbConnection.QueryAsync(storedProcedure, dynamicParameters, commandType: CommandType.StoredProcedure);
                 result.Message = data.FirstOrDefault().Message;
                 result.Details = data.FirstOrDefault().Details;
@@ -711,6 +818,179 @@ namespace HotelBooking.DataAccess.Base
                 DynamicParameters dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@OperationType", 4);
                 var data = await _dbConnection.QueryAsync<RoomTypeImageViewEntity>(storedProcedure, dynamicParameters, commandType: CommandType.StoredProcedure);
+                return data.ToList();
+
+            }
+            catch (SqlException sqlException)
+            {
+                logger.LogError(sqlException, sqlException.Message);
+                result.ErrorMessage = sqlException.Message;
+                result.Status = (int)ResponseStatusCode.InternaServerError;
+                result.Message = CommonRepositoryMessages.CannotFindAllMessage;
+                result.Details = CommonRepositoryMessages.CannotFindAllDetails;
+                throw;
+            }
+            catch (Exception ex)
+            {
+                result.Status = (int)ResponseStatusCode.InternaServerError;
+                result.Message = CommonRepositoryMessages.ExceptionMessage;
+                result.ErrorMessage = ex.Message;
+                throw;
+            }
+            finally
+            {
+
+            }
+
+
+        }
+        #endregion
+
+
+        #region Insert RoomTypeBed
+        public async Task<ResultModel> InsertRoomTypeBed(RoomTypeBed entity, string storedProcedure)
+        {
+            ResultModel result = new ResultModel();
+
+            try
+            {
+                Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+                DynamicParameters dynamicParameters = new DynamicParameters();
+                
+                dynamicParameters.Add("@BedTypeID", entity.BedTypeID);
+                dynamicParameters.Add("@Count", entity.Count);
+                dynamicParameters.Add("@Length", entity.Length);
+                dynamicParameters.Add("@Width", entity.Width);
+                dynamicParameters.Add("@DimensionUnit", entity.DimensionUnit);
+                dynamicParameters.Add("@Description", entity.Description);
+                dynamicParameters.Add("@OperationType", CommonRepositoryConstants.Insert);
+                var data = await _dbConnection.QueryAsync(storedProcedure, dynamicParameters, commandType: CommandType.StoredProcedure);
+                result.ID = data.FirstOrDefault().ID;
+                result.Message = data.FirstOrDefault().Message;
+                result.Details = data.FirstOrDefault().Details;
+
+            }
+            catch (SqlException sqlException)
+            {
+                logger.LogError(sqlException, sqlException.Message);
+                result.ErrorMessage = sqlException.Message;
+                result.Status = (int)ResponseStatusCode.InternaServerError;
+                result.Message = CommonRepositoryMessages.CannotFindAllMessage;
+                result.Details = CommonRepositoryMessages.CannotFindAllDetails;
+
+            }
+            catch (Exception ex)
+            {
+                result.Status = (int)ResponseStatusCode.InternaServerError;
+                result.Message = CommonRepositoryMessages.ExceptionMessage;
+                result.ErrorMessage = ex.Message;
+
+            }
+            finally
+            {
+            }
+
+            return result;
+        }
+        #endregion
+
+        #region Update RoomTypeBed
+        public async Task<ResultModel> UpdateRoomTypeBed(RoomTypeBed entity, string storedProcedure)
+        {
+            ResultModel result = new ResultModel();
+
+            try
+            {
+                Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+                DynamicParameters dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@ID", entity.ID);
+                dynamicParameters.Add("@BedTypeID", entity.BedTypeID);
+                dynamicParameters.Add("@Count", entity.Count);
+                dynamicParameters.Add("@Length", entity.Length);
+                dynamicParameters.Add("@Width", entity.Width);
+                dynamicParameters.Add("@DimensionUnit", entity.DimensionUnit);
+                dynamicParameters.Add("@Description", entity.Description);
+                dynamicParameters.Add("@OperationType", CommonRepositoryConstants.Update);
+                var data = await _dbConnection.QueryAsync(storedProcedure, dynamicParameters, commandType: CommandType.StoredProcedure);
+                result.Message = data.FirstOrDefault().Message;
+                result.Details = data.FirstOrDefault().Details;
+
+            }
+            catch (SqlException sqlException)
+            {
+                logger.LogError(sqlException, sqlException.Message);
+                result.ErrorMessage = sqlException.Message;
+                result.Status = (int)ResponseStatusCode.InternaServerError;
+                result.Message = CommonRepositoryMessages.CannotFindAllMessage;
+                result.Details = CommonRepositoryMessages.CannotFindAllDetails;
+
+            }
+            catch (Exception ex)
+            {
+                result.Status = (int)ResponseStatusCode.InternaServerError;
+                result.Message = CommonRepositoryMessages.ExceptionMessage;
+                result.ErrorMessage = ex.Message;
+
+            }
+            finally
+            {
+            }
+
+            return result;
+        }
+        #endregion
+
+        #region Delete RoomTypeBed
+        public async Task<ResultModel> DeleteRoomTypeBed(RoomTypeBed entity, string storedProcedure)
+        {
+            ResultModel result = new ResultModel();
+
+            try
+            {
+                Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+                DynamicParameters dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@ID", entity.ID);
+                dynamicParameters.Add("@OperationType", 3);
+                var data = await _dbConnection.QueryAsync(storedProcedure, dynamicParameters, commandType: CommandType.StoredProcedure);
+                result.Message = data.FirstOrDefault().Message;
+                result.Details = data.FirstOrDefault().Details;
+
+            }
+            catch (SqlException sqlException)
+            {
+                logger.LogError(sqlException, sqlException.Message);
+                result.ErrorMessage = sqlException.Message;
+                result.Status = (int)ResponseStatusCode.InternaServerError;
+                result.Message = CommonRepositoryMessages.CannotFindAllMessage;
+                result.Details = CommonRepositoryMessages.CannotFindAllDetails;
+
+            }
+            catch (Exception ex)
+            {
+                result.Status = (int)ResponseStatusCode.InternaServerError;
+                result.Message = CommonRepositoryMessages.ExceptionMessage;
+                result.ErrorMessage = ex.Message;
+
+            }
+            finally
+            {
+            }
+
+            return result;
+        }
+        #endregion
+
+        #region Find All RoomTypeBed
+        public async Task<List<RoomTypeBedViewEntity>> FindAllRoomTypeBed(string storedProcedure)
+        {
+            RoomTypeBedViewEntity result = new RoomTypeBedViewEntity();
+
+            try
+            {
+                Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+                DynamicParameters dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@OperationType", 1);
+                var data = await _dbConnection.QueryAsync<RoomTypeBedViewEntity>(storedProcedure, dynamicParameters, commandType: CommandType.StoredProcedure);
                 return data.ToList();
 
             }

@@ -20,6 +20,14 @@ namespace HotelBooking.DataAccess.Repositories
         {
             return await repository.UpdateRoomType(entity, "sp_ManageRoomType");
         }
+        public async Task<ResultModel> UpdateRoomTypeOccupancy(RoomTypeDataEntity entity)
+        {
+            return await repository.UpdateRoomTypeOccupancy(entity, "sp_ManageRoomType");
+        }
+        public async Task<ResultModel> UpdateRoomTypeAmenities(RoomTypeDataEntity entity)
+        {
+            return await repository.UpdateRoomTypeAmenities(entity, "sp_ManageRoomType");
+        }
         public async Task<ResultModel> DeleteRoomType(RoomTypeIDEntity entity)
         {
             return await repository.DeleteRoomType(entity, "sp_ManageRoomTypeFindByID");
@@ -55,6 +63,26 @@ namespace HotelBooking.DataAccess.Repositories
         public async Task<List<RoomTypeImageViewEntity>> FindAllRoomTypeImage(RoomTypeIDEntity entity)
         {
             return await repository.FindAllRoomTypeImage(entity, "sp_ManageRoomTypeFindAll");
+        }
+
+        public async Task<ResultModel> InsertRoomTypeBed(RoomTypeBed entity)
+        {
+            return await repository.InsertRoomTypeBed(entity, "sp_ManageRoomTypeBed");
+        }
+
+        public async Task<ResultModel> UpdateRoomTypeBed(RoomTypeBed entity)
+        {
+            return await repository.UpdateRoomTypeBed(entity, "sp_ManageRoomTypeBed");
+        }
+
+        public async Task<ResultModel> DeleteRoomTypeBed(RoomTypeBed entity)
+        {
+            return await repository.DeleteRoomTypeBed(entity, "sp_ManageRoomTypeBed");
+        }
+
+        public async Task<List<RoomTypeBedViewEntity>> FindAllRoomTypeBed()
+        {
+            return await repository.FindAllRoomTypeBed("sp_ManageRoomTypeBedFindAll");
         }
 
     }
