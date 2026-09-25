@@ -133,6 +133,14 @@ namespace HotelBooking.DI
             services.AddScoped<IAccessibilityDomain, AccessibilityDomain>();
             services.AddScoped(typeof(IAccessibilityLookupRepositoryInterface), typeof(AccessibilityLookupRepository));
 
+            services.AddScoped<IRoomStyleRepository, RoomStyleRepository>();
+            services.AddScoped<IRoomStyleDomain, RoomStyleDomain>();
+            services.AddScoped(typeof(IRoomStyleLookupRepositoryInterface), typeof(RoomStyleLookupRepository));
+
+            services.AddScoped<ISuitableforRepository, SuitableforRepository>();
+            services.AddScoped<ISuitableforDomain, SuitableforDomain>();
+            services.AddScoped(typeof(ISuitableforLookupRepositoryInterface), typeof(SuitableforLookupRepository));
+
         }
 
     }

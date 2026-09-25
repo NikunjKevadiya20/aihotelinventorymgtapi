@@ -156,6 +156,9 @@ namespace HotelBooking.Controllers
         }
         #endregion
 
+
+
+
         #region Delete RoomType
         [HttpPost("DeleteRoomType")]
         [Authorize]
@@ -483,6 +486,9 @@ namespace HotelBooking.Controllers
 
         }
         #endregion
+
+
+
 
         #region RoomType Image Upload
 

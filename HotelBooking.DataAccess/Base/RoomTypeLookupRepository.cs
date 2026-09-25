@@ -32,34 +32,21 @@ namespace HotelBooking.DataAccess.Base
             try
             {
                 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
-                DynamicParameters dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@AmenitiesIDs", entity.AmenitiesIDs);
+                DynamicParameters dynamicParameters = new DynamicParameters();                
                 dynamicParameters.Add("@RoomType", entity.RoomType);
-                dynamicParameters.Add("@Prefix", entity.Prefix);
-                dynamicParameters.Add("@MaxGuest", entity.MaxGuest);
-                dynamicParameters.Add("@RoomArea", entity.RoomArea);
-                dynamicParameters.Add("@BedType", entity.BedType);
-                dynamicParameters.Add("@Description", entity.Description);
-                dynamicParameters.Add("@Amenities", entity.Amenities);
                 dynamicParameters.Add("@OTARoomCode", entity.OTARoomCode);
-                dynamicParameters.Add("@BoAdults", entity.BoAdults);
-                dynamicParameters.Add("@BoChildren", entity.BoChildren);
-                dynamicParameters.Add("@MoAdults", entity.MoAdults);
-                dynamicParameters.Add("@MoChildren", entity.MoChildren);
-                dynamicParameters.Add("@MoInfant", entity.MoInfant);
-                dynamicParameters.Add("@Floor", entity.Floor);
                 dynamicParameters.Add("@RoomCategoryID", entity.RoomCategoryID);
-                dynamicParameters.Add("@AccessibilityID", entity.AccessibilityID);
-                dynamicParameters.Add("@RoomViewID", entity.RoomViewID);
+                dynamicParameters.Add("@TotalRoom", entity.TotalRoom);
+                dynamicParameters.Add("@Description", entity.Description);
+                dynamicParameters.Add("@FullDescription", entity.FullDescription);
+                dynamicParameters.Add("@RoomArea", entity.RoomArea);
                 dynamicParameters.Add("@Smoking", entity.Smoking);
-                dynamicParameters.Add("@SizeType", entity.SizeType);
+                dynamicParameters.Add("@RoomViewID", entity.RoomViewID);
+                dynamicParameters.Add("@RoomStyleID", entity.RoomStyleID);
+                dynamicParameters.Add("@Floor", entity.Floor); 
+                dynamicParameters.Add("@SuitableforID", entity.SuitableforID);
                 dynamicParameters.Add("@IsActive", entity.IsActive);
                 dynamicParameters.Add("@CreatedBy", entity.CreatedBy);
-                dynamicParameters.AddTable<RoomTypeBed>(
-                    "@RoomTypeBeds",
-                    "dbo.UDTT_RoomTypeBed",
-                    entity.RoomTypeBeds ?? new List<RoomTypeBed>()
-                );
                 dynamicParameters.Add("@OperationType", CommonRepositoryConstants.Insert);
                 var data = await _dbConnection.QueryAsync(storedProcedure, dynamicParameters, commandType: CommandType.StoredProcedure);
                 result.ID = data.FirstOrDefault().ID;
@@ -101,33 +88,20 @@ namespace HotelBooking.DataAccess.Base
                 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
                 DynamicParameters dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@ID", entity.ID);
-                dynamicParameters.Add("@AmenitiesIDs", entity.AmenitiesIDs);
                 dynamicParameters.Add("@RoomType", entity.RoomType);
-                dynamicParameters.Add("@Prefix", entity.Prefix);
-                dynamicParameters.Add("@MaxGuest", entity.MaxGuest);
-                dynamicParameters.Add("@RoomArea", entity.RoomArea);
-                dynamicParameters.Add("@BedType", entity.BedType);
-                dynamicParameters.Add("@Description", entity.Description);
-                dynamicParameters.Add("@Amenities", entity.Amenities);
                 dynamicParameters.Add("@OTARoomCode", entity.OTARoomCode);
-                dynamicParameters.Add("@BoAdults", entity.BoAdults);
-                dynamicParameters.Add("@BoChildren", entity.BoChildren);
-                dynamicParameters.Add("@MoAdults", entity.MoAdults);
-                dynamicParameters.Add("@MoChildren", entity.MoChildren);
-                dynamicParameters.Add("@MoInfant", entity.MoInfant);
-                dynamicParameters.Add("@Floor", entity.Floor);
                 dynamicParameters.Add("@RoomCategoryID", entity.RoomCategoryID);
-                dynamicParameters.Add("@AccessibilityID", entity.AccessibilityID);
-                dynamicParameters.Add("@RoomViewID", entity.RoomViewID);
+                dynamicParameters.Add("@TotalRoom", entity.TotalRoom);
+                dynamicParameters.Add("@Description", entity.Description);
+                dynamicParameters.Add("@FullDescription", entity.FullDescription);
+                dynamicParameters.Add("@RoomArea", entity.RoomArea);
                 dynamicParameters.Add("@Smoking", entity.Smoking);
-                dynamicParameters.Add("@SizeType", entity.SizeType);
+                dynamicParameters.Add("@RoomViewID", entity.RoomViewID);
+                dynamicParameters.Add("@RoomStyleID", entity.RoomStyleID);
+                dynamicParameters.Add("@Floor", entity.Floor);
+                dynamicParameters.Add("@SuitableforID", entity.SuitableforID);
                 dynamicParameters.Add("@IsActive", entity.IsActive);
                 dynamicParameters.Add("@UpdatedBy", entity.UpdatedBy);
-                dynamicParameters.AddTable<RoomTypeBed>(
-                    "@RoomTypeBeds",
-                    "dbo.UDTT_RoomTypeBed",
-                    entity.RoomTypeBeds ?? new List<RoomTypeBed>()
-                );
                 dynamicParameters.Add("@OperationType", CommonRepositoryConstants.Update);
                 var data = await _dbConnection.QueryAsync(storedProcedure, dynamicParameters, commandType: CommandType.StoredProcedure);
                 result.Message = data.FirstOrDefault().Message;
@@ -157,6 +131,8 @@ namespace HotelBooking.DataAccess.Base
             return result;
         }
         #endregion
+
+
 
         #region Delete RoomType
         public async Task<ResultModel> DeleteRoomType(RoomTypeIDEntity entity, string storedProcedure)
@@ -388,6 +364,8 @@ namespace HotelBooking.DataAccess.Base
             return result;
         }
         #endregion
+
+
 
         #region Room Type Image Upload
 

@@ -109,10 +109,10 @@ namespace HotelBooking.Helpers
             IConfiguration configuration)
         {
             // Existing URL Header
-            var website = context.Request.Headers["URL"]
-                .FirstOrDefault()?.Trim().ToLower();
+            //var website = context.Request.Headers["URL"]
+            //    .FirstOrDefault()?.Trim().ToLower();
 
-            //var website = "29397";
+            var website = "29397";
 
             // New PropertyId Header
             var propertyId = context.Request.Headers["PropertyId"]

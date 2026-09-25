@@ -25,6 +25,10 @@ namespace HotelBooking.Entity.Entities
         public string? RoomViewID { get; set; }
         public string? Smoking { get; set; }
         public string? SizeType { get; set; }
+        public int? TotalRoom { get; set; }
+        public string? FullDescription { get; set; }
+        public int? RoomStyleID { get; set; }
+        public int? SuitableforID { get; set; }
         public Boolean? IsActive { get; set; }
         public Int32? CreatedBy { set; get; }
         public Int32? UpdatedBy { set; get; }
@@ -93,6 +97,8 @@ namespace HotelBooking.Entity.Entities
         public int? ID { get; set; }
         public int? RoomTypeID { get; set; }
         public string? ImageList { get; set; }
+        public string? AltTag { get; set; }
+        public string? Title { get; set; }
         public string? Details { get; set; }
         public string? Message { get; set; }
         public int? Status { get; set; }
