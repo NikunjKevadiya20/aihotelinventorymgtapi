@@ -1,4 +1,5 @@
 ﻿using AutoMapper;
+using DocumentFormat.OpenXml.Office2010.Excel;
 using HotelBooking.Domain.Interfaces;
 using HotelBooking.Entity.Common;
 using HotelBooking.Entity.Common.Entities;
@@ -286,6 +287,265 @@ namespace HotelBooking.Controllers
         }
         #endregion
 
+        #region Update RoomTypeImageContent
+        [HttpPost("UpdateRoomTypeImageContent")]
+        [Authorize]
+        public async Task<IActionResult> UpdateRoomTypeImageContent(RoomTypeDataEntity entity)
+        {
+
+            try
+            {
+                var token = HttpContext.Request.Headers["Authorization"]
+                 .FirstOrDefault()?.Split(" ").Last();
+
+                int userId = JwtMiddleware.GetUserIdFromToken(token);
+                entity.UpdatedBy = userId;
+                if (userId != 0)
+                {
+                    var result = await domain.UpdateRoomTypeImageContent(entity);
+                    if (result.Message == "success")
+                    {
+                        return StatusCode((int)HttpStatusCode.OK, new ResultModel()
+                        {
+                            Status = (int)ResponseStatusCode.Success,
+                            Message = Convert.ToString(result.Message),
+                            Details = Convert.ToString(result.Details),
+                            Data = result,
+                        });
+                    }
+                    else
+                    {
+                        return StatusCode((int)HttpStatusCode.BadRequest, new ResultModel()
+                        {
+                            Data = string.Empty,
+                            Message = Convert.ToString(result.Message),
+                            Details = Convert.ToString(result.Details),
+                            Status = (int)ResponseStatusCode.BadRequestError,
+                            ErrorMessage = Convert.ToString(result.ErrorMessage),
+                        });
+                    }
+                }
+                else
+                {
+                    return StatusCode((int)ResponseStatusCode.TokenExpired, new ResultModel()
+                    {
+                        Data = string.Empty,
+                        Message = CommonRepositoryMessages.NotFoundMessageEN,
+                        Details = CommonRepositoryMessages.NotFoundMessageEN,
+                        Status = (int)ResponseStatusCode.TokenExpired,
+
+                    });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, new ResultModel()
+                {
+                    Message = CommonRepositoryMessages.NotFoundMessageEN,
+                    Details = CommonRepositoryMessages.NotFoundMessageEN,
+                    ErrorMessage = ex.Message,
+                    Status = (int)ResponseStatusCode.InternaServerError,
+                });
+            }
+
+        }
+        #endregion
+
+        #region Update RoomTypeImageDetail
+        [HttpPost("UpdateRoomTypeImageDetail")]
+        [Authorize]
+        public async Task<IActionResult> UpdateRoomTypeImageDetail(RoomTypeDataEntity entity)
+        {
+
+            try
+            {
+                var token = HttpContext.Request.Headers["Authorization"]
+                 .FirstOrDefault()?.Split(" ").Last();
+
+                int userId = JwtMiddleware.GetUserIdFromToken(token);
+                entity.UpdatedBy = userId;
+                if (userId != 0)
+                {
+                    var result = await domain.UpdateRoomTypeImageDetail(entity);
+                    if (result.Message == "success")
+                    {
+                        return StatusCode((int)HttpStatusCode.OK, new ResultModel()
+                        {
+                            Status = (int)ResponseStatusCode.Success,
+                            Message = Convert.ToString(result.Message),
+                            Details = Convert.ToString(result.Details),
+                            Data = result,
+                        });
+                    }
+                    else
+                    {
+                        return StatusCode((int)HttpStatusCode.BadRequest, new ResultModel()
+                        {
+                            Data = string.Empty,
+                            Message = Convert.ToString(result.Message),
+                            Details = Convert.ToString(result.Details),
+                            Status = (int)ResponseStatusCode.BadRequestError,
+                            ErrorMessage = Convert.ToString(result.ErrorMessage),
+                        });
+                    }
+                }
+                else
+                {
+                    return StatusCode((int)ResponseStatusCode.TokenExpired, new ResultModel()
+                    {
+                        Data = string.Empty,
+                        Message = CommonRepositoryMessages.NotFoundMessageEN,
+                        Details = CommonRepositoryMessages.NotFoundMessageEN,
+                        Status = (int)ResponseStatusCode.TokenExpired,
+
+                    });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, new ResultModel()
+                {
+                    Message = CommonRepositoryMessages.NotFoundMessageEN,
+                    Details = CommonRepositoryMessages.NotFoundMessageEN,
+                    ErrorMessage = ex.Message,
+                    Status = (int)ResponseStatusCode.InternaServerError,
+                });
+            }
+
+        }
+        #endregion
+
+        #region Update RoomTypeCommonImage
+        [HttpPost("UpdateRoomTypeCommonImage")]
+        [Authorize]
+        public async Task<IActionResult> UpdateRoomTypeCommonImage(RoomTypeDataEntity entity)
+        {
+
+            try
+            {
+                var token = HttpContext.Request.Headers["Authorization"]
+                 .FirstOrDefault()?.Split(" ").Last();
+
+                int userId = JwtMiddleware.GetUserIdFromToken(token);
+                entity.UpdatedBy = userId;
+                if (userId != 0)
+                {
+                    var result = await domain.UpdateRoomTypeCommonImage(entity);
+                    if (result.Message == "success")
+                    {
+                        return StatusCode((int)HttpStatusCode.OK, new ResultModel()
+                        {
+                            Status = (int)ResponseStatusCode.Success,
+                            Message = Convert.ToString(result.Message),
+                            Details = Convert.ToString(result.Details),
+                            Data = result,
+                        });
+                    }
+                    else
+                    {
+                        return StatusCode((int)HttpStatusCode.BadRequest, new ResultModel()
+                        {
+                            Data = string.Empty,
+                            Message = Convert.ToString(result.Message),
+                            Details = Convert.ToString(result.Details),
+                            Status = (int)ResponseStatusCode.BadRequestError,
+                            ErrorMessage = Convert.ToString(result.ErrorMessage),
+                        });
+                    }
+                }
+                else
+                {
+                    return StatusCode((int)ResponseStatusCode.TokenExpired, new ResultModel()
+                    {
+                        Data = string.Empty,
+                        Message = CommonRepositoryMessages.NotFoundMessageEN,
+                        Details = CommonRepositoryMessages.NotFoundMessageEN,
+                        Status = (int)ResponseStatusCode.TokenExpired,
+
+                    });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, new ResultModel()
+                {
+                    Message = CommonRepositoryMessages.NotFoundMessageEN,
+                    Details = CommonRepositoryMessages.NotFoundMessageEN,
+                    ErrorMessage = ex.Message,
+                    Status = (int)ResponseStatusCode.InternaServerError,
+                });
+            }
+
+        }
+        #endregion
+
+        #region Update RoomTypeMainImage
+        [HttpPost("UpdateRoomTypeMainImage")]
+        [Authorize]
+        public async Task<IActionResult> UpdateRoomTypeMainImage(RoomTypeDataEntity entity)
+        {
+
+            try
+            {
+                var token = HttpContext.Request.Headers["Authorization"]
+                 .FirstOrDefault()?.Split(" ").Last();
+
+                int userId = JwtMiddleware.GetUserIdFromToken(token);
+                entity.UpdatedBy = userId;
+                if (userId != 0)
+                {
+                    var result = await domain.UpdateRoomTypeMainImage(entity);
+                    if (result.Message == "success")
+                    {
+                        return StatusCode((int)HttpStatusCode.OK, new ResultModel()
+                        {
+                            Status = (int)ResponseStatusCode.Success,
+                            Message = Convert.ToString(result.Message),
+                            Details = Convert.ToString(result.Details),
+                            Data = result,
+                        });
+                    }
+                    else
+                    {
+                        return StatusCode((int)HttpStatusCode.BadRequest, new ResultModel()
+                        {
+                            Data = string.Empty,
+                            Message = Convert.ToString(result.Message),
+                            Details = Convert.ToString(result.Details),
+                            Status = (int)ResponseStatusCode.BadRequestError,
+                            ErrorMessage = Convert.ToString(result.ErrorMessage),
+                        });
+                    }
+                }
+                else
+                {
+                    return StatusCode((int)ResponseStatusCode.TokenExpired, new ResultModel()
+                    {
+                        Data = string.Empty,
+                        Message = CommonRepositoryMessages.NotFoundMessageEN,
+                        Details = CommonRepositoryMessages.NotFoundMessageEN,
+                        Status = (int)ResponseStatusCode.TokenExpired,
+
+                    });
+
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode((int)HttpStatusCode.InternalServerError, new ResultModel()
+                {
+                    Message = CommonRepositoryMessages.NotFoundMessageEN,
+                    Details = CommonRepositoryMessages.NotFoundMessageEN,
+                    ErrorMessage = ex.Message,
+                    Status = (int)ResponseStatusCode.InternaServerError,
+                });
+            }
+
+        }
+        #endregion
 
 
         #region Delete RoomType
@@ -958,6 +1218,9 @@ namespace HotelBooking.Controllers
                 // Save Image Details
                 // -----------------------------------------
                 var result = await domain.CommonImageUpload(
+                    entity.ID,
+                    entity.Type,
+                    entity.Caption,
                     singleImage,
                     entity.AltTag,
                     entity.Title,

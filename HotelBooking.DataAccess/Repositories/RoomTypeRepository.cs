@@ -28,6 +28,22 @@ namespace HotelBooking.DataAccess.Repositories
         {
             return await repository.UpdateRoomTypeAmenities(entity, "sp_ManageRoomType");
         }
+        public async Task<ResultModel> UpdateRoomTypeImageContent(RoomTypeDataEntity entity)
+        {
+            return await repository.UpdateRoomTypeImageContent(entity, "sp_ManageRoomType");
+        }
+        public async Task<ResultModel> UpdateRoomTypeImageDetail(RoomTypeDataEntity entity)
+        {
+            return await repository.UpdateRoomTypeImageDetail(entity, "sp_ManageRoomType");
+        }
+        public async Task<ResultModel> UpdateRoomTypeCommonImage(RoomTypeDataEntity entity)
+        {
+            return await repository.UpdateRoomTypeCommonImage(entity, "sp_ManageRoomTypeImages");
+        }
+        public async Task<ResultModel> UpdateRoomTypeMainImage(RoomTypeDataEntity entity)
+        {
+            return await repository.UpdateRoomTypeMainImage(entity, "sp_ManageRoomTypeImages");
+        }
         public async Task<ResultModel> DeleteRoomType(RoomTypeIDEntity entity)
         {
             return await repository.DeleteRoomType(entity, "sp_ManageRoomTypeFindByID");
@@ -52,9 +68,9 @@ namespace HotelBooking.DataAccess.Repositories
         {
             return await repository.RoomTypeImageUpload(image, imageList, roomTypeID, updatedBy );
         }
-        public async Task<ResultModel> CommonImageUpload(string? image, string? altTag, string? title, int? updatedBy)
+        public async Task<ResultModel> CommonImageUpload(int? ID, string? Type, string? Caption, string? image, string? altTag, string? title, int? updatedBy)
         {
-            return await repository.CommonImageUpload(image, altTag, title, updatedBy);
+            return await repository.CommonImageUpload(ID, Type, Caption, image, altTag, title, updatedBy);
         }
         public async Task<ResultModel> DeleteImage(DeleteImageEntity entity)
         {

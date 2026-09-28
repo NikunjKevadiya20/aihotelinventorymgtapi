@@ -10,6 +10,10 @@ namespace HotelBooking.DataAccess.Interfaces
         Task<ResultModel> UpdateRoomType(RoomTypeDataEntity entity);
         Task<ResultModel> UpdateRoomTypeOccupancy(RoomTypeDataEntity entity);
         Task<ResultModel> UpdateRoomTypeAmenities(RoomTypeDataEntity entity);
+        Task<ResultModel> UpdateRoomTypeImageContent(RoomTypeDataEntity entity);
+        Task<ResultModel> UpdateRoomTypeImageDetail(RoomTypeDataEntity entity);
+        Task<ResultModel> UpdateRoomTypeCommonImage(RoomTypeDataEntity entity);
+        Task<ResultModel> UpdateRoomTypeMainImage(RoomTypeDataEntity entity);
         Task<ResultModel> DeleteRoomType(RoomTypeIDEntity entity);
         Task<RoomTypeViewEntity> FindByIDRoomType(RoomTypeIDEntity entity);
         Task<List<RoomTypeViewEntity>> FindAllRoomType(RoomTypeIDEntity entity);
@@ -18,7 +22,7 @@ namespace HotelBooking.DataAccess.Interfaces
         Task<ResultModel> RoomTypeImageUpload(string? image, List<string> imageList, int? roomTypeID, int? updatedBy);
         Task<ResultModel> DeleteImage(DeleteImageEntity entity);
         Task<List<RoomTypeImageViewEntity>> FindAllRoomTypeImage(RoomTypeIDEntity entity);
-        Task<ResultModel> CommonImageUpload(string? image, string? altTag, string? title, int? updatedBy);
+        Task<ResultModel> CommonImageUpload(int? ID, string? Type, string? Caption, string? image, string? altTag, string? title, int? updatedBy);
         Task<ResultModel> InsertRoomTypeBed(RoomTypeBed entity);
         Task<ResultModel> UpdateRoomTypeBed(RoomTypeBed entity);
         Task<ResultModel> DeleteRoomTypeBed(RoomTypeBed entity);

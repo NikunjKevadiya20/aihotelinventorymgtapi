@@ -239,6 +239,180 @@ namespace HotelBooking.DataAccess.Base
         }
         #endregion
 
+        #region Update RoomTypeImageContent
+        public async Task<ResultModel> UpdateRoomTypeImageContent(RoomTypeDataEntity entity, string storedProcedure)
+        {
+            ResultModel result = new ResultModel();
+
+            try
+            {
+                Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+                DynamicParameters dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@ID", entity.ID);
+                dynamicParameters.Add("@RoomHighlightIDs", entity.RoomHighlightIDs);
+                dynamicParameters.Add("@ShortDescription", entity.ShortDescription);
+                dynamicParameters.Add("@LongDescription", entity.LongDescription);
+                dynamicParameters.Add("@UpdatedBy", entity.UpdatedBy);
+                dynamicParameters.Add("@OperationType", 5);
+                var data = await _dbConnection.QueryAsync(storedProcedure, dynamicParameters, commandType: CommandType.StoredProcedure);
+                result.Message = data.FirstOrDefault().Message;
+                result.Details = data.FirstOrDefault().Details;
+
+            }
+            catch (SqlException sqlException)
+            {
+                logger.LogError(sqlException, sqlException.Message);
+                result.ErrorMessage = sqlException.Message;
+                result.Status = (int)ResponseStatusCode.InternaServerError;
+                result.Message = CommonRepositoryMessages.CannotFindAllMessage;
+                result.Details = CommonRepositoryMessages.CannotFindAllDetails;
+
+            }
+            catch (Exception ex)
+            {
+                result.Status = (int)ResponseStatusCode.InternaServerError;
+                result.Message = CommonRepositoryMessages.ExceptionMessage;
+                result.ErrorMessage = ex.Message;
+
+            }
+            finally
+            {
+            }
+
+            return result;
+        }
+        #endregion
+
+        #region Update RoomTypeImageDetail
+        public async Task<ResultModel> UpdateRoomTypeImageDetail(RoomTypeDataEntity entity, string storedProcedure)
+        {
+            ResultModel result = new ResultModel();
+
+            try
+            {
+                Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+                DynamicParameters dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@ID", entity.ID);
+                dynamicParameters.Add("@Type", entity.Type);
+                dynamicParameters.Add("@Caption", entity.Caption);
+                dynamicParameters.Add("@Title", entity.Title);
+                dynamicParameters.Add("@AltTag", entity.AltTag);
+                dynamicParameters.Add("@UpdatedBy", entity.UpdatedBy);
+                dynamicParameters.Add("@OperationType", 6);
+                var data = await _dbConnection.QueryAsync(storedProcedure, dynamicParameters, commandType: CommandType.StoredProcedure);
+                result.Message = data.FirstOrDefault().Message;
+                result.Details = data.FirstOrDefault().Details;
+
+            }
+            catch (SqlException sqlException)
+            {
+                logger.LogError(sqlException, sqlException.Message);
+                result.ErrorMessage = sqlException.Message;
+                result.Status = (int)ResponseStatusCode.InternaServerError;
+                result.Message = CommonRepositoryMessages.CannotFindAllMessage;
+                result.Details = CommonRepositoryMessages.CannotFindAllDetails;
+
+            }
+            catch (Exception ex)
+            {
+                result.Status = (int)ResponseStatusCode.InternaServerError;
+                result.Message = CommonRepositoryMessages.ExceptionMessage;
+                result.ErrorMessage = ex.Message;
+
+            }
+            finally
+            {
+            }
+
+            return result;
+        }
+        #endregion
+
+        #region Update RoomTypeCommonImage
+        public async Task<ResultModel> UpdateRoomTypeCommonImage(RoomTypeDataEntity entity, string storedProcedure)
+        {
+            ResultModel result = new ResultModel();
+
+            try
+            {
+                Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+                DynamicParameters dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@IDs", entity.IDs);
+                dynamicParameters.Add("@RoomTypeID", entity.RoomTypeID);
+                dynamicParameters.Add("@UpdatedBy", entity.UpdatedBy);
+                dynamicParameters.Add("@OperationType", 4);
+                var data = await _dbConnection.QueryAsync(storedProcedure, dynamicParameters, commandType: CommandType.StoredProcedure);
+                result.Message = data.FirstOrDefault().Message;
+                result.Details = data.FirstOrDefault().Details;
+
+            }
+            catch (SqlException sqlException)
+            {
+                logger.LogError(sqlException, sqlException.Message);
+                result.ErrorMessage = sqlException.Message;
+                result.Status = (int)ResponseStatusCode.InternaServerError;
+                result.Message = CommonRepositoryMessages.CannotFindAllMessage;
+                result.Details = CommonRepositoryMessages.CannotFindAllDetails;
+
+            }
+            catch (Exception ex)
+            {
+                result.Status = (int)ResponseStatusCode.InternaServerError;
+                result.Message = CommonRepositoryMessages.ExceptionMessage;
+                result.ErrorMessage = ex.Message;
+
+            }
+            finally
+            {
+            }
+
+            return result;
+        }
+        #endregion
+
+        #region Update RoomTypeMainImage
+        public async Task<ResultModel> UpdateRoomTypeMainImage(RoomTypeDataEntity entity, string storedProcedure)
+        {
+            ResultModel result = new ResultModel();
+
+            try
+            {
+                Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+                DynamicParameters dynamicParameters = new DynamicParameters();
+                dynamicParameters.Add("@ID", entity.ID);
+                dynamicParameters.Add("@RoomTypeID", entity.RoomTypeID);
+                dynamicParameters.Add("@IsMain", entity.IsMain);
+                dynamicParameters.Add("@UpdatedBy", entity.UpdatedBy);
+                dynamicParameters.Add("@OperationType", 5);
+                var data = await _dbConnection.QueryAsync(storedProcedure, dynamicParameters, commandType: CommandType.StoredProcedure);
+                result.Message = data.FirstOrDefault().Message;
+                result.Details = data.FirstOrDefault().Details;
+
+            }
+            catch (SqlException sqlException)
+            {
+                logger.LogError(sqlException, sqlException.Message);
+                result.ErrorMessage = sqlException.Message;
+                result.Status = (int)ResponseStatusCode.InternaServerError;
+                result.Message = CommonRepositoryMessages.CannotFindAllMessage;
+                result.Details = CommonRepositoryMessages.CannotFindAllDetails;
+
+            }
+            catch (Exception ex)
+            {
+                result.Status = (int)ResponseStatusCode.InternaServerError;
+                result.Message = CommonRepositoryMessages.ExceptionMessage;
+                result.ErrorMessage = ex.Message;
+
+            }
+            finally
+            {
+            }
+
+            return result;
+        }
+        #endregion
+
 
 
         #region Delete RoomType
@@ -642,11 +816,7 @@ namespace HotelBooking.DataAccess.Base
 
         #region Common Image Upload
 
-        public async Task<ResultModel> CommonImageUpload(
-            string? image,
-            string? altTag,
-            string? title,
-            int? updatedBy)
+        public async Task<ResultModel> CommonImageUpload(int? ID, string? Type, string? Caption, string? image, string? altTag, string? title, int? updatedBy)
         {
             ResultModel result = new ResultModel();
 
@@ -657,8 +827,7 @@ namespace HotelBooking.DataAccess.Base
                 // -----------------------------------------
                 if (string.IsNullOrWhiteSpace(image))
                 {
-                    result.Status =
-                        (int)ResponseStatusCode.BadRequestError;
+                    result.Status = (int)ResponseStatusCode.BadRequestError;
 
                     result.Message = "failure";
                     result.Details = "Image is required.";
@@ -670,6 +839,21 @@ namespace HotelBooking.DataAccess.Base
                 // Image Upload
                 // -----------------------------------------
                 DynamicParameters parameters = new DynamicParameters();
+
+                parameters.Add(
+                    "@ID",
+                    ID,
+                    DbType.String);
+
+                parameters.Add(
+                    "@Type",
+                    Type,
+                    DbType.String);
+
+                parameters.Add(
+                    "@Caption",
+                    Caption,
+                    DbType.String);
 
                 parameters.Add(
                     "@Image",

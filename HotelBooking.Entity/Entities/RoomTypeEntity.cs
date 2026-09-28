@@ -38,6 +38,19 @@ namespace HotelBooking.Entity.Entities
         public int? InfantMaxAge { get; set; }
         public bool? ConnectingRoom { get; set; }
         public string? CompatibleRoomTypeIDs { get; set; }
+
+        public string? IDs { get; set; }
+        public int? RoomTypeID { get; set; }
+        public string? Type { get; set; }
+        public string? Caption { get; set; }
+        public string? AltTag { get; set; }
+        public string? Title { get; set; }
+        public string? ShortDescription { get; set; }
+        public string? LongDescription { get; set; }
+        public string? RoomHighlightIDs { get; set; }
+        public bool? IsMain { get; set; }
+
+
         public Boolean? IsActive { get; set; }
         public Int32? CreatedBy { set; get; }
         public Int32? UpdatedBy { set; get; }
@@ -137,9 +150,16 @@ namespace HotelBooking.Entity.Entities
     {
         public int? ID { get; set; }
         public int? RoomTypeID { get; set; }
-        public string? ImageList { get; set; }
+        public string? Type { get; set; }
+        public string? Caption { get; set; }
         public string? AltTag { get; set; }
         public string? Title { get; set; }
+        public string? ShortDescription { get; set; }
+        public string? LongDescription { get; set; }
+        public string? RoomHighlightIDs { get; set; }
+        public string? RoomHighlightNames { get; set; }
+        public bool? IsMain { get; set; }
+        public string? ImageList { get; set; }
         public string? Details { get; set; }
         public string? Message { get; set; }
         public int? Status { get; set; }
@@ -161,6 +181,9 @@ namespace HotelBooking.Entity.Entities
     }
     public class CommonImageEntity
     {
+        public int? ID { get; set; }
+        public string? Type { get; set; }
+        public string? Caption { get; set; }
         public IFormFile? Image { get; set; }
         public string? AltTag { get; set; }
         public string? Title { get; set; }
