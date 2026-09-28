@@ -162,11 +162,6 @@ namespace HotelBooking.DataAccess.Base
                 dynamicParameters.Add("@CompatibleRoomTypeIDs", entity.CompatibleRoomTypeIDs);
                 dynamicParameters.Add("@IsActive", entity.IsActive);
                 dynamicParameters.Add("@UpdatedBy", entity.UpdatedBy);
-                dynamicParameters.AddTable<RoomTypeBedEntity>(
-                    "@RoomTypeBeds",
-                    "dbo.UDTT_RoomTypeBed",
-                    entity.RoomTypeBeds ?? new List<RoomTypeBedEntity>()
-                );
                 dynamicParameters.Add("@OperationType", CommonRepositoryConstants.Update);
                 var data = await _dbConnection.QueryAsync(storedProcedure, dynamicParameters, commandType: CommandType.StoredProcedure);
                 result.Message = data.FirstOrDefault().Message;
