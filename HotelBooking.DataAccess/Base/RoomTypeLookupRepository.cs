@@ -913,7 +913,7 @@ namespace HotelBooking.DataAccess.Base
                 DynamicParameters parameters = new DynamicParameters();
 
                 parameters.Add(
-                    "@ID",
+                    "@RoomTypeID",
                     ID,
                     DbType.String);
 
