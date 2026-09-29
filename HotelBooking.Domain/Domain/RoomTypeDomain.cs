@@ -32,9 +32,9 @@ namespace HotelBooking.Domain.Domain
         {
             return await repository.UpdateRoomTypeImageContent(entity);
         }
-        public async Task<ResultModel> UpdateRoomTypeImageDetail(RoomTypeDataEntity entity)
+        public async Task<ResultModel> UpdateRoomTypeImageDetail(int? ID, string? Type, string? Caption, string? image, string? altTag, string? title, int? updatedBy)
         {
-            return await repository.UpdateRoomTypeImageDetail(entity);
+            return await repository.UpdateRoomTypeImageDetail(ID, Type, Caption, image, altTag, title, updatedBy);
         }
         public async Task<ResultModel> UpdateRoomTypeCommonImage(RoomTypeDataEntity entity)
         {

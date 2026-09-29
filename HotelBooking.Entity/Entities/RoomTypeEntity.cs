@@ -2,7 +2,7 @@ using Microsoft.AspNetCore.Http;
 
 namespace HotelBooking.Entity.Entities
 {
-    public class RoomTypeDataEntity
+    public class RoomTypeDataEntity  
     {
         public int? ID { get; set; }
         public string? AmenitiesIDs { get; set; }
@@ -21,7 +21,7 @@ namespace HotelBooking.Entity.Entities
         public int? MoInfant { get; set; }
         public int? Floor { get; set; }
         public int? RoomCategoryID { get; set; }
-        public int? AccessibilityID { get; set; }
+        public string? AccessibilityID { get; set; }
         public string? RoomViewID { get; set; }
         public string? Smoking { get; set; }
         public string? SizeType { get; set; }
@@ -121,7 +121,7 @@ namespace HotelBooking.Entity.Entities
         public int? Floor { get; set; }
         public int? RoomCategoryID { get; set; }
         public string? RoomCategoryName { get; set; }
-        public int? AccessibilityID { get; set; }
+        public string? AccessibilityID { get; set; }
         public string? AccessibilityName { get; set; }
         public string? RoomViewID { get; set; }
         public string? RoomViewName { get; set; }

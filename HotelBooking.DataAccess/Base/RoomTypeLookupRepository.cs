@@ -162,7 +162,7 @@ namespace HotelBooking.DataAccess.Base
                 dynamicParameters.Add("@CompatibleRoomTypeIDs", entity.CompatibleRoomTypeIDs);
                 dynamicParameters.Add("@IsActive", entity.IsActive);
                 dynamicParameters.Add("@UpdatedBy", entity.UpdatedBy);
-                dynamicParameters.Add("@OperationType", CommonRepositoryConstants.Update);
+                dynamicParameters.Add("@OperationType", 3);
                 var data = await _dbConnection.QueryAsync(storedProcedure, dynamicParameters, commandType: CommandType.StoredProcedure);
                 result.Message = data.FirstOrDefault().Message;
                 result.Details = data.FirstOrDefault().Details;
@@ -279,48 +279,125 @@ namespace HotelBooking.DataAccess.Base
         #endregion
 
         #region Update RoomTypeImageDetail
-        public async Task<ResultModel> UpdateRoomTypeImageDetail(RoomTypeDataEntity entity, string storedProcedure)
+
+        public async Task<ResultModel> UpdateRoomTypeImageDetail(int? ID, string? Type, string? Caption, string? image, string? altTag, string? title, int? updatedBy)
         {
             ResultModel result = new ResultModel();
 
             try
             {
-                Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
-                DynamicParameters dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@ID", entity.ID);
-                dynamicParameters.Add("@Type", entity.Type);
-                dynamicParameters.Add("@Caption", entity.Caption);
-                dynamicParameters.Add("@Title", entity.Title);
-                dynamicParameters.Add("@AltTag", entity.AltTag);
-                dynamicParameters.Add("@UpdatedBy", entity.UpdatedBy);
-                dynamicParameters.Add("@OperationType", 6);
-                var data = await _dbConnection.QueryAsync(storedProcedure, dynamicParameters, commandType: CommandType.StoredProcedure);
-                result.Message = data.FirstOrDefault().Message;
-                result.Details = data.FirstOrDefault().Details;
 
+                DynamicParameters parameters = new DynamicParameters();
+
+                parameters.Add(
+                    "@ID",
+                    ID,
+                    DbType.String);
+
+                parameters.Add(
+                    "@Type",
+                    Type,
+                    DbType.String);
+
+                parameters.Add(
+                    "@Caption",
+                    Caption,
+                    DbType.String);
+
+                parameters.Add(
+                    "@Image",
+                    image,
+                    DbType.String);
+
+                parameters.Add(
+                    "@AltTag",
+                    altTag,
+                    DbType.String);
+
+                parameters.Add(
+                    "@Title",
+                    title,
+                    DbType.String);
+
+                parameters.Add(
+                    "@UpdatedBy",
+                    updatedBy ?? 1,
+                    DbType.Int32);
+
+                parameters.Add(
+                    "@OperationType",
+                    6,
+                    DbType.Int32);
+
+                var imageResult =
+                    await _dbConnection.QueryFirstOrDefaultAsync<ResultModel>(
+                        "dbo.sp_ManageRoomTypeImages",
+                        parameters,
+                        commandType: CommandType.StoredProcedure);
+
+                if (imageResult != null)
+                {
+                    result.Status = imageResult.Status;
+                    result.Message = imageResult.Message;
+                    result.Details = imageResult.Details;
+                    result.ErrorMessage = imageResult.ErrorMessage;
+                    result.Data = imageResult.Data;
+                }
+
+                // -----------------------------------------
+                // Success Response
+                // -----------------------------------------
+                if (string.IsNullOrEmpty(result.Message))
+                {
+                    result.Status =
+                        (int)ResponseStatusCode.Success;
+
+                    result.Message = "success";
+                    result.Details = "Image uploaded successfully.";
+                }
+                else if (result.Status == 0)
+                {
+                    result.Status =
+                        (int)ResponseStatusCode.Success;
+                }
             }
-            catch (SqlException sqlException)
+            catch (SqlException ex)
             {
-                logger.LogError(sqlException, sqlException.Message);
-                result.ErrorMessage = sqlException.Message;
-                result.Status = (int)ResponseStatusCode.InternaServerError;
-                result.Message = CommonRepositoryMessages.CannotFindAllMessage;
-                result.Details = CommonRepositoryMessages.CannotFindAllDetails;
+                logger.LogError(
+                    ex,
+                    "CommonImageUpload SQL Error.",
+                    updatedBy);
 
+                result.Status =
+                    (int)ResponseStatusCode.InternaServerError;
+
+                result.Message =
+                    CommonRepositoryMessages.CannotFindAllMessage;
+
+                result.Details =
+                    CommonRepositoryMessages.CannotFindAllDetails;
+
+                result.ErrorMessage = ex.Message;
             }
             catch (Exception ex)
             {
-                result.Status = (int)ResponseStatusCode.InternaServerError;
-                result.Message = CommonRepositoryMessages.ExceptionMessage;
-                result.ErrorMessage = ex.Message;
+                logger.LogError(
+                    ex,
+                    "CommonImageUpload Error.",
+                    updatedBy);
 
-            }
-            finally
-            {
+                result.Status =
+                    (int)ResponseStatusCode.InternaServerError;
+
+                result.Message =
+                    CommonRepositoryMessages.ExceptionMessage;
+
+                result.ErrorMessage = ex.Message;
             }
 
             return result;
         }
+
         #endregion
 
         #region Update RoomTypeCommonImage
@@ -911,7 +988,7 @@ namespace HotelBooking.DataAccess.Base
             {
                 logger.LogError(
                     ex,
-                    "CommonImageUpload SQL Error. UpdatedBy: {UpdatedBy}",
+                    "CommonImageUpload SQL Error.",
                     updatedBy);
 
                 result.Status =
@@ -929,7 +1006,7 @@ namespace HotelBooking.DataAccess.Base
             {
                 logger.LogError(
                     ex,
-                    "CommonImageUpload Error. UpdatedBy: {UpdatedBy}",
+                    "CommonImageUpload Error.",
                     updatedBy);
 
                 result.Status =

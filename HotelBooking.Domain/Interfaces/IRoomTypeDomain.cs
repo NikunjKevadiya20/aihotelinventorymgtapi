@@ -10,7 +10,7 @@ namespace HotelBooking.Domain.Interfaces
         Task<ResultModel> UpdateRoomTypeOccupancy(RoomTypeDataEntity entity);
         Task<ResultModel> UpdateRoomTypeAmenities(RoomTypeDataEntity entity);
         Task<ResultModel> UpdateRoomTypeImageContent(RoomTypeDataEntity entity);
-        Task<ResultModel> UpdateRoomTypeImageDetail(RoomTypeDataEntity entity);
+        Task<ResultModel> UpdateRoomTypeImageDetail(int? ID, string? Type, string? Caption, string? image, string? altTag, string? title, int? updatedBy);
         Task<ResultModel> UpdateRoomTypeCommonImage(RoomTypeDataEntity entity);
         Task<ResultModel> UpdateRoomTypeMainImage(RoomTypeDataEntity entity);
         Task<ResultModel> DeleteRoomType(RoomTypeIDEntity entity);

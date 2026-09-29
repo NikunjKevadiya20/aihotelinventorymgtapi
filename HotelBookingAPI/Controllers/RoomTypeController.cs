@@ -353,68 +353,118 @@ namespace HotelBooking.Controllers
         #endregion
 
         #region Update RoomTypeImageDetail
+
         [HttpPost("UpdateRoomTypeImageDetail")]
         [Authorize]
-        public async Task<IActionResult> UpdateRoomTypeImageDetail(RoomTypeDataEntity entity)
+        public async Task<IActionResult> UpdateRoomTypeImageDetail([FromForm] CommonImageEntity entity)
         {
-
             try
             {
                 var token = HttpContext.Request.Headers["Authorization"]
-                 .FirstOrDefault()?.Split(" ").Last();
+                            .FirstOrDefault()?.Split(" ").Last();
 
                 int userId = JwtMiddleware.GetUserIdFromToken(token);
-                entity.UpdatedBy = userId;
-                if (userId != 0)
+
+                if (userId == 0)
                 {
-                    var result = await domain.UpdateRoomTypeImageDetail(entity);
-                    if (result.Message == "success")
-                    {
-                        return StatusCode((int)HttpStatusCode.OK, new ResultModel()
+                    return StatusCode(
+                        (int)ResponseStatusCode.TokenExpired,
+                        new ResultModel()
+                        {
+                            Data = string.Empty,
+                            Message = CommonRepositoryMessages.NotFoundMessageEN,
+                            Details = CommonRepositoryMessages.NotFoundMessageEN,
+                            Status = (int)ResponseStatusCode.TokenExpired,
+                        });
+                }
+
+                // Use userId as updatedBy
+                int updatedBy = userId;
+
+                string singleImage = string.Empty;
+
+                string folderPath = Path.Combine(
+                    CommonRepositoryConstants.ImageFilePath,
+                    CommonRepositoryConstants.documentsFolder);
+
+                if (!Directory.Exists(folderPath))
+                {
+                    Directory.CreateDirectory(folderPath);
+                }
+
+                // -----------------------------------------
+                // Single Image
+                // -----------------------------------------
+                if (entity.Image != null && entity.Image.Length > 0)
+                {
+                    singleImage = $"{Guid.NewGuid()}.webp";
+
+                    string filePath = Path.Combine(
+                        folderPath,
+                        singleImage);
+
+                    await ImageHelper.CompressWithSkia(
+                        entity.Image,
+                        filePath);
+                }
+
+
+                // -----------------------------------------
+                // Save Image Details
+                // -----------------------------------------
+                var result = await domain.UpdateRoomTypeImageDetail(
+                    entity.ID,
+                    entity.Type,
+                    entity.Caption,
+                    singleImage,
+                    entity.AltTag,
+                    entity.Title,
+                    updatedBy);
+
+                // -----------------------------------------
+                // Success Response
+                // -----------------------------------------
+                if (result.Message == "success"
+                    || result.Status == (int)ResponseStatusCode.Success)
+                {
+                    return StatusCode(
+                        (int)HttpStatusCode.OK,
+                        new ResultModel()
                         {
                             Status = (int)ResponseStatusCode.Success,
                             Message = Convert.ToString(result.Message),
                             Details = Convert.ToString(result.Details),
                             Data = result,
                         });
-                    }
-                    else
-                    {
-                        return StatusCode((int)HttpStatusCode.BadRequest, new ResultModel()
+                }
+                else
+                {
+                    return StatusCode(
+                        (int)HttpStatusCode.NotFound,
+                        new ResultModel()
                         {
                             Data = string.Empty,
                             Message = Convert.ToString(result.Message),
                             Details = Convert.ToString(result.Details),
-                            Status = (int)ResponseStatusCode.BadRequestError,
+                            Status = (int)ResponseStatusCode.NotFound,
                             ErrorMessage = Convert.ToString(result.ErrorMessage),
                         });
-                    }
-                }
-                else
-                {
-                    return StatusCode((int)ResponseStatusCode.TokenExpired, new ResultModel()
-                    {
-                        Data = string.Empty,
-                        Message = CommonRepositoryMessages.NotFoundMessageEN,
-                        Details = CommonRepositoryMessages.NotFoundMessageEN,
-                        Status = (int)ResponseStatusCode.TokenExpired,
-
-                    });
-
                 }
             }
             catch (Exception ex)
             {
-                return StatusCode((int)HttpStatusCode.InternalServerError, new ResultModel()
-                {
-                    Message = CommonRepositoryMessages.NotFoundMessageEN,
-                    Details = CommonRepositoryMessages.NotFoundMessageEN,
-                    ErrorMessage = ex.Message,
-                    Status = (int)ResponseStatusCode.InternaServerError,
-                });
+                return StatusCode(
+                    (int)HttpStatusCode.InternalServerError,
+                    new ResultModel()
+                    {
+                        Message = CommonRepositoryMessages.NotFoundMessageEN,
+                        Details = CommonRepositoryMessages.NotFoundMessageEN,
+                        ErrorMessage = ex.Message,
+                        Status = (int)ResponseStatusCode.InternaServerError,
+                    });
             }
-
         }
+
         #endregion
 
         #region Update RoomTypeCommonImage

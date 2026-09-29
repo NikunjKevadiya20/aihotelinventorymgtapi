@@ -11,7 +11,7 @@ namespace HotelBooking.DataAccess.Base
         Task<ResultModel> UpdateRoomTypeOccupancy(RoomTypeDataEntity entity, string storedProcedure);
         Task<ResultModel> UpdateRoomTypeAmenities(RoomTypeDataEntity entity, string storedProcedure);
         Task<ResultModel> UpdateRoomTypeImageContent(RoomTypeDataEntity entity, string storedProcedure);
-        Task<ResultModel> UpdateRoomTypeImageDetail(RoomTypeDataEntity entity, string storedProcedure);
+        Task<ResultModel> UpdateRoomTypeImageDetail(int? ID, string? Type, string? Caption, string? image, string? altTag, string? title, int? updatedBy);
         Task<ResultModel> UpdateRoomTypeCommonImage(RoomTypeDataEntity entity, string storedProcedure);
         Task<ResultModel> UpdateRoomTypeMainImage(RoomTypeDataEntity entity, string storedProcedure);
         Task<ResultModel> DeleteRoomType(RoomTypeIDEntity entity, string storedProcedure);
