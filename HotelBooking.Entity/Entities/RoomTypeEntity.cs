@@ -136,6 +136,18 @@ namespace HotelBooking.Entity.Entities
         public int? SuitableforID { get; set; }
         public string? SuitableforName { get; set; }
         public string? DisplayName { get; set; }
+        public string? ShortDescription { get; set; }
+        public string? LongDescription { get; set; }
+        public string? RoomHighlightIDs { get; set; }
+        public int? AdultsMinAge { get; set; }
+        public int? AdultsMaxAge { get; set; }
+        public int? ChildrenMinAge { get; set; }
+        public int? ChildrenMaxAge { get; set; }
+        public int? InfantMinAge { get; set; }
+        public int? InfantMaxAge { get; set; }
+        public bool? ConnectingRoom { get; set; }
+        public string? CompatibleRoomTypeIDs { get; set; }
+        public bool? IsMain { get; set; }
         public Boolean? IsActive { get; set; }
         public string? Details { get; set; }
         public string? Message { get; set; }
