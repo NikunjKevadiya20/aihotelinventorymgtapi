@@ -245,8 +245,6 @@ namespace HotelBooking.DataAccess.Base
                 DynamicParameters dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@ID", entity.ID);
                 dynamicParameters.Add("@RoomHighlightIDs", entity.RoomHighlightIDs);
-                dynamicParameters.Add("@ShortDescription", entity.ShortDescription);
-                dynamicParameters.Add("@LongDescription", entity.LongDescription);
                 dynamicParameters.Add("@UpdatedBy", entity.UpdatedBy);
                 dynamicParameters.Add("@OperationType", 5);
                 var data = await _dbConnection.QueryAsync(storedProcedure, dynamicParameters, commandType: CommandType.StoredProcedure);

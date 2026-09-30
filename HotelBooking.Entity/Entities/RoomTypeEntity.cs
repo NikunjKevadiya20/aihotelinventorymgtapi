@@ -45,8 +45,6 @@ namespace HotelBooking.Entity.Entities
         public string? Caption { get; set; }
         public string? AltTag { get; set; }
         public string? Title { get; set; }
-        public string? ShortDescription { get; set; }
-        public string? LongDescription { get; set; }
         public string? RoomHighlightIDs { get; set; }
         public bool? IsMain { get; set; }
 
@@ -136,9 +134,8 @@ namespace HotelBooking.Entity.Entities
         public int? SuitableforID { get; set; }
         public string? SuitableforName { get; set; }
         public string? DisplayName { get; set; }
-        public string? ShortDescription { get; set; }
-        public string? LongDescription { get; set; }
         public string? RoomHighlightIDs { get; set; }
+        public string? RoomHighlightName { get; set; }
         public int? AdultsMinAge { get; set; }
         public int? AdultsMaxAge { get; set; }
         public int? ChildrenMinAge { get; set; }
