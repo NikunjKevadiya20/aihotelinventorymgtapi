@@ -70,6 +70,7 @@ namespace HotelBooking.Entity.Entities
     {
         public int? ID { get; set; }
         public int? BedTypeID { get; set; }
+        public int? RoomTypeID { get; set; }
         public int? Count { get; set; }
         public decimal? Length { get; set; }
         public decimal? Width { get; set; }
@@ -80,6 +81,7 @@ namespace HotelBooking.Entity.Entities
     {
         public int? ID { get; set; }
         public int? BedTypeID { get; set; }
+        public int? RoomTypeID { get; set; }
         public string? BedTypeName { get; set; }
         public int? Count { get; set; }
         public decimal? Length { get; set; }

@@ -598,42 +598,51 @@ namespace HotelBooking.DataAccess.Base
         #endregion
 
         #region Find All RoomType
-        public async Task<List<RoomTypeViewEntity>> FindAllRoomType(RoomTypeIDEntity entity, string storedProcedure)
+        public async Task<List<RoomTypeViewEntity>> FindAllRoomType(
+            RoomTypeIDEntity entity,
+            string storedProcedure)
         {
-            RoomTypeViewEntity result = new RoomTypeViewEntity();
-
             try
             {
                 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
+
                 DynamicParameters dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@RoomType", entity.RoomType);
                 dynamicParameters.Add("@OperationType", 5);
-                var data = await _dbConnection.QueryAsync<RoomTypeViewEntity>(storedProcedure, dynamicParameters, commandType: CommandType.StoredProcedure);
-                return data.ToList();
 
+                using var multi = await _dbConnection.QueryMultipleAsync(
+                    storedProcedure,
+                    dynamicParameters,
+                    commandType: CommandType.StoredProcedure);
+
+                var roomTypes = (await multi.ReadAsync<RoomTypeViewEntity>()).ToList();
+
+                var roomTypeBeds = (await multi.ReadAsync<RoomTypeBedViewEntity>()).ToList();
+
+                foreach (var roomType in roomTypes)
+                {
+                    roomType.RoomTypeBeds = roomTypeBeds
+                        .Where(x => x.RoomTypeID == roomType.ID)
+                        .ToList();
+                }
+
+                return roomTypes;
             }
             catch (SqlException sqlException)
             {
                 logger.LogError(sqlException, sqlException.Message);
-                result.ErrorMessage = sqlException.Message;
-                result.Status = (int)ResponseStatusCode.InternaServerError;
-                result.Message = CommonRepositoryMessages.CannotFindAllMessage;
-                result.Details = CommonRepositoryMessages.CannotFindAllDetails;
+
                 throw;
             }
             catch (Exception ex)
             {
-                result.Status = (int)ResponseStatusCode.InternaServerError;
-                result.Message = CommonRepositoryMessages.ExceptionMessage;
-                result.ErrorMessage = ex.Message;
+                logger.LogError(ex, ex.Message);
+
                 throw;
             }
             finally
             {
-
             }
-
-
         }
         #endregion
 
@@ -1112,6 +1121,7 @@ namespace HotelBooking.DataAccess.Base
                 DynamicParameters dynamicParameters = new DynamicParameters();
                 
                 dynamicParameters.Add("@BedTypeID", entity.BedTypeID);
+                dynamicParameters.Add("@RoomTypeID", entity.RoomTypeID);
                 dynamicParameters.Add("@Count", entity.Count);
                 dynamicParameters.Add("@Length", entity.Length);
                 dynamicParameters.Add("@Width", entity.Width);
@@ -1159,6 +1169,7 @@ namespace HotelBooking.DataAccess.Base
                 DynamicParameters dynamicParameters = new DynamicParameters();
                 dynamicParameters.Add("@ID", entity.ID);
                 dynamicParameters.Add("@BedTypeID", entity.BedTypeID);
+                dynamicParameters.Add("@RoomTypeID", entity.RoomTypeID);
                 dynamicParameters.Add("@Count", entity.Count);
                 dynamicParameters.Add("@Length", entity.Length);
                 dynamicParameters.Add("@Width", entity.Width);
