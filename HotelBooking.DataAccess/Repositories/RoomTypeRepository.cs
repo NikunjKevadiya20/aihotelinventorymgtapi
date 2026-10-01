@@ -58,7 +58,7 @@ namespace HotelBooking.DataAccess.Repositories
         }
         public async Task<List<RoomTypeViewEntity>> FindAllActiveRoomType()
         {
-            return await repository.FindAllActiveRoomType("sp_ManageRoomTypeFindAll");
+            return await repository.FindAllActiveRoomType("sp_ManageRoomTypeFindAllActive");
         }
         public async Task<ResultModel> ActiveInActiveRoomType(RoomTypeIDEntity entity)
         {

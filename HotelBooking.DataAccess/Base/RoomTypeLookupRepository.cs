@@ -655,7 +655,7 @@ namespace HotelBooking.DataAccess.Base
             {
                 Dapper.DefaultTypeMap.MatchNamesWithUnderscores = true;
                 DynamicParameters dynamicParameters = new DynamicParameters();
-                dynamicParameters.Add("@OperationType", 6);
+                dynamicParameters.Add("@OperationType", 1);
                 var data = await _dbConnection.QueryAsync<RoomTypeViewEntity>(storedProcedure, dynamicParameters, commandType: CommandType.StoredProcedure);
                 return data.ToList();
 
